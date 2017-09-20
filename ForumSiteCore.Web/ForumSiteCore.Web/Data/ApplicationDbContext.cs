@@ -11,14 +11,14 @@ namespace ForumSiteCore.Web.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, long>
     {
-        //public DbSet<Forum> Forums { get; set; }
-        //public DbSet<ForumSave> ForumSaves { get; set; }
-        //public DbSet<Post> Posts { get; set; }        
-        //public DbSet<PostVote> PostVotes { get; set; }
-        //public DbSet<PostSave> PostSaves { get; set; }
-        //public DbSet<Comment> Comments { get; set; }
-        //public DbSet<CommentVote> CommentVotes { get; set; }
-        //public DbSet<CommentSave> CommentSaves { get; set; }
+        public DbSet<Forum> Forums { get; set; }
+        public DbSet<ForumSave> ForumSaves { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<PostVote> PostVotes { get; set; }
+        public DbSet<PostSave> PostSaves { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<CommentVote> CommentVotes { get; set; }
+        public DbSet<CommentSave> CommentSaves { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
