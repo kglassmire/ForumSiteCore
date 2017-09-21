@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ForumSiteCore.Web.Data;
-using ForumSiteCore.Web.Data.Models;
+using ForumSiteCore.DAL;
+using ForumSiteCore.DAL.Models;
 using ForumSiteCore.Web.Services;
 
 namespace ForumSiteCore.Web

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ForumSiteCore.Web.Data.Models;
+using ForumSiteCore.DAL.Models;
 using ForumSiteCore.Web.Models.AccountViewModels;
 using ForumSiteCore.Web.Services;
 

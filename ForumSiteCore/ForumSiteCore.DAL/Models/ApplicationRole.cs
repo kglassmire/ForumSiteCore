@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ForumSiteCore.Web.Data.Models
+namespace ForumSiteCore.DAL.Models
 {
     public class ApplicationRole : IdentityRole<long>
     {

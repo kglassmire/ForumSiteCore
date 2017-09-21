@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForumSiteCore.Web", "ForumSiteCore.Web\ForumSiteCore.Web.csproj", "{06047D9B-20D5-4081-A646-A3BCAEE10464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForumSiteCore.Web", "ForumSiteCore.Web\ForumSiteCore.Web.csproj", "{06047D9B-20D5-4081-A646-A3BCAEE10464}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForumSiteCore.DAL", "ForumSiteCore.DAL\ForumSiteCore.DAL.csproj", "{4C59177A-403B-456E-9708-91F4757B451E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForumSiteCore.Utility", "ForumSiteCore.Utility\ForumSiteCore.Utility.csproj", "{FDC9A199-18C4-4446-8E69-AD97E82EC831}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{06047D9B-20D5-4081-A646-A3BCAEE10464}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06047D9B-20D5-4081-A646-A3BCAEE10464}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06047D9B-20D5-4081-A646-A3BCAEE10464}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C59177A-403B-456E-9708-91F4757B451E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C59177A-403B-456E-9708-91F4757B451E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C59177A-403B-456E-9708-91F4757B451E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C59177A-403B-456E-9708-91F4757B451E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDC9A199-18C4-4446-8E69-AD97E82EC831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDC9A199-18C4-4446-8E69-AD97E82EC831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDC9A199-18C4-4446-8E69-AD97E82EC831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDC9A199-18C4-4446-8E69-AD97E82EC831}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

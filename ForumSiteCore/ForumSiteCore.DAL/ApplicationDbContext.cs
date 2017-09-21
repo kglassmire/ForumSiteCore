@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using ForumSiteCore.Web.Data.Models;
-using ForumSiteCore.Web.Utility;
+using ForumSiteCore.DAL.Models;
+using ForumSiteCore.Utility;
 
-namespace ForumSiteCore.Web.Data
+namespace ForumSiteCore.DAL
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, long>
     {

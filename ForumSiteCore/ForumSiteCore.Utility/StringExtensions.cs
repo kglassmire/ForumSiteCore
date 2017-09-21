@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ForumSiteCore.Web.Utility
+namespace ForumSiteCore.Utility
 {
     public static class StringExtensions
     {
