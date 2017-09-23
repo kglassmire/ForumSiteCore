@@ -254,7 +254,7 @@ namespace ForumSiteCore.DAL.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     created = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
-                    parent_id = table.Column<long>(type: "int8", nullable: false),
+                    parent_id = table.Column<long>(type: "int8", nullable: true),
                     post_id = table.Column<long>(type: "int8", nullable: false),
                     updated = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false),
                     user_id = table.Column<long>(type: "int8", nullable: false)
@@ -267,7 +267,7 @@ namespace ForumSiteCore.DAL.Migrations
                         column: x => x.parent_id,
                         principalTable: "comments",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_comments_posts_post_id",
                         column: x => x.post_id,
@@ -314,7 +314,7 @@ namespace ForumSiteCore.DAL.Migrations
                     created = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false),
                     direction = table.Column<bool>(type: "bool", nullable: false),
                     post_id = table.Column<long>(type: "int8", nullable: false),
-                    update = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false),
+                    updated = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false),
                     user_id = table.Column<long>(type: "int8", nullable: false)
                 },
                 constraints: table =>

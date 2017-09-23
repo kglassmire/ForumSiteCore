@@ -30,7 +30,6 @@ namespace ForumSiteCore.Web
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             //services.AddDbContext<ApplicationDbContext>(options =>
             //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();

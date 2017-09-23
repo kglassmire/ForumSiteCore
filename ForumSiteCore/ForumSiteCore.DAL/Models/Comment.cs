@@ -8,7 +8,7 @@ namespace ForumSiteCore.DAL.Models
     public class Comment
     {
         public Int64 Id { get; set; }
-        public Int64 ParentId { get; set; }
+        public Int64? ParentId { get; set; }
         public Int64 UserId { get; set; }
         public Int64 PostId { get; set; }
         public String Description { get; set; }

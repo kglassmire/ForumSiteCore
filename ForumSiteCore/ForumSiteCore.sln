@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForumSiteCore.Web", "ForumSiteCore.Web\ForumSiteCore.Web.csproj", "{06047D9B-20D5-4081-A646-A3BCAEE10464}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForumSiteCore.DAL", "ForumSiteCore.DAL\ForumSiteCore.DAL.csproj", "{4C59177A-403B-456E-9708-91F4757B451E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForumSiteCore.DAL", "ForumSiteCore.DAL\ForumSiteCore.DAL.csproj", "{4C59177A-403B-456E-9708-91F4757B451E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForumSiteCore.Utility", "ForumSiteCore.Utility\ForumSiteCore.Utility.csproj", "{FDC9A199-18C4-4446-8E69-AD97E82EC831}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForumSiteCore.Utility", "ForumSiteCore.Utility\ForumSiteCore.Utility.csproj", "{FDC9A199-18C4-4446-8E69-AD97E82EC831}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

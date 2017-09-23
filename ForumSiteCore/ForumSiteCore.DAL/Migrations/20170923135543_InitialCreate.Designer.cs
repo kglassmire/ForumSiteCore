@@ -11,7 +11,7 @@ using System;
 namespace ForumSiteCore.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170921034309_InitialCreate")]
+    [Migration("20170923135543_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -127,7 +127,7 @@ namespace ForumSiteCore.DAL.Migrations
                     b.Property<string>("Description")
                         .HasColumnName("description");
 
-                    b.Property<long>("ParentId")
+                    b.Property<long?>("ParentId")
                         .HasColumnName("parent_id");
 
                     b.Property<long>("PostId")
@@ -388,8 +388,8 @@ namespace ForumSiteCore.DAL.Migrations
                     b.Property<long>("PostId")
                         .HasColumnName("post_id");
 
-                    b.Property<DateTimeOffset>("Update")
-                        .HasColumnName("update");
+                    b.Property<DateTimeOffset>("Updated")
+                        .HasColumnName("updated");
 
                     b.Property<long>("UserId")
                         .HasColumnName("user_id");
@@ -519,8 +519,7 @@ namespace ForumSiteCore.DAL.Migrations
                     b.HasOne("ForumSiteCore.DAL.Models.Comment", "Parent")
                         .WithMany()
                         .HasForeignKey("ParentId")
-                        .HasConstraintName("fk_comments_comments_parent_id")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasConstraintName("fk_comments_comments_parent_id");
 
                     b.HasOne("ForumSiteCore.DAL.Models.Post", "Post")
                         .WithMany()

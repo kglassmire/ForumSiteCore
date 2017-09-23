@@ -126,7 +126,7 @@ namespace ForumSiteCore.DAL.Migrations
                     b.Property<string>("Description")
                         .HasColumnName("description");
 
-                    b.Property<long>("ParentId")
+                    b.Property<long?>("ParentId")
                         .HasColumnName("parent_id");
 
                     b.Property<long>("PostId")
@@ -387,8 +387,8 @@ namespace ForumSiteCore.DAL.Migrations
                     b.Property<long>("PostId")
                         .HasColumnName("post_id");
 
-                    b.Property<DateTimeOffset>("Update")
-                        .HasColumnName("update");
+                    b.Property<DateTimeOffset>("Updated")
+                        .HasColumnName("updated");
 
                     b.Property<long>("UserId")
                         .HasColumnName("user_id");
@@ -518,8 +518,7 @@ namespace ForumSiteCore.DAL.Migrations
                     b.HasOne("ForumSiteCore.DAL.Models.Comment", "Parent")
                         .WithMany()
                         .HasForeignKey("ParentId")
-                        .HasConstraintName("fk_comments_comments_parent_id")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasConstraintName("fk_comments_comments_parent_id");
 
                     b.HasOne("ForumSiteCore.DAL.Models.Post", "Post")
                         .WithMany()
@@ -615,7 +614,7 @@ namespace ForumSiteCore.DAL.Migrations
             modelBuilder.Entity("ForumSiteCore.DAL.Models.PostVote", b =>
                 {
                     b.HasOne("ForumSiteCore.DAL.Models.Post", "Post")
-                        .WithMany()
+                        .WithMany("PostVote")
                         .HasForeignKey("PostId")
                         .HasConstraintName("fk_post_votes_posts_post_id")
                         .OnDelete(DeleteBehavior.Cascade);

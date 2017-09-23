@@ -23,6 +23,7 @@ namespace ForumSiteCore.DAL.Models
 
         public Forum Forum { get; set; }
         public ApplicationUser User { get; set; }
+        public List<PostVote> PostVotes { get; set; }
         
     }
 }

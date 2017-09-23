@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ForumSiteCore.DAL.Models;
 using ForumSiteCore.Utility;
-
+using Serilog;
 namespace ForumSiteCore.DAL
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, long>
@@ -22,7 +22,8 @@ namespace ForumSiteCore.DAL
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
-        {                       
+        {
+            Log.Information("Initializing ApplicationDbContext.");
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
