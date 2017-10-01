@@ -21,6 +21,7 @@ namespace ForumSiteCore.Web
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
+                .WriteTo.RollingFile(@".\Logs\log-{Date}.txt")
                 .CreateLogger();
 
             try
@@ -54,6 +55,11 @@ namespace ForumSiteCore.Web
                 .UseStartup<Startup>()
                 .Build();
 
+        /// <summary>
+        /// Manually defined webhost builder that we DO use.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static IWebHost BuildCustomWebHost(string[] args)
         {
             return new WebHostBuilder()

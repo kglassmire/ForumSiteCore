@@ -7,34 +7,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ForumSiteCore.Web.Models;
 using Serilog;
-using ForumSiteCore.DAL;
+using ForumSiteCore.DAL.Repositories.Interfaces;
 
 namespace ForumSiteCore.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IForumRepository _forumRepository;
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(IForumRepository forumRepository)
         {
-            _context = context;
+            _forumRepository = forumRepository;
         }
 
         public IActionResult Index()
         {
-            var date = new DateTimeOffset(new DateTime(2017, 03, 09, 08, 55, 32));
-            //var posts = _context.Posts
-            //    .Include(x => x.User)
-            //    .Where(x => x.ForumId.Equals(592) && (x.Created < new DateTimeOffset(new DateTime(2017, 03, 09, 08, 55, 32)).ToUniversalTime() && x.Id < 17034)).ToList();
-            var posts = _context.Posts
-                .Include(x => x.User)
-                .Where(x => x.ForumId.Equals(592) && (x.Created < date && x.Id < 17034))
-                .OrderByDescending(x => x.Created).ThenByDescending(x => x.Id)
-                .Take(25)
-                .ToList();
-
-
-
+            var date = new DateTimeOffset(DateTime.Now);
+            var posts = _forumRepository.New(592, 25);
+            foreach (var post in posts)
+                Log.Debug("{@Post}", post);
             Log.Information("Hi from the Home Controller.");
             return View();
         }
