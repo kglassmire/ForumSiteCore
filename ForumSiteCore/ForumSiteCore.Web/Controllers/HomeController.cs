@@ -7,26 +7,43 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ForumSiteCore.Web.Models;
 using Serilog;
-using ForumSiteCore.DAL.Repositories.Interfaces;
+using ForumSiteCore.Business.Services;
+using ForumSiteCore.Business;
+using ForumSiteCore.DAL.Models;
 
 namespace ForumSiteCore.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IForumRepository _forumRepository;
+        private readonly ForumService _forumService;
+        private readonly PostService _postService;
 
-        public HomeController(IForumRepository forumRepository)
+        public HomeController(ForumService forumService, PostService postService)
         {
-            _forumRepository = forumRepository;
+            _forumService = forumService;
+            _postService = postService;
         }
 
         public IActionResult Index()
         {
             var date = new DateTimeOffset(DateTime.Now);
-            var posts = _forumRepository.New(592, 25);
-            foreach (var post in posts)
-                Log.Debug("{@Post}", post);
-            Log.Information("Hi from the Home Controller.");
+            _forumService.Save(10, 1, true);
+
+            Post postTest = new Post();
+            postTest.Name = "Hi";
+            postTest.UserId = 1;
+            postTest.ForumId = 10;
+            postTest.Url = "http://google.com";
+            postTest.Name = String.Format("{0}testPost", DateTimeOffset.Now);
+            postTest.Description = "Hi this is just a test post okay? Just chill";
+
+            var returnPost = _postService.Add(postTest);
+
+            var hotListing = _forumService.Top(10, 25);
+            //var forumPostListing = _forumService.New(10, 25);
+            foreach (var post in hotListing.Posts)
+                Log.Debug(String.Format("{0} {1} {2}", post.Id, post.Name, post.Description));
+            //Log.Information("Hi from the Home Controller.");
             return View();
         }
 

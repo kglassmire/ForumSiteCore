@@ -11,8 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ForumSiteCore.DAL;
 using ForumSiteCore.DAL.Models;
 using ForumSiteCore.Web.Services;
-using ForumSiteCore.DAL.Repositories.Implementations;
-using ForumSiteCore.DAL.Repositories.Interfaces;
+using ForumSiteCore.Business.Services;
 
 namespace ForumSiteCore.Web
 {
@@ -35,7 +34,9 @@ namespace ForumSiteCore.Web
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddTransient<IForumRepository, ForumRepository>();
+            services.AddTransient(typeof(ForumService));
+            services.AddTransient(typeof(PostService));
+            services.AddTransient(typeof(CommentService));
             ConfigureIdentity(services);
             ConfigureCookieSettings(services);
             // Add application services.
