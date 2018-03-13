@@ -1,7 +1,10 @@
-﻿using ForumSiteCore.Business.Models;
+﻿using AutoMapper;
+using ForumSiteCore.Business.Models;
+using ForumSiteCore.Business.ViewModels;
 using ForumSiteCore.DAL;
 using ForumSiteCore.DAL.Models;
 using ForumSiteCore.Utility;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
@@ -19,49 +22,95 @@ namespace ForumSiteCore.Business.Services
             _context = context;
         }
 
-        public Forum Get(Int64 forumId)
-        {
-            var forum = _context.Forums.Single(x => x.Id.Equals(forumId));
-            return forum;
-        }
-
         public ForumPostListing Hot(Int64 forumId = 0, Int32 postLimit = 25)
         {
-            var forum = Get(forumId);
+            var predicate = CreateForumWhereClause(forumId);
+
             var posts = _context.Posts
+                .Include(x => x.User)
+                .Include(x => x.Forum)
+                .Where(predicate)
                 .OrderByDescending(x => x.HotScore)
                 .Take(postLimit)
                 .ToList();
 
-            return new ForumPostListing(forum, posts, Consts.POST_LISTING_TYPE_HOT);
+            ForumDto forumDto;
+            IList<PostDto> postDtos;
+            MapDtos(forumId, posts, out forumDto, out postDtos);
+
+            return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_HOT);
         }
 
-        public ForumPostListing Top(Int64 forumId = 0, Int32 postLimit = 25)
+        public ForumPostListing New(DateTimeOffset howFarBack, Int64 forumId = 0, Int32 postLimit = 25)
         {
-            var forum = Get(forumId);
-            var posts = _context.Posts
-                .Where(x => x.ForumId.Equals(forumId))
-                .OrderByDescending(x => x.Upvotes - x.Downvotes)
-                .Take(postLimit)
-                .ToList();
+            var predicate = CreateForumWhereClause(forumId);
+            predicate = predicate.And(x => x.Created >= howFarBack);
 
-            return new ForumPostListing(forum, posts, Consts.POST_LISTING_TYPE_TOP);
-        }
-
-        public ForumPostListing New(Int64 forumId = 0, Int32 postLimit = 25)
-        {
-            var forum = Get(forumId);
             var posts = _context.Posts
-                .Where(x => x.ForumId.Equals(forumId))
+                .Include(x => x.User)
+                .Include(x => x.Forum)
+                .Where(predicate)
                 .OrderByDescending(x => x.Created)
                 .Take(postLimit)
                 .ToList();
 
-            return new ForumPostListing(forum, posts, Consts.POST_LISTING_TYPE_NEW);
+            ForumDto forumDto;
+            IList<PostDto> postDtos;
+            MapDtos(forumId, posts, out forumDto, out postDtos);
+
+            return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_NEW);
+        }
+
+        public ForumPostListing Top(DateTimeOffset howFarBack, Int64 forumId = 0, Int32 postLimit = 25)
+        {
+            var predicate = CreateForumWhereClause(forumId);
+            predicate = predicate.And(x => x.Created >= howFarBack);
+
+            var query = _context.Posts
+                .Include(x => x.User)
+                .Include(x => x.Forum)
+                .Where(predicate)
+                .OrderByDescending(x => x.Upvotes - x.Downvotes)
+                .ToList();
+
+            ForumDto forumDto;
+            IList<PostDto> postDtos;
+            MapDtos(forumId, query, out forumDto, out postDtos);
+
+            return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_TOP);
+        }
+
+        public ForumPostListing Controversial(DateTimeOffset howFarBack, Int64 forumId = 0, Int32 postLimit = 25)
+        {
+            var predicate = CreateForumWhereClause(forumId);
+            predicate = predicate.And(x => x.Created >= howFarBack);
+
+            var posts = _context.Posts
+                .Include(x => x.User)
+                .Include(x => x.Forum)
+                .Where(predicate)
+                .OrderByDescending(x => x.ControversyScore)
+                .Take(postLimit)
+                .ToList();
+
+            ForumDto forumDto;
+            IList<PostDto> postDtos;
+            MapDtos(forumId, posts, out forumDto, out postDtos);
+
+            return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_CONTROVERSIAL);
+        }
+
+        public ForumDto Get(Int64 forumId)
+        {
+            var forum = _context.Forums
+                .Include(x => x.User)
+                .Single(x => x.Id.Equals(forumId));
+
+            return Mapper.Map<ForumDto>(forum);
         }
 
         public Boolean Save(Int64 forumId, Int64 userId, Boolean saving)
-        {            
+        {
             var forumSave = _context.ForumSaves.SingleOrDefault(x => x.ForumId.Equals(forumId) && x.UserId.Equals(userId));
 
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
@@ -91,7 +140,7 @@ namespace ForumSiteCore.Business.Services
                     result = _context.SaveChanges() == 1;
                     transaction.Commit();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     result = false;
                     Log.Error(e, "Error while saving forum");
@@ -99,7 +148,64 @@ namespace ForumSiteCore.Business.Services
                 }
 
                 return result;
-            }                        
+            }
         }
+
+        private static ExpressionStarter<Post> CreateForumWhereClause(long forumId)
+        {
+            var predicate = PredicateBuilder.New<Post>();
+
+            if (ForumIsAll(forumId))
+            {
+                // do all stuff
+                Log.Information("CreateForumWhereClause => ForumIsAll");
+            }
+            else if (ForumIsHome(forumId))
+            {
+                // do home stuff
+                // get user's forums
+                Int64[] ids = { 3, 10, 12 };
+                Log.Information("CreateForumWhereClause => ForumIsHome");
+                predicate = predicate.And(x => ids.Contains(x.ForumId));
+            }
+            else
+            {
+                predicate = predicate.And(x => x.ForumId.Equals(forumId));
+            }
+
+            return predicate;
+        }
+
+        private static void MapDtos(long forumId, List<Post> posts, out ForumDto forumDto, out IList<PostDto> postDtos)
+        {
+            forumDto = new ForumDto();
+            if (ForumIsAll(forumId))
+            {
+                // do all stuff
+                Log.Information("MapDtos => ForumIsAll");
+            }
+            else if (ForumIsHome(forumId))
+            {
+                // do home stuff
+                Log.Information("MapDtos => ForumIsHome");
+            }
+            else 
+            {
+                var forum = posts.FirstOrDefault().Forum;
+                forumDto = Mapper.Map<ForumDto>(forum);
+            }
+            postDtos = Mapper.Map<IList<PostDto>>(posts);
+        }
+
+        private static Boolean ForumIsAll(Int64 forumId)
+        {
+            return forumId.Equals(0);
+        }
+
+        private static Boolean ForumIsHome(Int64 forumId)
+        {
+            return forumId.Equals(-1);
+        }
+
     }
 }

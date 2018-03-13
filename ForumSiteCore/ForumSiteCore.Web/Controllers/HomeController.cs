@@ -39,7 +39,7 @@ namespace ForumSiteCore.Web.Controllers
 
             var returnPost = _postService.Add(postTest);
 
-            var hotListing = _forumService.Top(10, 25);
+            var hotListing = _forumService.Hot(10, 25);
             //var forumPostListing = _forumService.New(10, 25);
             foreach (var post in hotListing.Posts)
                 Log.Debug(String.Format("{0} {1} {2}", post.Id, post.Name, post.Description));

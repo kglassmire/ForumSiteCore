@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /ForumSiteCore/ForumSiteCore.Web/Logs
+/ForumSiteCore/ForumSiteCore.API/Logs

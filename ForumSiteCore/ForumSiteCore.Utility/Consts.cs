@@ -10,5 +10,6 @@ namespace ForumSiteCore.Utility
         public const String POST_LISTING_TYPE_HOT = "hot";
         public const String POST_LISTING_TYPE_RISING = "rising";
         public const String POST_LISTING_TYPE_TOP = "top";
+        public const String POST_LISTING_TYPE_CONTROVERSIAL = "controversial";
     }
 }

@@ -18,6 +18,7 @@ namespace ForumSiteCore.DAL.Models
         public Int64 Upvotes { get; set; }
         public Int64 Downvotes { get; set; }
         public Decimal HotScore { get; set; }
+        public Decimal ControversyScore { get; set; }
         public Int64 CommentsCount { get; set; }
         public Int64 SavesCount { get; set; }
 
