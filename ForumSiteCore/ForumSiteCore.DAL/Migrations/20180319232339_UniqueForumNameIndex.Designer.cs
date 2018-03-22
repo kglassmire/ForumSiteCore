@@ -11,9 +11,10 @@ using System;
 namespace ForumSiteCore.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180319232339_UniqueForumNameIndex")]
+    partial class UniqueForumNameIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,8 +250,7 @@ namespace ForumSiteCore.DAL.Migrations
                         .HasName("pk_forums");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasName("ix_forums_name");
+                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .HasName("ix_forums_user_id");

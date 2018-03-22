@@ -32,7 +32,9 @@ namespace ForumSiteCore.DAL
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
-            
+
+            builder.HasPostgresExtension("citext");
+            builder.Entity<Forum>().HasIndex(x => x.Name).IsUnique();
 
             foreach (var entity in builder.Model.GetEntityTypes())
             {
@@ -59,7 +61,7 @@ namespace ForumSiteCore.DAL
                 {
                     index.Relational().Name = index.Relational().Name.ToSnakeCase();
                 }
-            }
+            }            
         }
     }
 }

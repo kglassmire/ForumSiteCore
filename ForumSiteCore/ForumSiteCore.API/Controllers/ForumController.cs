@@ -21,6 +21,12 @@ namespace ForumSiteCore.API.Controllers
             _forumService = forumService;
         }
 
+        [HttpGet("/search/{search}")]
+        public IList<String> ForumSearch(String search)
+        {
+            return _forumService.ForumSearch(search);
+        }
+
         // GET api/Forum/5
         [HttpGet("{id}")]
         public ForumDto Get(int id)
@@ -28,28 +34,28 @@ namespace ForumSiteCore.API.Controllers
             return _forumService.Get(id);
         }
 
-        [HttpGet("new/{id}")]
-        public ForumPostListing New(Int64 id)
+        [HttpGet("{name}/new")]
+        public ForumPostListing New(String name)
         {
-            return _forumService.New(DateTime.Now.AddYears(-5), id, 25);
+            return _forumService.New(DateTime.Now.AddYears(-5), name, 25);
         }
 
-        [HttpGet("hot/{id}")]
-        public ForumPostListing Hot(Int64 id)
+        [HttpGet("{name}/hot")]
+        public ForumPostListing Hot(String name)
         {
-            return _forumService.Hot(id, 25);
+            return _forumService.Hot(name, 25);
         }
 
-        [HttpGet("top/{id}")]
-        public ForumPostListing Top(Int64 id)
+        [HttpGet("{name}/top")]
+        public ForumPostListing Top(String name)
         {
-            return _forumService.Top(DateTime.Now.AddYears(-5), id, 25);
+            return _forumService.Top(DateTime.Now.AddYears(-5), name, 25);
         }
 
-        [HttpGet("controversial/{id}")]
-        public ForumPostListing Controversial(Int64 id)
+        [HttpGet("{name}/controversial")]
+        public ForumPostListing Controversial(String name)
         {
-            return _forumService.Controversial(DateTime.Now.AddYears(-5), id, 25);
+            return _forumService.Controversial(DateTime.Now.AddYears(-5), name, 25);
         }
     }
 }

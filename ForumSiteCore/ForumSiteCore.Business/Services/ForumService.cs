@@ -22,9 +22,9 @@ namespace ForumSiteCore.Business.Services
             _context = context;
         }
 
-        public ForumPostListing Hot(Int64 forumId = 0, Int32 postLimit = 25)
-        {
-            var predicate = CreateForumWhereClause(forumId);
+        public ForumPostListing Hot(String forumName, Int32 postLimit = 25)
+        {            
+            var predicate = CreateForumWhereClause(forumName);
 
             var posts = _context.Posts
                 .Include(x => x.User)
@@ -36,14 +36,14 @@ namespace ForumSiteCore.Business.Services
 
             ForumDto forumDto;
             IList<PostDto> postDtos;
-            MapDtos(forumId, posts, out forumDto, out postDtos);
+            MapDtos(forumName, posts, out forumDto, out postDtos);
 
             return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_HOT);
         }
 
-        public ForumPostListing New(DateTimeOffset howFarBack, Int64 forumId = 0, Int32 postLimit = 25)
+        public ForumPostListing New(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
-            var predicate = CreateForumWhereClause(forumId);
+            var predicate = CreateForumWhereClause(forumName);
             predicate = predicate.And(x => x.Created >= howFarBack);
 
             var posts = _context.Posts
@@ -56,14 +56,14 @@ namespace ForumSiteCore.Business.Services
 
             ForumDto forumDto;
             IList<PostDto> postDtos;
-            MapDtos(forumId, posts, out forumDto, out postDtos);
+            MapDtos(forumName, posts, out forumDto, out postDtos);
 
             return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_NEW);
         }
 
-        public ForumPostListing Top(DateTimeOffset howFarBack, Int64 forumId = 0, Int32 postLimit = 25)
+        public ForumPostListing Top(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
-            var predicate = CreateForumWhereClause(forumId);
+            var predicate = CreateForumWhereClause(forumName);
             predicate = predicate.And(x => x.Created >= howFarBack);
 
             var query = _context.Posts
@@ -75,14 +75,14 @@ namespace ForumSiteCore.Business.Services
 
             ForumDto forumDto;
             IList<PostDto> postDtos;
-            MapDtos(forumId, query, out forumDto, out postDtos);
+            MapDtos(forumName, query, out forumDto, out postDtos);
 
             return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_TOP);
         }
 
-        public ForumPostListing Controversial(DateTimeOffset howFarBack, Int64 forumId = 0, Int32 postLimit = 25)
+        public ForumPostListing Controversial(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
-            var predicate = CreateForumWhereClause(forumId);
+            var predicate = CreateForumWhereClause(forumName);
             predicate = predicate.And(x => x.Created >= howFarBack);
 
             var posts = _context.Posts
@@ -95,9 +95,18 @@ namespace ForumSiteCore.Business.Services
 
             ForumDto forumDto;
             IList<PostDto> postDtos;
-            MapDtos(forumId, posts, out forumDto, out postDtos);
+            MapDtos(forumName, posts, out forumDto, out postDtos);
 
             return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_CONTROVERSIAL);
+        }
+
+        public IList<String> ForumSearch(String search)
+        {
+            var results = from f in _context.Forums
+                          where EF.Functions.Like(f.Name, String.Format("%{0}%", search))
+                          select f;
+
+            return results.Select(x => x.Name).ToList();
         }
 
         public ForumDto Get(Int64 forumId)
@@ -151,16 +160,16 @@ namespace ForumSiteCore.Business.Services
             }
         }
 
-        private static ExpressionStarter<Post> CreateForumWhereClause(long forumId)
+        private static ExpressionStarter<Post> CreateForumWhereClause(String forumName)
         {
-            var predicate = PredicateBuilder.New<Post>();
-
-            if (ForumIsAll(forumId))
+            var predicate = PredicateBuilder.New<Post>(true);
+            
+            if (ForumIsAll(forumName))
             {
                 // do all stuff
                 Log.Information("CreateForumWhereClause => ForumIsAll");
             }
-            else if (ForumIsHome(forumId))
+            else if (ForumIsHome(forumName))
             {
                 // do home stuff
                 // get user's forums
@@ -170,23 +179,43 @@ namespace ForumSiteCore.Business.Services
             }
             else
             {
-                predicate = predicate.And(x => x.ForumId.Equals(forumId));
+                predicate = predicate.And(x => x.Forum.Name.Equals(forumName));
             }
 
             return predicate;
         }
 
-        private static void MapDtos(long forumId, List<Post> posts, out ForumDto forumDto, out IList<PostDto> postDtos)
+        private static void MapDtos(String forumName, List<Post> posts, out ForumDto forumDto, out IList<PostDto> postDtos)
         {
             forumDto = new ForumDto();
-            if (ForumIsAll(forumId))
+            if (ForumIsAll(forumName))
             {
+                forumDto = new ForumDto
+                {
+                    Name = "all",
+                    Id = "0",
+                    Created = new DateTimeOffset(new DateTime(2016, 12, 22)),
+                    Updated = new DateTimeOffset(new DateTime(2016, 12, 22)),
+                    Description = "All forums",
+                    Inactive = false,
+                    Saves = 0
+                };
                 // do all stuff
                 Log.Information("MapDtos => ForumIsAll");
             }
-            else if (ForumIsHome(forumId))
+            else if (ForumIsHome(forumName))
             {
                 // do home stuff
+                forumDto = new ForumDto
+                {
+                    Name = "home",
+                    Id = "0",
+                    Created = new DateTimeOffset(new DateTime(2016, 12, 22)),
+                    Updated = new DateTimeOffset(new DateTime(2016, 12, 22)),
+                    Description = "Your forums!",
+                    Inactive = false,
+                    Saves = 0
+                };
                 Log.Information("MapDtos => ForumIsHome");
             }
             else 
@@ -197,14 +226,14 @@ namespace ForumSiteCore.Business.Services
             postDtos = Mapper.Map<IList<PostDto>>(posts);
         }
 
-        private static Boolean ForumIsAll(Int64 forumId)
+        private static Boolean ForumIsAll(String forumName)
         {
-            return forumId.Equals(0);
+            return forumName.Equals("all", StringComparison.OrdinalIgnoreCase);
         }
 
-        private static Boolean ForumIsHome(Int64 forumId)
+        private static Boolean ForumIsHome(String forumName)
         {
-            return forumId.Equals(-1);
+            return forumName.Equals("home", StringComparison.OrdinalIgnoreCase);
         }
 
     }

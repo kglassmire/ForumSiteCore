@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,6 +9,8 @@ namespace ForumSiteCore.DAL.Models
     public class Forum
     {
         public Int64 Id { get; set; }
+
+        [Column(TypeName = "citext")]
         public String Name { get; set; }
         public String Description { get; set; }
         public DateTimeOffset Created { get; set; }
