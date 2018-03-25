@@ -50,7 +50,7 @@ namespace ForumSiteCore.API
             }
 
             app.UseCors(builder => 
-                builder.WithOrigins("http://localhost:4200")
+                builder.WithOrigins(new []{ "http://localhost:4200" } ) // remember to use an origin here, not a url -- "http://localhost:4200" -- origin, "http://localhost:4200/ -- url
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                 );
