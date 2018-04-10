@@ -54,8 +54,7 @@ namespace ForumSiteCore.API.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
+                    return new UnauthorizedResult();
                 }
             }
 
