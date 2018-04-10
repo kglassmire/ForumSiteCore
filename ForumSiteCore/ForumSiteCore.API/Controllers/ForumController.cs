@@ -8,11 +8,12 @@ using ForumSiteCore.Business.Services;
 using ForumSiteCore.DAL.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ForumSiteCore.API.Controllers
 {
     [Produces("application/json")]
-    [Route("api/forum")]
+    [Route("api/forum")]    
     public class ForumController : Controller
     {
         private readonly ForumService _forumService;
@@ -21,17 +22,10 @@ namespace ForumSiteCore.API.Controllers
             _forumService = forumService;
         }
 
-        [HttpGet("/search/{search}")]
+        [HttpGet("search/{search}")]
         public IList<String> ForumSearch(String search)
         {
             return _forumService.ForumSearch(search);
-        }
-
-        // GET api/Forum/5
-        [HttpGet("{id}")]
-        public ForumDto Get(int id)
-        {
-            return _forumService.Get(id);
         }
 
         [HttpGet("{name}/new")]
