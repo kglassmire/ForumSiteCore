@@ -9,6 +9,7 @@ using ForumSiteCore.DAL.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Serilog;
 
 namespace ForumSiteCore.API.Controllers
 {
@@ -37,6 +38,7 @@ namespace ForumSiteCore.API.Controllers
         [HttpGet("{name}/hot")]
         public ForumPostListing Hot(String name)
         {
+            
             return _forumService.Hot(name, 25);
         }
 

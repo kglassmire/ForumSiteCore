@@ -88,14 +88,16 @@ namespace ForumSiteCore.API
             app.UseAuthentication();
 
             app.UseCors(builder => 
-                builder.WithOrigins(new []{ "http://localhost:4200" } ) // remember to use an origin here, not a url -- "http://localhost:4200" -- origin, "http://localhost:4200/ -- url
-                    //.AllowAnyOrigin()
+                builder//.WithOrigins(new []{ "http://localhost:4200", "http://localhost:5000" } ) // remember to use an origin here, not a url -- "http://localhost:4200" -- origin, "http://localhost:4200/ -- url
+                    .AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials()
                 );
 
             app.UseMvc();
+
+            
         }
     }
 }

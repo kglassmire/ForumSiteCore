@@ -12,11 +12,12 @@ namespace ForumSiteCore.Business.Models
         public String Url { get; set; }
         public Decimal HotScore { get; set; }
         public Decimal ControversyScore { get; set; }
-        public Int64 TopScore => Upvotes - Downvotes;
+        public Int64 TotalScore => Upvotes - Downvotes;
         public Int64 Upvotes { get; set; }
         public Int64 Downvotes { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
+        public Int64 CommentsCount { get; set; }
         public Int64 SavesCount { get; set; }
         public String UserName { get; set; }
         public string ForumName

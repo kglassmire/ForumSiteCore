@@ -29,8 +29,8 @@ namespace ForumSiteCore.API.Controllers
             _context = context;
         }
 
-
-        [HttpPost]
+        
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]LoginDto model, string returnUrl = null)
         {
             if (ModelState.IsValid)
@@ -40,25 +40,34 @@ namespace ForumSiteCore.API.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    Log.Information("User logged in.");
-                    return new OkObjectResult("Signed in.");
+                    Log.Information("Logged in.");
+                    return Ok("Logged in.");
                 }
                 if (result.RequiresTwoFactor)
                 {
-                    return new NotFoundResult();
+                    Log.Information("Requires 2fa.");
+                    return NotFound("Requires 2fa.");
                     // return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
                 }
                 if (result.IsLockedOut)
                 {
-                    return new ForbidResult();
+                    Log.Information("Locked out.");
+                    return Forbid("Locked out.");
                 }
-                else
-                {
-                    return new UnauthorizedResult();
-                }
+
+
+                return Unauthorized();
             }
 
-            return new BadRequestObjectResult("Something failed...");
+            return new BadRequestObjectResult("ModelState is invalid.");
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+
+            return Ok("User logged out.");
         }
     }
 }
