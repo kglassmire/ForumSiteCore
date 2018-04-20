@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ForumSiteCore.Business.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,6 +21,7 @@ namespace ForumSiteCore.Business.Models
         public Int64 CommentsCount { get; set; }
         public Int64 SavesCount { get; set; }
         public String UserName { get; set; }
+        public VotedType UserVote { get; set; }
         public string ForumName
         {
             get => forumName;
