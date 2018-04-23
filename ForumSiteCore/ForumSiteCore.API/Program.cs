@@ -7,8 +7,6 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Events;
 
 namespace ForumSiteCore.API
 {
@@ -16,33 +14,9 @@ namespace ForumSiteCore.API
     {
         public static int Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.RollingFile(@".\Logs\log-{Date}.txt")
-                .CreateLogger();
+            BuildCustomWebHost(args).Run();
 
-            try
-            {
-                Log.Information("Starting web host.");
-
-                BuildCustomWebHost(args).Run();
-                // typical app entry point that we're not using.
-                // BuildWebHost(args).Run();
-                Log.Information("Start successful.");
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "Host terminated unexpectedly.");
-                return 1;
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
+            return 0;
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
@@ -76,7 +50,6 @@ namespace ForumSiteCore.API
              //    logging.AddDebug();
              //})
              .UseStartup<Startup>()
-             .UseSerilog()
              .Build();
         }
     }

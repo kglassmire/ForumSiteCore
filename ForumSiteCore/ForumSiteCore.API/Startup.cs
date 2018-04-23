@@ -16,6 +16,11 @@ using NSwag.AspNetCore;
 using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using ForumSiteCore.DAL.Models;
+using CacheManager;
+using CacheManager.Core;
+using Serilog;
+using Microsoft.AspNetCore.Http;
+using ForumSiteCore.Business.Interfaces;
 
 namespace ForumSiteCore.API
 {
@@ -32,6 +37,14 @@ namespace ForumSiteCore.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                //.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.RollingFile(@".\Logs\log-{Date}.txt")
+                .CreateLogger();
+
             services.AddCors();
             services.AddMvc();
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -39,10 +52,15 @@ namespace ForumSiteCore.API
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddTransient(typeof(ForumService));
-            services.AddTransient(typeof(PostService));
-            services.AddTransient(typeof(CommentService));
-
+            services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
+            services.AddScoped(typeof(ForumService));
+            services.AddScoped(typeof(PostService));
+            services.AddScoped(typeof(CommentService));
+            services.AddScoped(typeof(UserActivitiesService));
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IUserAccessor<Int64>, UserAccessor>();
+            services.AddCacheManagerConfiguration(cfg => cfg.WithMicrosoftMemoryCacheHandle().And.WithMicrosoftLogging(f => f.AddSerilog()));
+            services.AddCacheManager();
             ConfigureIdentity(services);
             ConfigureCookieSettings(services);
         }
@@ -80,7 +98,7 @@ namespace ForumSiteCore.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwaggerUi(typeof(Startup).GetTypeInfo().Assembly, new SwaggerUiSettings());
+                app.UseSwaggerUi(typeof(Startup).GetTypeInfo().Assembly);
             }
 
             app.UseAuthentication();

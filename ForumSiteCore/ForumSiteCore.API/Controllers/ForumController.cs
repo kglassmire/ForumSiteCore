@@ -18,9 +18,12 @@ namespace ForumSiteCore.API.Controllers
     public class ForumController : Controller
     {
         private readonly ForumService _forumService;
-        public ForumController(ForumService forumService)
+        private readonly UserActivitiesService _userActivitiesService;
+
+        public ForumController(ForumService forumService, UserActivitiesService userActivitiesService)
         {
             _forumService = forumService;
+            _userActivitiesService = userActivitiesService;
         }
 
         [HttpGet("search/{search}")]
@@ -38,8 +41,10 @@ namespace ForumSiteCore.API.Controllers
         [HttpGet("{name}/hot")]
         public ForumPostListing Hot(String name)
         {
-            
-            return _forumService.Hot(name, 25);
+            Log.Information("reading Hot/{0}...", name);
+            var forumPostListing = _forumService.Hot(name, 25);
+            _userActivitiesService.ProcessPosts(forumPostListing.Posts);
+            return forumPostListing;
         }
 
         [HttpGet("{name}/top")]
