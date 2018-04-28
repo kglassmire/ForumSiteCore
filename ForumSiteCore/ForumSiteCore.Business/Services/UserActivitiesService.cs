@@ -100,7 +100,6 @@ namespace ForumSiteCore.Business.Services
         private Dictionary<Int64, Boolean> UserPostsVotedInternal(Int64 userId)
         {
             var query = _context.PostVotes
-                .Include(x => x.Post)
                 .Where(x => x.UserId.Equals(userId));
 
             return query.Select(x => new { x.PostId, x.Direction }).ToDictionary(kvp => kvp.PostId, kvp => kvp.Direction);
@@ -108,8 +107,7 @@ namespace ForumSiteCore.Business.Services
 
         private Dictionary<Int64, Boolean> UserCommentsVotedInternal(Int64 userId)
         {
-            var query = _context.CommentVotes
-                .Include(x => x.Comment)
+            var query = _context.CommentVotes               
                 .Where(x => x.UserId.Equals(userId)).ToList();
 
             return query.Select(x => new { x.CommentId, x.Direction }).ToDictionary(kvp => kvp.CommentId, kvp => kvp.Direction);
@@ -130,14 +128,12 @@ namespace ForumSiteCore.Business.Services
         private HashSet<Int64> UserPostsSavedInternal(Int64 userId)
         {
             return _context.PostSaves
-                .Include(x => x.Post)
                 .Where(x => x.UserId.Equals(userId)).Select(x => x.PostId).ToHashSet();
         }
 
         private HashSet<Int64> UserCommentsSavedInternal(Int64 userId)
         {
             return _context.CommentSaves
-                .Include(x => x.Comment)
                 .Where(x => x.UserId.Equals(userId)).Select(x => x.CommentId).ToHashSet();
         }
     }

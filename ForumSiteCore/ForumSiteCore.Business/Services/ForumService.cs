@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ForumSiteCore.Business.Interfaces;
 using ForumSiteCore.Business.Models;
 using ForumSiteCore.Business.ViewModels;
 using ForumSiteCore.DAL;
@@ -17,13 +18,17 @@ namespace ForumSiteCore.Business.Services
     public class ForumService
     {
         private readonly ApplicationDbContext _context;
-        public ForumService(ApplicationDbContext context)
+        private readonly IUserAccessor<Int64> _userAccessor;
+        private readonly UserActivitiesService _userActivitiesService;
+        public ForumService(ApplicationDbContext context, IUserAccessor<Int64> userAccessor, UserActivitiesService userActivitiesService)
         {
             _context = context;
+            _userAccessor = userAccessor;
+            _userActivitiesService = userActivitiesService;
         }
 
         public ForumPostListing Hot(String forumName, Int32 postLimit = 25)
-        {            
+        {
             var predicate = CreateForumWhereClause(forumName);
 
             var posts = _context.Posts
@@ -34,11 +39,18 @@ namespace ForumSiteCore.Business.Services
                 .Take(postLimit)
                 .ToList();
 
+            return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_HOT);
+        }
+
+        private ForumPostListing PrepareForumPostListing(string forumName, List<Post> posts, String postListingType)
+        {
             ForumDto forumDto;
             IList<PostDto> postDtos;
-            MapDtos(forumName, posts, out forumDto, out postDtos);
 
-            return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_HOT);
+            MapDtos(forumName, posts, out forumDto, out postDtos);
+            _userActivitiesService.ProcessPosts(postDtos);
+
+            return new ForumPostListing(forumDto, postDtos, postListingType);
         }
 
         public ForumPostListing New(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
@@ -54,11 +66,7 @@ namespace ForumSiteCore.Business.Services
                 .Take(postLimit)
                 .ToList();
 
-            ForumDto forumDto;
-            IList<PostDto> postDtos;
-            MapDtos(forumName, posts, out forumDto, out postDtos);
-
-            return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_NEW);
+            return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_NEW);
         }
 
         public ForumPostListing Top(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
@@ -66,18 +74,14 @@ namespace ForumSiteCore.Business.Services
             var predicate = CreateForumWhereClause(forumName);
             predicate = predicate.And(x => x.Created >= howFarBack);
 
-            var query = _context.Posts
+            var posts = _context.Posts
                 .Include(x => x.User)
                 .Include(x => x.Forum)
                 .Where(predicate)
                 .OrderByDescending(x => x.Upvotes - x.Downvotes)
                 .ToList();
 
-            ForumDto forumDto;
-            IList<PostDto> postDtos;
-            MapDtos(forumName, query, out forumDto, out postDtos);
-
-            return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_TOP);
+            return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_TOP);
         }
 
         public ForumPostListing Controversial(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
@@ -92,12 +96,8 @@ namespace ForumSiteCore.Business.Services
                 .OrderByDescending(x => x.ControversyScore)
                 .Take(postLimit)
                 .ToList();
-
-            ForumDto forumDto;
-            IList<PostDto> postDtos;
-            MapDtos(forumName, posts, out forumDto, out postDtos);
-
-            return new ForumPostListing(forumDto, postDtos, Consts.POST_LISTING_TYPE_CONTROVERSIAL);
+            
+            return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_CONTROVERSIAL);
         }
 
         public IList<String> ForumSearch(String search)

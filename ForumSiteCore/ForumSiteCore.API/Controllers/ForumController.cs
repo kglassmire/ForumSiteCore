@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using ForumSiteCore.Business.Models;
 using ForumSiteCore.Business.ViewModels;
 using ForumSiteCore.Business.Services;
-using ForumSiteCore.DAL.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -35,27 +34,34 @@ namespace ForumSiteCore.API.Controllers
         [HttpGet("{name}/new")]
         public ForumPostListing New(String name)
         {
+            Log.Debug("loading /f/New/{Name}...", name);
+
             return _forumService.New(DateTime.Now.AddYears(-5), name, 25);
         }
 
         [HttpGet("{name}/hot")]
         public ForumPostListing Hot(String name)
-        {
-            Log.Information("reading Hot/{0}...", name);
+        {            
+            Log.Debug("loading /f/Hot/{Name}...", name);
+
             var forumPostListing = _forumService.Hot(name, 25);
-            _userActivitiesService.ProcessPosts(forumPostListing.Posts);
+
             return forumPostListing;
         }
 
         [HttpGet("{name}/top")]
         public ForumPostListing Top(String name)
         {
+            Log.Debug("loading /f/Top/{Name}...", name);
+
             return _forumService.Top(DateTime.Now.AddYears(-5), name, 25);
         }
 
         [HttpGet("{name}/controversial")]
         public ForumPostListing Controversial(String name)
         {
+            Log.Debug("loading /f/Controversial/{Name}...", name);
+
             return _forumService.Controversial(DateTime.Now.AddYears(-5), name, 25);
         }
     }

@@ -57,8 +57,8 @@ namespace ForumSiteCore.API
             services.AddScoped(typeof(PostService));
             services.AddScoped(typeof(CommentService));
             services.AddScoped(typeof(UserActivitiesService));
-            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IUserAccessor<Int64>, UserAccessor>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IUserAccessor<Int64>, UserAccessor>();
             services.AddCacheManagerConfiguration(cfg => cfg.WithMicrosoftMemoryCacheHandle().And.WithMicrosoftLogging(f => f.AddSerilog()));
             services.AddCacheManager();
             ConfigureIdentity(services);
