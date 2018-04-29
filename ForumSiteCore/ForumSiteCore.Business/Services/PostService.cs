@@ -78,6 +78,14 @@ namespace ForumSiteCore.Business.Services
                     }
                     result = _context.SaveChanges() == 1;
                     transaction.Commit();
+                    if (!saving)
+                    {
+                        _userActivitiesService.UserPostsSaved.Remove(postId);
+                    }
+                    else
+                    {
+                        _userActivitiesService.UserPostsSaved.Add(postId);
+                    }
                 }
                 catch (Exception e)
                 {

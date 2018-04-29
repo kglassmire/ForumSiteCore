@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CacheManager.Core;
+using ForumSiteCore.Business;
+using ForumSiteCore.Business.Interfaces;
 using ForumSiteCore.Business.Services;
 using ForumSiteCore.DAL;
+using ForumSiteCore.DAL.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using ForumSiteCore.Business;
 using NSwag.AspNetCore;
-using System.Reflection;
-using Microsoft.AspNetCore.Identity;
-using ForumSiteCore.DAL.Models;
-using CacheManager;
-using CacheManager.Core;
 using Serilog;
-using Microsoft.AspNetCore.Http;
-using ForumSiteCore.Business.Interfaces;
+using System;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace ForumSiteCore.API
 {
@@ -59,7 +54,10 @@ namespace ForumSiteCore.API
             services.AddScoped(typeof(UserActivitiesService));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUserAccessor<Int64>, UserAccessor>();
-            services.AddCacheManagerConfiguration(cfg => cfg.WithMicrosoftMemoryCacheHandle().And.WithMicrosoftLogging(f => f.AddSerilog()));
+            services.AddCacheManagerConfiguration(cfg => cfg
+                .WithMicrosoftMemoryCacheHandle()
+                    .WithExpiration(ExpirationMode.Sliding, TimeSpan.FromSeconds(60))
+                    .And.WithMicrosoftLogging(f => f.AddSerilog()));
             services.AddCacheManager();
             ConfigureIdentity(services);
             ConfigureCookieSettings(services);
@@ -103,7 +101,7 @@ namespace ForumSiteCore.API
 
             app.UseAuthentication();
 
-            app.UseCors(builder => 
+            app.UseCors(builder =>
                 builder//.WithOrigins(new []{ "http://localhost:4200", "http://localhost:5000" } ) // remember to use an origin here, not a url -- "http://localhost:4200" -- origin, "http://localhost:4200/ -- url
                     .AllowAnyOrigin()
                     .AllowAnyHeader()
@@ -112,8 +110,6 @@ namespace ForumSiteCore.API
                 );
 
             app.UseMvc();
-
-            
         }
     }
 }

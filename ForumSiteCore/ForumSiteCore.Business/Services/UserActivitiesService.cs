@@ -125,7 +125,7 @@ namespace ForumSiteCore.Business.Services
         private HashSet<Int64> UserCommentsSavedInternal(Int64 userId)
         {
             return _context.CommentSaves
-                .Where(x => x.UserId.Equals(userId)).Select(x => x.CommentId).ToHashSet();
+                .Where(x => x.UserId.Equals(userId) && x.Inactive.Equals(false)).Select(x => x.CommentId).ToHashSet();
         }
 
         private Dictionary<Int64, Boolean> UserCommentsVotedInternal(Int64 userId)
@@ -145,7 +145,7 @@ namespace ForumSiteCore.Business.Services
         private HashSet<Int64> UserPostsSavedInternal(Int64 userId)
         {
             return _context.PostSaves
-                .Where(x => x.UserId.Equals(userId)).Select(x => x.PostId).ToHashSet();
+                .Where(x => x.UserId.Equals(userId) && x.Inactive.Equals(false)).Select(x => x.PostId).ToHashSet();
         }
 
         private Dictionary<Int64, Boolean> UserPostsVotedInternal(Int64 userId)
