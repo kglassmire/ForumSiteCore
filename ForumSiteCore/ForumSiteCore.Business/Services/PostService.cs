@@ -5,16 +5,18 @@ using System.Text;
 using System.Linq;
 using ForumSiteCore.DAL.Models;
 using Serilog;
+using ForumSiteCore.Business.Interfaces;
 
 namespace ForumSiteCore.Business.Services
 {
     public class PostService
     {
         private readonly ApplicationDbContext _context;
-
-        public PostService(ApplicationDbContext context)
+        private readonly UserActivitiesService _userActivitiesService;
+        public PostService(ApplicationDbContext context, UserActivitiesService userActivitiesService)
         {
             _context = context;
+            _userActivitiesService = userActivitiesService;
         }
 
         public Post Add(Post post)
@@ -43,14 +45,19 @@ namespace ForumSiteCore.Business.Services
             return post;
         }
 
-        public Boolean Save(Int64 postId, Int64 userId, Boolean saving)
+        public Boolean Downvote(Int64 postId, Int64 userId)
         {
-            var postSave = _context.PostSaves.SingleOrDefault(x => x.PostId.Equals(postId) && x.UserId.Equals(userId));
+            return Vote(postId, userId, false);
+        }
+
+        public Boolean Save(Int64 postId, Int64 userId, Boolean saving)
+        {            
+            var result = true;
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {
-                var result = false;
                 try
                 {
+                    var postSave = _context.PostSaves.SingleOrDefault(x => x.PostId.Equals(postId) && x.UserId.Equals(userId));
                     if (postSave == null)
                     {
                         postSave = new PostSave();
@@ -82,12 +89,6 @@ namespace ForumSiteCore.Business.Services
                 return result;
             }
         }
-
-        public Boolean Downvote(Int64 postId, Int64 userId)
-        {
-            return Vote(postId, userId, false);
-        }
-
         public Boolean Upvote(Int64 postId, Int64 userId)
         {
             return Vote(postId, userId, true);
@@ -95,13 +96,13 @@ namespace ForumSiteCore.Business.Services
 
         internal Boolean Vote(Int64 postId, Int64 userId, Boolean direction)
         {
+            var result = true;
+                      
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
-            {
-                var result = false;
+            {                
                 try
                 {
                     var postVote = _context.PostVotes.SingleOrDefault(x => x.PostId.Equals(postId) && x.UserId.Equals(userId));
-
                     if (postVote == null)
                     {
                         postVote = new PostVote();
@@ -122,13 +123,21 @@ namespace ForumSiteCore.Business.Services
                     }
                     result = _context.SaveChanges() == 1;
                     transaction.Commit();
+                    if (_userActivitiesService.UserPostsVoted.ContainsKey(postId))
+                    {
+                        _userActivitiesService.UserPostsVoted[postId] = direction;
+                    }
+                    else
+                    {
+                        _userActivitiesService.UserPostsVoted.Add(postId, direction);
+                    }
+                        
                 }
                 catch (Exception e)
                 {
                     result = false;
                     Log.Error(e, "Error while voting post");
-                    transaction.Rollback();
-                    
+                    transaction.Rollback();                    
                 }
 
                 return result;
