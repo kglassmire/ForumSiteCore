@@ -6,7 +6,7 @@ namespace ForumSiteCore.Business.Models
 {
     public class ForumDto
     {
-        public String Id { get; set; }
+        public Int64 Id { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
         public Boolean Inactive { get; set; }

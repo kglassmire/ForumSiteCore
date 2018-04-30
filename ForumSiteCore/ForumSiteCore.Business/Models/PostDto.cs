@@ -10,6 +10,7 @@ namespace ForumSiteCore.Business.Models
         public Int64 Id { get; set; }
         public String Name { get; set; }
         public String Description { get; set; }
+        public Boolean HasDescription => !String.IsNullOrWhiteSpace(Description);
         public String Url { get; set; }
         public Decimal HotScore { get; set; }
         public Decimal ControversyScore { get; set; }

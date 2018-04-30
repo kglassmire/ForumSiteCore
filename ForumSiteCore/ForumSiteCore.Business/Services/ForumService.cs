@@ -193,7 +193,7 @@ namespace ForumSiteCore.Business.Services
                 forumDto = new ForumDto
                 {
                     Name = "all",
-                    Id = "0",
+                    Id = 0,
                     Created = new DateTimeOffset(new DateTime(2016, 12, 22)),
                     Updated = new DateTimeOffset(new DateTime(2016, 12, 22)),
                     Description = "All forums",
@@ -209,7 +209,7 @@ namespace ForumSiteCore.Business.Services
                 forumDto = new ForumDto
                 {
                     Name = "home",
-                    Id = "0",
+                    Id = -1,
                     Created = new DateTimeOffset(new DateTime(2016, 12, 22)),
                     Updated = new DateTimeOffset(new DateTime(2016, 12, 22)),
                     Description = "Your forums!",
