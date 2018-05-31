@@ -67,7 +67,7 @@ namespace ForumSiteCore.API
         {
             services.ConfigureApplicationCookie(options =>
             {
-                options.Cookie.HttpOnly = true;
+                options.Cookie.HttpOnly = false;
                 options.LoginPath = String.Empty;
                 options.Events.OnRedirectToLogin = (context) =>
                 {
@@ -96,7 +96,8 @@ namespace ForumSiteCore.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwaggerUi(typeof(Startup).GetTypeInfo().Assembly);
+
+                app.UseSwaggerUi3(typeof(Startup).GetTypeInfo().Assembly);
             }
 
             app.UseAuthentication();
@@ -107,6 +108,7 @@ namespace ForumSiteCore.API
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials()
+                    .SetPreflightMaxAge(new TimeSpan(24, 0 , 0))
                 );
 
             app.UseMvc();

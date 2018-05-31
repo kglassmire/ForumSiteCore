@@ -12,9 +12,7 @@ using Serilog;
 
 namespace ForumSiteCore.API.Controllers
 {
-    [Produces("application/json")]
-    [Route("api/forum")]    
-    
+    [Route("api/forum")]        
     public class ForumController : Controller
     {
         private readonly ForumService _forumService;

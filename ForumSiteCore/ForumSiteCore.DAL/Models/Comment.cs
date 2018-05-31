@@ -13,11 +13,14 @@ namespace ForumSiteCore.DAL.Models
         public Int64 PostId { get; set; }
         public String Description { get; set; }
         public DateTimeOffset Created { get; set; }
-        public DateTimeOffset Updated { get; set; }
+        public DateTimeOffset Updated { get; set; }        
+        public Int64 CommentsCount { get; set; }
+        public Int64 SavesCount { get; set; }
 
         public List<CommentSave> CommentSaves { get; set; }
         public List<CommentVote> CommentVotes { get; set; }
         public Comment Parent { get; set; }
         public Post Post { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }
