@@ -7,6 +7,7 @@ using ForumSiteCore.DAL.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -41,7 +42,8 @@ namespace ForumSiteCore.API
                 .CreateLogger();
 
             services.AddCors();
-            services.AddMvc();
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<ApplicationUser, ApplicationRole>()
@@ -65,20 +67,27 @@ namespace ForumSiteCore.API
 
         private void ConfigureCookieSettings(IServiceCollection services)
         {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.HttpOnly = false;
+                options.Cookie.Name = "ForumSiteCore";
+                // options.ExpireTimeSpan = new TimeSpan(0, 2, 0);
+                // options.SlidingExpiration = true;
                 options.LoginPath = String.Empty;
                 options.Events.OnRedirectToLogin = (context) =>
                 {
                     context.Response.StatusCode = 401;
                     return Task.CompletedTask;
-                };
-                //options.Cookie.Expiration = TimeSpan.FromDays(150);
+                };                
                 //options.LoginPath = "/Account/Login"; // If the LoginPath is not set here, ASP.NET Core will default to /Account/Login
                 //options.LogoutPath = "/Account/Logout"; // If the LogoutPath is not set here, ASP.NET Core will default to /Account/Logout
                 //options.AccessDeniedPath = "/Account/AccessDenied"; // If the AccessDeniedPath is not set here, ASP.NET Core will default to /Account/AccessDenied
-                //options.SlidingExpiration = true;
             });
         }
 
@@ -99,9 +108,14 @@ namespace ForumSiteCore.API
 
                 app.UseSwaggerUi3(typeof(Startup).GetTypeInfo().Assembly);
             }
+            else
+            {
+                app.UseHsts();
+            }
 
             app.UseAuthentication();
-
+            app.UseHttpsRedirection();
+            app.UseCookiePolicy();
             app.UseCors(builder =>
                 builder//.WithOrigins(new []{ "http://localhost:4200", "http://localhost:5000" } ) // remember to use an origin here, not a url -- "http://localhost:4200" -- origin, "http://localhost:4200/ -- url
                     .AllowAnyOrigin()
