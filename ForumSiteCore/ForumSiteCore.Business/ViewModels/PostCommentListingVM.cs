@@ -1,21 +1,21 @@
-﻿using ForumSiteCore.DAL.Models;
+﻿using ForumSiteCore.Business.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ForumSiteCore.Business.ViewModels
 {
-    public class PostCommentListing
+    public class PostCommentListingVM
     {
-        public PostCommentListing(Post post, IList<Comment> comments, String postListingType)
+        public PostCommentListingVM(PostDto post, IList<CommentDto> comments, String postListingType)
         {
             Post = post;
             Comments = comments;
             PostListingType = postListingType;
         }
 
-        public Post Post { get; set; }
-        public IList<Comment> Comments { get; set; }
+        public PostDto Post { get; set; }
+        public IList<CommentDto> Comments { get; set; }
         public String PostListingType { get; set; }
     }
 }

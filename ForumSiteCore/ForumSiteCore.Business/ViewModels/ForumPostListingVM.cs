@@ -7,9 +7,9 @@ using System.Linq;
 
 namespace ForumSiteCore.Business.ViewModels
 {    
-    public class ForumPostListing
+    public class ForumPostListingVM
     {
-        public ForumPostListing(ForumDto forum, IList<PostDto> posts, String forumListingType)
+        public ForumPostListingVM(ForumDto forum, IList<PostDto> posts, String forumListingType)
         {
             Posts = posts;
             Forum = forum;

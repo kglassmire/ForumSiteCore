@@ -13,10 +13,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSwag.AspNetCore;
+using FluentValidation.AspNetCore;
 using Serilog;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using ForumSiteCore.Business.Validators;
 
 namespace ForumSiteCore.API
 {
@@ -43,7 +45,8 @@ namespace ForumSiteCore.API
 
             services.AddCors();
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginVMValidator>());
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<ApplicationUser, ApplicationRole>()

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ForumSiteCore.API.Utility;
 using ForumSiteCore.Business.Enums;
 using ForumSiteCore.Business.Interfaces;
 using ForumSiteCore.Business.Services;
+using ForumSiteCore.Business.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -12,7 +14,7 @@ using Serilog;
 namespace ForumSiteCore.API.Controllers
 {
     [Authorize]
-    [Route("api/post")]
+    [Route("api/posts")]
     public class PostController : Controller
     {
         private PostService _postService;
@@ -21,6 +23,14 @@ namespace ForumSiteCore.API.Controllers
         {
             _postService = postService;
             _userAccessor = userAccessor;
+        }
+
+        public IActionResult Create([FromBody]CreatePostVM model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.Errors());
+
+            return Ok();
         }
 
         [HttpGet("save/{id}")]

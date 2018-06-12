@@ -12,7 +12,7 @@ using Serilog;
 
 namespace ForumSiteCore.API.Controllers
 {
-    [Route("api/forum")]        
+    [Route("api/forums")]        
     public class ForumController : Controller
     {
         private readonly ForumService _forumService;
@@ -31,7 +31,7 @@ namespace ForumSiteCore.API.Controllers
         }
 
         [HttpGet("{name}/new")]
-        public ForumPostListing New(String name)
+        public ForumPostListingVM New(String name)
         {
             Log.Debug("loading /f/New/{Name}...", name);
 
@@ -39,7 +39,7 @@ namespace ForumSiteCore.API.Controllers
         }
 
         [HttpGet("{name}/hot")]
-        public ForumPostListing Hot(String name)
+        public ForumPostListingVM Hot(String name)
         {            
             Log.Debug("loading /f/Hot/{Name}...", name);
 
@@ -49,7 +49,7 @@ namespace ForumSiteCore.API.Controllers
         }
 
         [HttpGet("{name}/top")]
-        public ForumPostListing Top(String name)
+        public ForumPostListingVM Top(String name)
         {
             Log.Debug("loading /f/Top/{Name}...", name);
 
@@ -57,7 +57,7 @@ namespace ForumSiteCore.API.Controllers
         }
 
         [HttpGet("{name}/controversial")]
-        public ForumPostListing Controversial(String name)
+        public ForumPostListingVM Controversial(String name)
         {
             Log.Debug("loading /f/Controversial/{Name}...", name);
 

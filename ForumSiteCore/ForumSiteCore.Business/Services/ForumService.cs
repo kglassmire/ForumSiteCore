@@ -27,7 +27,7 @@ namespace ForumSiteCore.Business.Services
             _userActivitiesService = userActivitiesService;
         }
 
-        public ForumPostListing Hot(String forumName, Int32 postLimit = 25)
+        public ForumPostListingVM Hot(String forumName, Int32 postLimit = 25)
         {
             var predicate = CreateForumWhereClause(forumName);
 
@@ -42,7 +42,7 @@ namespace ForumSiteCore.Business.Services
             return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_HOT);
         }
 
-        private ForumPostListing PrepareForumPostListing(string forumName, List<Post> posts, String postListingType)
+        private ForumPostListingVM PrepareForumPostListing(string forumName, List<Post> posts, String postListingType)
         {
             ForumDto forumDto;
             IList<PostDto> postDtos;
@@ -50,10 +50,10 @@ namespace ForumSiteCore.Business.Services
             MapDtos(forumName, posts, out forumDto, out postDtos);
             _userActivitiesService.ProcessPosts(postDtos);
 
-            return new ForumPostListing(forumDto, postDtos, postListingType);
+            return new ForumPostListingVM(forumDto, postDtos, postListingType);
         }
 
-        public ForumPostListing New(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
+        public ForumPostListingVM New(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
             var predicate = CreateForumWhereClause(forumName);
             predicate = predicate.And(x => x.Created >= howFarBack);
@@ -69,7 +69,7 @@ namespace ForumSiteCore.Business.Services
             return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_NEW);
         }
 
-        public ForumPostListing Top(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
+        public ForumPostListingVM Top(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
             var predicate = CreateForumWhereClause(forumName);
             predicate = predicate.And(x => x.Created >= howFarBack);
@@ -84,7 +84,7 @@ namespace ForumSiteCore.Business.Services
             return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_TOP);
         }
 
-        public ForumPostListing Controversial(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
+        public ForumPostListingVM Controversial(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
             var predicate = CreateForumWhereClause(forumName);
             predicate = predicate.And(x => x.Created >= howFarBack);

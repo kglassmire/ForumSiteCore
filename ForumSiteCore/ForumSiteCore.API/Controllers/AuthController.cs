@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ForumSiteCore.Business.Models;
+using ForumSiteCore.API.Utility;
+using ForumSiteCore.Business.ViewModels;
 using ForumSiteCore.DAL;
 using ForumSiteCore.DAL.Models;
 using Microsoft.AspNetCore.Identity;
@@ -28,10 +29,9 @@ namespace ForumSiteCore.API.Controllers
             _signInManager = signInManager;
             _context = context;
         }
-
         
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]LoginDto model, string returnUrl = null)
+        public async Task<IActionResult> Login([FromBody]LoginVM model, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -39,27 +39,25 @@ namespace ForumSiteCore.API.Controllers
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
-                {
-                    Log.Information("Logged in.");
-                    return Ok("Logged in.");
+                {                    
+                    return Ok("Logged in");
                 }
                 if (result.RequiresTwoFactor)
                 {
-                    Log.Information("Requires 2fa.");
-                    return NotFound("Requires 2fa.");
+                    ModelState.AddModelError("result", "Requires 2fa");
+                    return NotFound(ModelState.Errors());
                     // return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
                 }
                 if (result.IsLockedOut)
                 {
-                    Log.Information("Locked out.");
-                    return Forbid("Locked out.");
+                    ModelState.AddModelError("result", "Locked out");
+                    return Forbid();
                 }
-
-
+                
                 return Unauthorized();
             }
 
-            return new BadRequestObjectResult("ModelState is invalid.");
+            return BadRequest(ModelState.Errors());
         }
 
         [HttpPost("logout")]
@@ -67,7 +65,7 @@ namespace ForumSiteCore.API.Controllers
         {
             await _signInManager.SignOutAsync();
 
-            return Ok("User logged out.");
+            return Ok("Logged out");
         }
     }
 }
