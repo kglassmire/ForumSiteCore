@@ -72,13 +72,13 @@ namespace ForumSiteCore.API
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
-                options.CheckConsentNeeded = context => true;
+                options.CheckConsentNeeded = context => false;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
             services.ConfigureApplicationCookie(options =>
             {
-                options.Cookie.HttpOnly = false;
+                options.Cookie.HttpOnly = false;                
                 options.Cookie.Name = "ForumSiteCore";
                 // options.ExpireTimeSpan = new TimeSpan(0, 2, 0);
                 // options.SlidingExpiration = true;
@@ -87,7 +87,12 @@ namespace ForumSiteCore.API
                 {
                     context.Response.StatusCode = 401;
                     return Task.CompletedTask;
-                };                
+                };
+                options.Events.OnRedirectToAccessDenied = (context) =>
+                {
+                    context.Response.StatusCode = 403;
+                    return Task.CompletedTask;
+                };
                 //options.LoginPath = "/Account/Login"; // If the LoginPath is not set here, ASP.NET Core will default to /Account/Login
                 //options.LogoutPath = "/Account/Logout"; // If the LogoutPath is not set here, ASP.NET Core will default to /Account/Logout
                 //options.AccessDeniedPath = "/Account/AccessDenied"; // If the AccessDeniedPath is not set here, ASP.NET Core will default to /Account/AccessDenied
@@ -114,10 +119,10 @@ namespace ForumSiteCore.API
             else
             {
                 app.UseHsts();
+                app.UseHttpsRedirection();
             }
 
-            app.UseAuthentication();
-            app.UseHttpsRedirection();
+            app.UseAuthentication();            
             app.UseCookiePolicy();
             app.UseCors(builder =>
                 builder//.WithOrigins(new []{ "http://localhost:4200", "http://localhost:5000" } ) // remember to use an origin here, not a url -- "http://localhost:4200" -- origin, "http://localhost:4200/ -- url

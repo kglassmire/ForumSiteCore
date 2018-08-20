@@ -29,15 +29,31 @@ namespace ForumSiteCore.API.Controllers
             _signInManager = signInManager;
             _context = context;
         }
-        
-        [HttpPost("login")]
+
+        /// <summary>
+        /// Authenticate and login user.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="returnUrl"></param>
+        /// <response code="200">Successful login.</response>
+        /// <response code="400">Two-factor not set up yet.</response>
+        /// <response code="401">Authentication failed.</response>
+        /// <response code="403">Account locked out.</response>
+        /// <response code="404">Invalid model.</response>
+        /// <returns></returns>
+        [HttpPost("login")]        
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> Login([FromBody]LoginVM model, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {                    
                     return Ok("Logged in");
