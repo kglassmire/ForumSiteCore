@@ -72,17 +72,47 @@ namespace ForumSiteCore.Business.Services
         private string UserPostsSavedCacheKey => String.Format(UserPostsSavedCacheKeyTemplate, _userAccessor.UserId);
         private string UserPostsVotedCacheKey => String.Format(UserPostsVotedCacheKeyTemplate, _userAccessor.UserId);
 
-        public void ProcessComments()
+        public void ProcessComments(IList<CommentDto> comments)
         {
-            throw new NotImplementedException();
+            if (!_userAccessor.User.Identity.IsAuthenticated)
+                return;
+
+            var userCommentsVoted = UserCommentsVoted;
+            var userCommentsSaved = UserCommentsSaved;
+            var userCommentsCreated = UserCommentsCreated;            
+
+            foreach (var comment in comments)
+            {
+                if (userCommentsVoted.ContainsKey(comment.Id))
+                {
+                    if (userCommentsVoted[comment.Id] == true)
+                    {
+                        comment.UserVote = Enums.VotedType.Up;
+                    }
+                    else
+                    {
+                        comment.UserVote = Enums.VotedType.Down;
+                    }
+                   
+                    if (userCommentsCreated.Contains(comment.Id))
+                    {
+                        comment.UserCreated = true;
+                    }
+
+                    if (userCommentsSaved.Contains(comment.Id))
+                    {
+                        comment.UserSaved = true;
+                    }
+                }
+            }
         }
 
-        public void ProcessForums(IEnumerable<ForumDto> forums)
+        public void ProcessForums(IList<ForumDto> forums)
         {
 
         }
 
-        public void ProcessPosts(IEnumerable<PostDto> posts)
+        public void ProcessPosts(IList<PostDto> posts)
         {
             if (!_userAccessor.User.Identity.IsAuthenticated)
                 return;

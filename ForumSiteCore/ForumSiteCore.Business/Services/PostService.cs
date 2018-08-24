@@ -1,11 +1,14 @@
 ﻿using ForumSiteCore.DAL;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using ForumSiteCore.DAL.Models;
 using Serilog;
-using ForumSiteCore.Business.Interfaces;
+using AutoMapper;
+using ForumSiteCore.Business.Models;
+using ForumSiteCore.Business.ViewModels;
+using ForumSiteCore.Utility;
+using Microsoft.EntityFrameworkCore;
 
 namespace ForumSiteCore.Business.Services
 {
@@ -17,6 +20,74 @@ namespace ForumSiteCore.Business.Services
         {
             _context = context;
             _userActivitiesService = userActivitiesService;
+        }
+
+        public PostCommentListingVM Best(Int64 id)
+        {
+            var comments = _context.Comments
+                .Include(x => x.User)
+                .Include(x => x.Post)
+                .Where(x => x.PostId.Equals(id))
+                .ToList();
+                
+            PostDto postDto;
+            IList<CommentDto> commentDtos;
+
+            MapDtos(comments, out postDto, out commentDtos);
+            _userActivitiesService.ProcessComments(commentDtos);
+
+            return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_BEST);
+        }
+
+        public PostCommentListingVM Top(Int64 id)
+        {
+            var comments = _context.Comments
+                .Include(x => x.User)
+                .Include(x => x.Post)
+                .Where(x => x.PostId.Equals(id))
+                .ToList();
+
+            PostDto postDto;
+            IList<CommentDto> commentDtos;
+
+            MapDtos(comments, out postDto, out commentDtos);
+            _userActivitiesService.ProcessComments(commentDtos);
+
+            return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_TOP);
+        }
+
+        public PostCommentListingVM Controversial(Int64 id)
+        {
+            var comments = _context.Comments
+                .Include(x => x.User)
+                .Include(x => x.Post)
+                .Where(x => x.PostId.Equals(id))
+                .ToList();
+
+            PostDto postDto;
+            IList<CommentDto> commentDtos;
+
+            MapDtos(comments, out postDto, out commentDtos);
+            _userActivitiesService.ProcessComments(commentDtos);
+
+            return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_CONTROVERSIAL);
+        }
+
+        public PostCommentListingVM New(Int64 id)
+        {
+            var comments = _context.Comments
+                .Include(x => x.User)
+                .Include(x => x.Post)
+                .Where(x => x.PostId.Equals(id))
+                .ToList();
+
+            PostDto postDto;
+            IList<CommentDto> commentDtos;
+
+            MapDtos(comments, out postDto, out commentDtos);
+            _userActivitiesService.ProcessComments(commentDtos);
+
+            return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_NEW);
         }
 
         public Post Add(Post post)
@@ -151,6 +222,13 @@ namespace ForumSiteCore.Business.Services
                 return result;
             }
 
+        }
+
+        private void MapDtos(IList<Comment> comments, out PostDto postDto, out IList<CommentDto> commentDtos)
+        {
+            Post post = comments.FirstOrDefault().Post;
+            postDto = Mapper.Map<PostDto>(post);
+            commentDtos = Mapper.Map<IList<CommentDto>>(comments);
         }
     }
 }

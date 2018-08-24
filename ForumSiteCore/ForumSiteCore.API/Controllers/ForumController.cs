@@ -12,7 +12,8 @@ using Serilog;
 
 namespace ForumSiteCore.API.Controllers
 {
-    [Route("api/forums")]        
+    [Route("api/forums")]    
+    [ApiController]
     public class ForumController : Controller
     {
         private readonly ForumService _forumService;

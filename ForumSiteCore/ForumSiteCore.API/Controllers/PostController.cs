@@ -12,10 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
 namespace ForumSiteCore.API.Controllers
-{
-    [Authorize]
+{    
     [Route("api/posts")]
-    public class PostController : Controller
+    [ApiController]
+    public class PostController : ControllerBase
     {
         private PostService _postService;
         private IUserAccessor<Int64> _userAccessor;
@@ -25,14 +25,45 @@ namespace ForumSiteCore.API.Controllers
             _userAccessor = userAccessor;
         }
 
+        [HttpGet("{id}/comments/best")]
+        public PostCommentListingVM Best(Int64 id)
+        {
+            Log.Debug("loading /api/posts/{id}/comments/best...", id);
+            return _postService.Best(id);
+        }
+
+        [HttpGet("{id}/comments/top")]
+        public PostCommentListingVM Top(Int64 id)
+        {
+            Log.Debug("loading /api/posts/{id}/comments/top...", id);
+            return _postService.Top(id);
+        }
+
+        [HttpGet("{id}/comments/controversial")]
+        public PostCommentListingVM Controversial(Int64 id)
+        {
+            Log.Debug("loading /api/posts/{id}/comments/controversial...", id);
+            return _postService.Controversial(id);
+        }
+
+        [HttpGet("{id}/comments/new")]
+        public PostCommentListingVM New(Int64 id)
+        {
+            Log.Debug("loading /api/posts/{id}/comments/new...", id);
+            return _postService.New(id);
+        }
+
+        [Authorize]
         public IActionResult Create([FromBody]CreatePostVM model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.Errors());
+            
 
             return Ok();
         }
 
+        [Authorize]
         [HttpGet("save/{id}")]
         public IActionResult Save(Int64 id, Boolean value)
         {
@@ -51,6 +82,7 @@ namespace ForumSiteCore.API.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpGet("vote/{id}")]
         public IActionResult Vote(Int64 id, VotedType value)
         {
