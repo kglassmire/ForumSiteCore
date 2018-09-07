@@ -15,7 +15,7 @@ using Serilog;
 namespace ForumSiteCore.API.Controllers
 {
     [Route("api/auth")]
-    public class AuthController : Controller
+    public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;

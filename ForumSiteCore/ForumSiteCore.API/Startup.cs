@@ -19,6 +19,7 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using ForumSiteCore.Business.Validators;
+using ForumSiteCore.API.Middleware;
 
 namespace ForumSiteCore.API
 {
@@ -104,16 +105,17 @@ namespace ForumSiteCore.API
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
 
                 app.UseSwaggerUi3(typeof(Startup).GetTypeInfo().Assembly);
             }
             else
             {
                 app.UseHsts();
-                app.UseHttpsRedirection();
+                app.UseHttpsRedirection();                
             }
 
+            app.UseMiddleware<ExceptionHandler>();
             app.UseAuthentication();            
             app.UseCookiePolicy();
             app.UseCors(builder =>

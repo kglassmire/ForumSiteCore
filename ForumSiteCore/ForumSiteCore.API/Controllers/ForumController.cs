@@ -16,7 +16,7 @@ namespace ForumSiteCore.API.Controllers
 {
     [Route("api/forums")]    
     [ApiController]
-    public class ForumController : Controller
+    public class ForumController : ControllerBase
     {
         private readonly ForumService _forumService;
         private readonly UserActivitiesService _userActivitiesService;
