@@ -65,13 +65,13 @@ namespace ForumSiteCore.API.Controllers
 
         [Authorize]
         [HttpGet("save/{id}")]
-        public IActionResult Save(Int64 id, Boolean value)
+        public IActionResult Save(Int64 id)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
             var result = false;
-            result = _postService.Save(id, _userAccessor.UserId, value);
+            result = _postService.Save(id, _userAccessor.UserId);
 
             if (!result)
             {

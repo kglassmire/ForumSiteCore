@@ -3,15 +3,17 @@ using System;
 using ForumSiteCore.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ForumSiteCore.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180825152159_AddCommentsBestScore")]
+    partial class AddCommentsBestScore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,17 +128,11 @@ namespace ForumSiteCore.DAL.Migrations
                     b.Property<long>("CommentsCount")
                         .HasColumnName("comments_count");
 
-                    b.Property<decimal>("ControversyScore")
-                        .HasColumnName("controversy_score");
-
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnName("created");
 
                     b.Property<string>("Description")
                         .HasColumnName("description");
-
-                    b.Property<long>("Downvotes")
-                        .HasColumnName("downvotes");
 
                     b.Property<long?>("ParentId")
                         .HasColumnName("parent_id");
@@ -149,9 +145,6 @@ namespace ForumSiteCore.DAL.Migrations
 
                     b.Property<DateTimeOffset>("Updated")
                         .HasColumnName("updated");
-
-                    b.Property<long>("Upvotes")
-                        .HasColumnName("upvotes");
 
                     b.Property<long>("UserId")
                         .HasColumnName("user_id");
@@ -218,9 +211,6 @@ namespace ForumSiteCore.DAL.Migrations
 
                     b.Property<bool>("Direction")
                         .HasColumnName("direction");
-
-                    b.Property<bool>("Inactive")
-                        .HasColumnName("inactive");
 
                     b.Property<DateTimeOffset>("Updated")
                         .HasColumnName("updated");
@@ -415,9 +405,6 @@ namespace ForumSiteCore.DAL.Migrations
 
                     b.Property<bool>("Direction")
                         .HasColumnName("direction");
-
-                    b.Property<bool>("Inactive")
-                        .HasColumnName("inactive");
 
                     b.Property<long>("PostId")
                         .HasColumnName("post_id");

@@ -19,6 +19,8 @@ namespace ForumSiteCore.Business.Models
         //public Int64 Downvotes { get; set; }
         public Int64 CommentsCount { get; set; }
         public Int64 SavesCount { get; set; }
+        public Int64 BestScore { get; set; }
+        public Int64 ControversyScore { get; set; }
         public String UserName { get; set; }
         public VotedType UserVote { get; set; }
         public Boolean UserCreated { get; set; }

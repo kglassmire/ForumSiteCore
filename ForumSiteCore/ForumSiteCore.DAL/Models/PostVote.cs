@@ -13,6 +13,7 @@ namespace ForumSiteCore.DAL.Models
         public Boolean Direction { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
+        public Boolean Inactive { get; set; }
 
         public Post Post { get; set; }
         public ApplicationUser User { get; set; }

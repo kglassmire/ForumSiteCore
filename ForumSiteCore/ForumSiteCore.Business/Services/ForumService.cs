@@ -109,11 +109,20 @@ namespace ForumSiteCore.Business.Services
             return results.Select(x => x.Name).ToList();
         }
 
+        public ForumDto GetByName(String forumName)
+        {
+            var forum = _context.Forums
+                .Include(x => x.User)
+                .SingleOrDefault(x => x.Name.Equals(forumName));
+
+            return Mapper.Map<ForumDto>(forum);
+        }
+
         public ForumDto Get(Int64 forumId)
         {
             var forum = _context.Forums
                 .Include(x => x.User)
-                .Single(x => x.Id.Equals(forumId));
+                .SingleOrDefault(x => x.Id.Equals(forumId));
 
             return Mapper.Map<ForumDto>(forum);
         }
@@ -160,7 +169,7 @@ namespace ForumSiteCore.Business.Services
             }
         }
 
-        private static ExpressionStarter<Post> CreateForumWhereClause(String forumName)
+        private ExpressionStarter<Post> CreateForumWhereClause(String forumName)
         {
             var predicate = PredicateBuilder.New<Post>(true);
             
@@ -185,7 +194,7 @@ namespace ForumSiteCore.Business.Services
             return predicate;
         }
 
-        private static void MapDtos(String forumName, List<Post> posts, out ForumDto forumDto, out IList<PostDto> postDtos)
+        private void MapDtos(String forumName, List<Post> posts, out ForumDto forumDto, out IList<PostDto> postDtos)
         {
             forumDto = new ForumDto();
             if (ForumIsAll(forumName))
@@ -220,18 +229,28 @@ namespace ForumSiteCore.Business.Services
             }
             else 
             {
-                var forum = posts.FirstOrDefault().Forum;
-                forumDto = Mapper.Map<ForumDto>(forum);
+                
+                if (posts.Count > 0)
+                {
+                    var forum = posts.FirstOrDefault().Forum;
+                    forumDto = Mapper.Map<ForumDto>(forum);
+                }
+                else
+                {
+                    var forum = GetByName(forumName);
+                    forumDto = Mapper.Map<ForumDto>(forum);
+                }
+                
             }
             postDtos = Mapper.Map<IList<PostDto>>(posts);
         }
 
-        private static Boolean ForumIsAll(String forumName)
+        private Boolean ForumIsAll(String forumName)
         {
             return forumName.Equals("all", StringComparison.OrdinalIgnoreCase);
         }
 
-        private static Boolean ForumIsHome(String forumName)
+        private Boolean ForumIsHome(String forumName)
         {
             return forumName.Equals("home", StringComparison.OrdinalIgnoreCase);
         }

@@ -13,5 +13,7 @@ namespace ForumSiteCore.Business.Models
         public String Name { get; set; }
         public String Description { get; set; }
         public Int64 Saves { get; set; }
+
+        public Boolean UserSaved { get; set; }
     }
 }

@@ -114,7 +114,12 @@ namespace ForumSiteCore.Business.Services
                     }
                     else
                     {
-                        if (commentVote.Direction != direction)
+                        if (commentVote.Direction == direction)
+                        {
+                            commentVote.Inactive = !commentVote.Inactive;
+                            commentVote.Updated = DateTimeOffset.Now;
+                        }
+                        else
                         {
                             commentVote.Direction = direction;
                             commentVote.Updated = DateTimeOffset.Now;

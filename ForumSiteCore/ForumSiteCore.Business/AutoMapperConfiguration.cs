@@ -13,8 +13,11 @@ namespace ForumSiteCore.Business
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Forum, ForumDto>();
+                cfg.CreateMap<Forum, ForumDto>()
+                    .ForMember(dest => dest.UserSaved, opt => opt.Ignore());
+
                 cfg.CreateMap<ApplicationUser, UserDto>();
+
                 cfg.CreateMap<Post, PostDto>()
                     .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
                     .ForMember(dest => dest.UserVote, opt => opt.Ignore())
