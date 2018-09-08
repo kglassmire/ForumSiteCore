@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ForumSiteCore.Business.Models;
 using ForumSiteCore.Business.ViewModels;
 using ForumSiteCore.Business.Services;
 using Microsoft.AspNetCore.Http;
