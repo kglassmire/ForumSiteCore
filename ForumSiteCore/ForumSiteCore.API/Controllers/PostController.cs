@@ -83,20 +83,20 @@ namespace ForumSiteCore.API.Controllers
         }
 
         [Authorize]
-        [HttpGet("vote/{id}")]
-        public IActionResult Vote(Int64 id, VotedType value)
+        [HttpPost("vote/{id}")]
+        public IActionResult Vote([FromBody]VotePostVM model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
             var result = false;
-            if (value == VotedType.Up)
+            if (model.Direction == true)
             {
-                result = _postService.Upvote(id, _userAccessor.UserId);
+                result = _postService.Upvote(model.Id, _userAccessor.UserId);
             }
-            else if (value == VotedType.Down)
+            else if (model.Direction == false)
             {
-                result = _postService.Downvote(id, _userAccessor.UserId);
+                result = _postService.Downvote(model.Id, _userAccessor.UserId);
             }
             else
             {
@@ -105,7 +105,7 @@ namespace ForumSiteCore.API.Controllers
             
             if (!result)
             {
-                Log.Information("Post Upvote failed for post id: {Id} for user: {User}", id, _userAccessor.UserName);
+                Log.Information("Post Upvote failed for post id: {Id} for user: {User}", model.Id, _userAccessor.UserName);
                 return BadRequest();
             }
                 

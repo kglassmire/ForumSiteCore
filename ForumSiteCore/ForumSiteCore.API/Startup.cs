@@ -49,7 +49,7 @@ namespace ForumSiteCore.API
             services.AddScoped(typeof(ForumService));
             services.AddScoped(typeof(PostService));
             services.AddScoped(typeof(CommentService));
-            services.AddScoped(typeof(UserActivitiesService));
+            services.AddScoped(typeof(UserActivitiesService));            
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUserAccessor<Int64>, UserAccessor>();
             services.AddCacheManagerConfiguration(cfg => cfg
