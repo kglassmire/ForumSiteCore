@@ -1,0 +1,36 @@
+﻿<cache>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: '#app-forum-post-list',
+            data: function () {
+                return {
+                    forumPostListing: window.__INITIAL_STATE__,
+                    message: '',
+                    converter: new showdown.Converter()
+                }
+            },
+            computed: {
+                convertedMarkdown: function () {
+                    // `this` points to the vm instance
+                    var self = this;
+                    return self.converter.makeHtml(self.forumPostListing.forum.description);
+                }
+            },
+            methods: {
+                retrievePosts(name) {
+                    let self = this;
+                    fetch('api/forums/' + name + '/hot')
+                        .then(responseStream => responseStream.json())
+                        .then(function (response) {
+                            console.log(self.forumPostListing.posts.length);
+                            for (i = 0; i < response.data.posts.length; i++) {
+                                self.forumPostListing.posts.push(response.data.posts[i]);
+                            }
+                        })
+                        .catch(error => console.log(error))
+                }
+            }
+        })
+    </script>
+
+</cache>

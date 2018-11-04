@@ -9,7 +9,7 @@ namespace ForumSiteCore.Web.Controllers
 {
     [Route("api/comments")]
     [ApiController]
-    public class CommentController : ControllerBase
+    public class CommentApiController : ControllerBase
     {
     }
 }

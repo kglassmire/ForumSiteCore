@@ -19,16 +19,17 @@
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
     <environment include="Development">
-        <!-- jquery, popper, bootstrap, vue, showdown, site -->
+        <!-- jquery, popper, bootstrap, vue, showdown, lodash, site -->
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/popper/popper.js"></script>
         <script src="~/lib/bootstrap-4.1.3/js/bootstrap.js"></script>
         <script src="~/lib/vue/vue.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.7/showdown.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment exclude="Development">
-        <!-- jquery, popper, bootstrap, vue, showdown, site -->
+        <!-- jquery, popper, bootstrap, vue, showdown, lodash, site -->
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery"
@@ -47,13 +48,14 @@
                 crossorigin="anonymous">
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.7/showdown.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 </head>
 <body class="site">
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">ForumSiteCore.Web</a>
+            <a class="navbar-brand" href="#">forumsitecore.web</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -61,31 +63,28 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a asp-controller="Forum" asp-action="Index" class="nav-link">Home<span class="sr-only">(current)</span></a>
+                        <a asp-route="forum" asp-route-name="home" class="nav-link">home<span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
+                        <a class="nav-link" asp-route="forum" asp-route-name="all">all</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Dropdown
+                            dropdown
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">action</a>
+                            <a class="dropdown-item" href="#">another action</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
+                            <a class="dropdown-item" href="#">something else here</a>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#">Disabled</a>
+                        <a class="nav-link disabled" href="#">disabled</a>
                     </li>                    
                     <partial name="_LoginPartial" />
                 </ul>
-                <div class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </div>
+                <div id="search-typeahead"></div>
             </div>
         </nav>
         @*<partial name="_CookieConsentPartial" />*@
@@ -119,7 +118,7 @@
             </div>
         </div>
     </footer>
-
+    <partial name="Vue/TypeAheadComponent" />
     @RenderSection("Scripts", required: false)
 </body>
 </html>

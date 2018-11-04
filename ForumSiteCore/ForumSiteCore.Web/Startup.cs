@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ForumSiteCore.DAL;
-using FluentValidation.AspNetCore;
 using ForumSiteCore.DAL.Models;
 using ForumSiteCore.Web.Areas.Identity.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -21,6 +20,7 @@ using ForumSiteCore.Business.Interfaces;
 using ForumSiteCore.Web.Controllers;
 using CacheManager.Core;
 using ForumSiteCore.Business;
+using NSwag.AspNetCore;
 
 namespace ForumSiteCore.Web
 {
@@ -49,7 +49,7 @@ namespace ForumSiteCore.Web
             services.AddScoped(typeof(PostService));
             services.AddScoped(typeof(CommentService));
             services.AddScoped(typeof(UserActivitiesService));
-            services.AddScoped(typeof(ForumController));
+            services.AddScoped(typeof(ForumApiController));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUserAccessor<Int64>, UserAccessor>();
             services.AddCacheManagerConfiguration(cfg => cfg
@@ -75,6 +75,7 @@ namespace ForumSiteCore.Web
         {
             if (env.IsDevelopment())
             {
+                app.UseSwaggerUi3WithApiExplorer();
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
@@ -94,8 +95,11 @@ namespace ForumSiteCore.Web
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=ForumWeb}/{action=Index}/{id?}"
+                );
             });
+
+            
         }
 
         private void ConfigureIdentity(IServiceCollection services)

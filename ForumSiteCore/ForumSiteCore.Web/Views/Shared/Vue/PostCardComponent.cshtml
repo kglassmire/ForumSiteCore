@@ -1,0 +1,37 @@
+﻿<cache>
+    <script type="text/javascript">
+
+        Vue.component('post-card', {
+            props: ['post'],
+            data: function() {
+                return {
+                    counter: 0,
+                    converter: new showdown.Converter()
+                };
+            },
+            computed: {
+                convertedMarkdown: function () {
+                    // `this` points to the vm instance
+                    var self = this;
+                    return self.converter.makeHtml(self.post.description);
+                }
+            },
+            methods: {
+                incrementCounter: function () {
+                    this.counter++;
+                },
+                upvote: function () {
+                    return;
+                },
+                downvote: function () {
+                    return;
+                },
+                togglePostDescription: function () {
+                    return;
+                }
+            },
+            template:
+                `@{await Html.RenderPartialAsync("Vue/PostCardTemplate");}`
+        });
+    </script>
+</cache>

@@ -1,0 +1,39 @@
+﻿<script type="text/javascript">
+
+    new Vue({
+        el: '#search-typeahead',            
+        props: ['post'],
+        data: function() {
+            return {
+                searchTerms: '',
+                searchResults: []
+            };
+        },
+        computed: {
+            hasResults: function () {
+                return this.searchResults.length > 0;
+            }
+        },
+        methods: {
+            search: _.debounce(function () {
+                let self = this;
+                fetch('/api/forums/search/' + self.searchTerms)
+                    .then(responseStream => responseStream.json())
+                    .then(function (response) {
+                        while (self.searchResults.length > 0) {
+                            self.searchResults.pop();
+                        }
+                        for (i = 0; i < response.data.length; i++) {
+                            self.searchResults.push(response.data[i]);
+                        }
+                    })
+                    .catch(error => console.log(error))
+            }, 1000),
+            navigate: function (result) {
+                window.location.href = '/f/' + result + '/hot/';
+            }
+        },
+        template:
+            `@{await Html.RenderPartialAsync("Vue/TypeAheadTemplate");}`
+    });
+</script>

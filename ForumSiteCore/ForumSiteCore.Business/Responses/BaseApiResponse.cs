@@ -6,7 +6,7 @@ namespace ForumSiteCore.Business.Responses
 {
     public abstract class BaseApiResponse
     {
-        public String Status { get; set; }
-        public String Message { get; set; }
+        public string Status { get; set; }
+        public string Message { get; set; }
     }
 }

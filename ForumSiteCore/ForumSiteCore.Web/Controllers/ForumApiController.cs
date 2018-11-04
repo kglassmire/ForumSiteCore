@@ -15,12 +15,12 @@ namespace ForumSiteCore.Web.Controllers
 {
     [Route("api/forums")]    
     [ApiController]
-    public class ForumController : ControllerBase
+    public class ForumApiController : ControllerBase
     {
         private readonly ForumService _forumService;
         private readonly UserActivitiesService _userActivitiesService;
 
-        public ForumController(ForumService forumService, UserActivitiesService userActivitiesService)
+        public ForumApiController(ForumService forumService, UserActivitiesService userActivitiesService)
         {
             _forumService = forumService;
             _userActivitiesService = userActivitiesService;

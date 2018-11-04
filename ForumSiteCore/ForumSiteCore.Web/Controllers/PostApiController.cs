@@ -15,11 +15,11 @@ namespace ForumSiteCore.Web.Controllers
 {    
     [Route("api/posts")]
     [ApiController]
-    public class PostController : ControllerBase
+    public class PostApiController : ControllerBase
     {
         private PostService _postService;
         private IUserAccessor<Int64> _userAccessor;
-        public PostController(PostService postService, IUserAccessor<Int64> userAccessor)
+        public PostApiController(PostService postService, IUserAccessor<Int64> userAccessor)
         {
             _postService = postService;
             _userAccessor = userAccessor;

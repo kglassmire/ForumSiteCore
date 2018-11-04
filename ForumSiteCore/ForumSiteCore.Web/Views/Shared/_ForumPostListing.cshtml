@@ -1,0 +1,23 @@
+﻿@model ForumPostListingResponse
+<div id="app-forum-post-list" v-cloak>
+    <div class="forum-grid-container">
+        <div class="forum-header">
+            <h2>
+                f/{{forumPostListing.forum.name}}
+            </h2>
+        </div>
+        <div class="forum-content">
+            <post-card v-for="post in forumPostListing.posts" v-bind:key="post.id" v-bind:post="post"></post-card>
+        </div>
+        <div class="forum-menu" v-html="convertedMarkdown"></div>
+    </div>
+</div>
+
+@section scripts
+    {
+    <script type="text/javascript">
+        window.__INITIAL_STATE__ = @Html.Raw(Model.Data.ToJson())
+    </script>
+    <partial name="Vue/PostCardComponent" />
+    <partial name="Vue/ForumPostListingComponent" />
+}
