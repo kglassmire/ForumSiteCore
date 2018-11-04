@@ -5,9 +5,9 @@
             <div class="input-group-prepend">
                 <div class="input-group-text"><i class="fas fa-search"></i></div>
             </div>
-            <input type="text" class="form-control mr-sm-2" placeholder="Search" v-model="searchTerms" v-on:input="search" aria-label="Search">
-            <div v-if="hasResults" class="dropdown-menu bd-search-results">
-                <div class="dropdown-item" v-on:click="navigate(result)" v-for="result in searchResults" value="result">{{ result }}</div>
+            <input type="text" class="form-control mr-sm-2 dropdown" placeholder="Search" v-model="searchTerms" v-on:blur="onBlur" v-on:input="search" aria-label="Search">
+            <div v-if="hasResults" class="dropdown-menu bd-search-results" role="menu">
+                <div class="dropdown-item-text" v-for="result in searchResults"><a v-bind:href="'/f/' + result + '/hot'">{{ result }}</a></div>
             </div>
         </div>
     </div>

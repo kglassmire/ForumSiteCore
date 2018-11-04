@@ -16,21 +16,26 @@
         },
         methods: {
             search: _.debounce(function () {
-                let self = this;
-                fetch('/api/forums/search/' + self.searchTerms)
-                    .then(responseStream => responseStream.json())
-                    .then(function (response) {
-                        while (self.searchResults.length > 0) {
-                            self.searchResults.pop();
-                        }
-                        for (i = 0; i < response.data.length; i++) {
-                            self.searchResults.push(response.data[i]);
-                        }
-                    })
-                    .catch(error => console.log(error))
+                self = this;
+                if (self.searchTerms.length > 0) {
+                    fetch('/api/forums/search/' + self.searchTerms)
+                        .then(responseStream => responseStream.json())
+                        .then(function (response) {
+                            self.searchResults = [];
+                            for (i = 0; i < response.data.length; i++) {
+                                self.searchResults.push(response.data[i]);
+                            }
+                        })
+                        .catch(error => console.log(error))
+                }
+                else {
+                    self.searchResults = [];
+                }
             }, 1000),
-            navigate: function (result) {
-                window.location.href = '/f/' + result + '/hot/';
+            onBlur: function () {
+                if (this.searchTerms.length == 0) {
+                    this.searchResults = [];
+                }
             }
         },
         template:
