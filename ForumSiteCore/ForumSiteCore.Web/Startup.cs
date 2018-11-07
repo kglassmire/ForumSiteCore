@@ -21,6 +21,9 @@ using ForumSiteCore.Web.Controllers;
 using CacheManager.Core;
 using ForumSiteCore.Business;
 using NSwag.AspNetCore;
+using WebMarkupMin.AspNetCore2;
+using WebMarkupMin.Core;
+using WebMarkupMin.NUglify;
 
 namespace ForumSiteCore.Web
 {
@@ -44,6 +47,19 @@ namespace ForumSiteCore.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddWebMarkupMin(options =>
+            {
+                options.AllowMinificationInDevelopmentEnvironment = false;                
+            })
+            .AddHtmlMinification(options =>
+            {
+                var settings = new HtmlMinificationSettings();
+                settings.WhitespaceMinificationMode = WhitespaceMinificationMode.Medium;
+                options.MinificationSettings = settings;
+                
+                options.JsMinifierFactory = new CrockfordJsMinifierFactory();
+                options.CssMinifierFactory = new KristensenCssMinifierFactory();                
+            });
 
             services.AddScoped(typeof(ForumService));
             services.AddScoped(typeof(PostService));
@@ -63,6 +79,7 @@ namespace ForumSiteCore.Web
                 .AddEntityFrameworkStores<ApplicationDbContext>()                
                 .AddDefaultTokenProviders();
             services.AddScoped<IEmailSender, EmailSender>();
+            services.AddResponseCaching();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginVMValidator>());
@@ -91,6 +108,9 @@ namespace ForumSiteCore.Web
 
             app.UseAuthentication();
 
+
+            app.UseWebMarkupMin();
+            app.UseResponseCaching();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
