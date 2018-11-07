@@ -99,12 +99,12 @@ namespace ForumSiteCore.Business.Services
             
             return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_CONTROVERSIAL);
         }
-
+        
         public IList<String> ForumSearch(String search)
         {
-            var results = from f in _context.Forums
+            var results = (from f in _context.Forums                          
                           where EF.Functions.Like(f.Name, String.Format("%{0}%", search))
-                          select f;
+                          select f).Take(25);
 
             return results.Select(x => x.Name).ToList();
         }
