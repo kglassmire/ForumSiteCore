@@ -33,10 +33,10 @@
                     else {
                         self.searchResults = [];
                     }
-                }, 1000),
+                }, 500),
                 onKeypress: function (event) {
                     let keysToProcess = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Escape', 'Enter'];
-                    if (_.includes(keysToProcess, event.key)) {
+                    if (keysToProcess.includes(event.key)) {
                         if (this.hasResults) {
                             if (event.key === 'Escape') {
                                 this.searchTerms = '';
