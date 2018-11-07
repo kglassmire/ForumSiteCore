@@ -3,21 +3,14 @@
         <label class="sr-only" for="inlineFormInput">Search</label>
         <div class="input-group mr-sm-2">
             <div class="input-group-prepend">
-                <div class="input-group-text"><i class="fas fa-search"></i></div>
+                <div class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </div>
             </div>
-            <input type="text" class="form-control mr-sm-2 dropdown" placeholder="Search" v-model="searchTerms" v-on:blur="onBlur" v-on:input="search" aria-label="Search">
+            <input type="text" class="form-control mr-sm-2 dropdown" placeholder="Search" v-model="searchTerms" v-on:keypress="onKeypress" v-on:blur="onBlur" v-on:input="search" aria-label="Search">
             <div v-if="hasResults" class="dropdown-menu bd-search-results" role="menu">
-                <div class="dropdown-item-text" v-for="result in searchResults"><a v-bind:href="'/f/' + result + '/hot'">{{ result }}</a></div>
+                <a v-bind:href="'/f/' + item + '/hot'" on-keyup:enter="goToLink" :class="['dropdown-item', index===menuCursor ? 'active' : '']" v-for="(item, index) in searchResults">{{ item }}</a>                        
             </div>
         </div>
     </div>
 </div>
-@*<div class="form-inline my-2 my-lg-0">
-    <div class="input-group-prepend">
-        <span class="input-group-text" id="basic-addon1">@@</span>
-    </div>
-    <input class="form-control mr-sm-2" type="text" placeholder="Search" v-model="searchTerms" v-on:input="search" aria-label="Search">
-    <div v-if="hasResults == true" class="dropdown-menu dropdown-menu-right bd-search-results" id="inputGroupSelect01">
-        <li class="dropdown-item" v-on:click="navigate(result)" v-for="result in searchResults" value="result">{{ result }}</li>
-    </div>
-</div>*@
