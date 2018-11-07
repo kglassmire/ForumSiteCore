@@ -1,9 +1,8 @@
 ﻿<cache>
     <script type="text/javascript">
-
         Vue.component('post-card', {
             props: ['post'],
-            data: function() {
+            data: function () {
                 return {
                     counter: 0,
                     converter: new showdown.Converter()
@@ -30,8 +29,7 @@
                     return;
                 }
             },
-            template:
-                `@{await Html.RenderPartialAsync("Vue/PostCardTemplate");}`
+            template: `@{await Html.RenderPartialAsync("Vue/PostCardTemplate");}`
         });
     </script>
 </cache>

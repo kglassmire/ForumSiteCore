@@ -17,7 +17,7 @@
                 }
             },
             methods: {
-                retrievePosts(name) {
+                retrievePosts: function (name) {
                     let self = this;
                     fetch('api/forums/' + name + '/hot')
                         .then(responseStream => responseStream.json())

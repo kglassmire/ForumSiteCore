@@ -16,8 +16,9 @@
 @section scripts
     {
     <script type="text/javascript">
-        window.__INITIAL_STATE__ = @Html.Raw(Model.Data.ToJson())
+        window.__INITIAL_STATE__ = @Html.Raw(Model.Data.ToJson());
     </script>
+    
     <partial name="Vue/PostCardComponent" />
     <partial name="Vue/ForumPostListingComponent" />
 }
