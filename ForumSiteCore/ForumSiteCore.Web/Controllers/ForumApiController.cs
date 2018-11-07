@@ -38,6 +38,7 @@ namespace ForumSiteCore.Web.Controllers
         }
 
         [HttpGet("search/{search}")]
+        [ResponseCache(VaryByQueryKeys = new[] { "*" }, Duration = 60, Location = ResponseCacheLocation.Client)]
         [ProducesResponseType(typeof(ForumSearchResponse), 200)]
         public IActionResult ForumSearch(String search)
         {    
