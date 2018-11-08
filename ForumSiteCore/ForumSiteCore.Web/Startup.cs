@@ -47,19 +47,19 @@ namespace ForumSiteCore.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddWebMarkupMin(options =>
-            {
-                options.AllowMinificationInDevelopmentEnvironment = false;                
-            })
-            .AddHtmlMinification(options =>
-            {
-                var settings = new HtmlMinificationSettings();
-                settings.WhitespaceMinificationMode = WhitespaceMinificationMode.Medium;
-                options.MinificationSettings = settings;
+            //services.AddWebMarkupMin(options =>
+            //{
+            //    options.AllowMinificationInDevelopmentEnvironment = false;                
+            //})
+            //.AddHtmlMinification(options =>
+            //{
+            //    var settings = new HtmlMinificationSettings();
+            //    settings.WhitespaceMinificationMode = WhitespaceMinificationMode.Medium;
+            //    options.MinificationSettings = settings;
                 
-                options.JsMinifierFactory = new CrockfordJsMinifierFactory();
-                options.CssMinifierFactory = new KristensenCssMinifierFactory();                
-            });
+            //    options.JsMinifierFactory = new CrockfordJsMinifierFactory();
+            //    options.CssMinifierFactory = new KristensenCssMinifierFactory();                
+            //});
 
             services.AddScoped(typeof(ForumService));
             services.AddScoped(typeof(PostService));
@@ -109,8 +109,9 @@ namespace ForumSiteCore.Web
             app.UseAuthentication();
 
 
-            app.UseWebMarkupMin();
+            
             app.UseResponseCaching();
+            //app.UseWebMarkupMin();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
