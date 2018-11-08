@@ -7,7 +7,7 @@
                     <i class="fas fa-search"></i>
                 </div>
             </div>
-            <input type="text" class="form-control mr-sm-2 dropdown" placeholder="Search" v-model="searchTerms" v-on:keypress="onKeypress" v-on:blur="onBlur" v-on:input="search" aria-label="Search">
+            <input type="text" class="form-control mr-sm-2 dropdown" placeholder="Search" v-model="searchTerms" v-on:keydown="onKeydown" v-on:blur="onBlur" v-on:input="search" aria-label="Search">
             <div v-if="hasResults" class="dropdown-menu bd-search-results" role="menu">
                 <a v-bind:href="'/f/' + item + '/hot'" on-keyup:enter="goToLink" :class="['dropdown-item', index===menuCursor ? 'active' : '']" v-for="(item, index) in searchResults">{{ item }}</a>                        
             </div>

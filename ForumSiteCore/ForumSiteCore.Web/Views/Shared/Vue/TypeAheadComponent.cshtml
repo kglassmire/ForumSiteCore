@@ -34,7 +34,7 @@
                         self.searchResults = [];
                     }
                 }, 500),
-                onKeypress: function (event) {
+                onKeydown: function (event) {
                     let keysToProcess = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Escape', 'Enter'];
                     if (keysToProcess.includes(event.key)) {
                         if (this.hasResults) {
