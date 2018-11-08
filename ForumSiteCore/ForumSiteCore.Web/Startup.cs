@@ -105,30 +105,24 @@ namespace ForumSiteCore.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
-            app.UseAuthentication();
-
-
-            
+            app.UseAuthentication();            
             app.UseResponseCaching();
             //app.UseWebMarkupMin();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=ForumWeb}/{action=Index}/{id?}"
                 );
-            });
-
-            
+            });            
         }
 
         private void ConfigureIdentity(IServiceCollection services)
         {
             services.Configure<IdentityOptions>(options =>
             {
-                // configure stuff here
-                
+                // configure stuff here                
             });
         }
     }
