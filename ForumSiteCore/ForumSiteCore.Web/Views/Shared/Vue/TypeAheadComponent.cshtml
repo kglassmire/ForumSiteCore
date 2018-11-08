@@ -2,7 +2,6 @@
     <script type="text/javascript">
         new Vue({
             el: '#search-typeahead',
-            props: ['post'],
             data: function () {
                 return {
                     searchTerms: '',
@@ -44,7 +43,7 @@
                                 return;
                             }
                             if (event.key === 'Enter') {
-                                window.location.href = '/f/' + this.searchResults[this.menuCursor] + '/hot';
+                                window.location.href = `/f/${this.searchResults[this.menuCursor]}/hot`;
                                 return;
                             }
                             if (this.menuCursor === null) {
