@@ -104,6 +104,7 @@ namespace ForumSiteCore.Business.Services
         {
             var results = (from f in _context.Forums                          
                           where EF.Functions.Like(f.Name, String.Format("%{0}%", search))
+                          orderby f.Name
                           select f).Take(25);
 
             return results.Select(x => x.Name).ToList();
