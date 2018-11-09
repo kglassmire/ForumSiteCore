@@ -1,38 +1,25 @@
-﻿<div class="post-card post-card-grid-container">
-    <div class="post-card-vote-panel">
-        <i title="upvote" v:on-click="upvote()" class="fas fa-arrow-up fa-lg"></i>
-        <i title="upvote" v:on-click="upvote()" class="fas fa-arrow-down fa-lg"></i>
-    </div>
-    <span><button class="btn btn-info" v-on:click="incrementCounter()">{{counter}}</button></span>
-    <div class="post-card-header">
-        <h4>
-            {{ post.name }}
-            <span v-cloak="post.hasDescription" class="btn-group-toggle" title="show description" data-toggle="buttons">
-                <label class="btn btn-light btn-sm active">
-                    <input v:on-click="togglePostDescription()" type="checkbox" />
-                    <i class="fas fa-expand"></i>
-                </label>
-            </span>
-        </h4>
+﻿
+<li class="media">
 
-    </div>
-    <div class="post-card-body">
-        <div class="card-text">
-            <p><span v-html="convertedMarkdown"></span></p>
+    <div class="d-inline-flex justify-content-between flex-column">
+        <div class="mr-3">
+            <i title="upvote" v:on-click="upvote()" class="fas fa-arrow-up fa-lg"></i>
+        </div>
+        <div class="mr-3 text-center">
+            {{ post.upvotes - post.downvotes }}
+        </div>
+        <div class="mr-3">
+            <i title="downvote" v:on-click="downvote()" class="fas fa-arrow-down fa-lg"></i>
         </div>
     </div>
-
-    <div class="post-card-footer">
-        <h6 class="comments-action">
-            <i class="far fa-comment-alt"></i> {{ post.commentsCount }} comments
-        </h6>
-        <h6 v-cloak="showForumName" class="forum-name">
-            <i class="fas fa-map-marker-alt"></i> {{ post.forumName }}
-        </h6>
-        <h6 class="save-action" title="save" v:on-click="save()"></h6>
-        <div class="spacer"></div>
-        <h6 class="created-by">
-            <i class="far fa-clock"></i><span> {{ post.created }}</span> by {{ post.userName }}
-        </h6>
+    <img class="align-self-start mr-3" alt="image">
+    <div class="media-body">
+        <h5 class="mt-0 mb-1">{{ post.name }}</h5>
+        <p>
+            <span v-html="convertedMarkdown"></span>
+        </p>
+        
     </div>
-</div>
+</li>
+
+
