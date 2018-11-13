@@ -1,25 +1,77 @@
-﻿
-<li class="media">
-
-    <div class="d-inline-flex justify-content-between flex-column">
-        <div class="mr-3">
-            <i title="upvote" v:on-click="upvote()" class="fas fa-arrow-up fa-lg"></i>
+﻿<li class="post-card media border rounded p-2 m-1">
+    <div class="d-inline-flex justify-content-between flex-column mr-3">
+        <div class="text-center upvote">
+            <i title="upvote" v-on:click="upvote" class="fas fa-arrow-up fa-lg" v-bind:class="upvoted"></i>
         </div>
-        <div class="mr-3 text-center">
-            {{ post.upvotes - post.downvotes }}
-        </div>
-        <div class="mr-3">
-            <i title="downvote" v:on-click="downvote()" class="fas fa-arrow-down fa-lg"></i>
+        <h4 class="text-center" v-bind:class="voteCountClassObject">
+            <strong>{{ post.upvotes - post.downvotes }}</strong>
+        </h4>
+        <div class="text-center downvote">
+            <i title="downvote" v-on:click="downvote" class="fas fa-arrow-down fa-lg" v-bind:class="downvoted"></i>
         </div>
     </div>
     <img class="align-self-start mr-3" alt="image">
-    <div class="media-body">
-        <h5 class="mt-0 mb-1">{{ post.name }}</h5>
-        <p>
+    <div class="media-body mr-4">
+        <h5>
+            <a v-bind:href="post.url">{{ post.name }}</a>
+            <button v-if="post.hasDescription" v-on:click="togglePostDescription" class="btn btn-light btn-sm" title="show description">
+                <i class="fas fa-expand"></i>
+            </button>
+        </h5>
+        <p v-if="showPostDescription">
             <span v-html="convertedMarkdown"></span>
         </p>
-        
+        <div class="d-flex flex-row mb-1 mt-1">
+            Created {{ createdText }} by {{ post.userName }}
+        </div>
+        <div class="d-flex flex-row mb-1 mt-1">
+            <h6 class="mr-3"><i class="far fa-comment-alt"></i> {{ post.commentsCount }} comments</h6>
+            <h6><i v-bind:class="post.userSaved === false ? 'far fa-bookmark': 'fas fa-bookmark'"></i> {{post.userSaved ? "saved" : "save"}}</h6>
+        </div>
     </div>
+  
+
 </li>
+
+@*<div class="post-card post-card-grid-container">
+    <div class="post-card-vote-panel">
+        <i title="upvote" v-on:click="upvote" class="fas fa-arrow-up fa-lg upvote" v-bind:class="voteCountClassObject"></i>
+        <h4 class="vote-count" v-bind:class="voteCountClassObject" v-bind:title="totalScoreTitle">{{post.upvotes - post.downvotes}}</h4>
+        <i title="downvote" v-on:click="downvote" class="fas fa-arrow-down fa-lg downvote" v-bind:class="voteCountClassObject"></i>
+    </div>
+    <div class="post-card-header">
+        <h4>
+            {{post.name}}
+            @*<span *ngIf="post.hasDescription" class="btn-group-toggle" title="show description" data-toggle="buttons">
+                <label class="btn btn-light btn-sm active" ngbButtonLabel>
+                    <input (click)="togglePostDescription()" type="checkbox" ngbButton [(ngModel)]="showPostDescription"><i class="fas fa-expand"></i>
+                </label>
+            </span>
+        </h4>
+
+    </div>
+    <div class="post-card-body">
+        <div class="card-text">
+            <p v-bind:html=convertedMarkdown></p>
+        </div>
+    </div>
+    <div class="post-card-footer">
+        <h6 class="comments-action">
+            <i class="far fa-comment-alt"></i> {{post.commentsCount}} comments
+        </h6>
+        <h6 v-if="showForumName" class="forum-name">
+            <a v-bind:href="'/f/' + post.forumName + '/hot'"><i class="fas fa-map-marker-alt"></i> {{post.forumName}}</a>            
+        </h6>
+        <h6 class="save-action" title="save" v-on:click="save">
+            <i v-bind:class="post.userSaved === false ? 'far fa-bookmark': 'fas fa-bookmark'"></i> {{post.userSaved ? "saved" : "save"}}
+        </h6>
+        <div class="spacer"></div>
+        <h6 class="created-by">
+            <span v-bind:title="post.created">
+                <i class="far fa-clock"></i> {{post.created}}
+            </span> by {{post.userName}}
+        </h6>
+    </div>
+</div>*@
 
 

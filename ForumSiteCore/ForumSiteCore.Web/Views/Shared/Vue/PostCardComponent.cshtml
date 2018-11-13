@@ -5,28 +5,49 @@
             data: function () {
                 return {
                     counter: 0,
-                    converter: new showdown.Converter()
+                    converter: new showdown.Converter(),
+                    showPostDescription: false
                 };
             },
             computed: {
+                totalScoreTitle: function () {
+                    return `${this.post.upvotes - this.post.downvotes} (${this.post.upvotes}|${this.post.downvotes})`;
+                },
+                showForumName: function () {
+                    return true;
+                },
                 convertedMarkdown: function () {
                     // `this` points to the vm instance
                     var self = this;
                     return self.converter.makeHtml(self.post.description);
+                },
+                upvoted: function () {
+                    return { 'upvoted': this.post.userVote === 'Up' }
+                },
+                downvoted: function () {
+                    return { 'downvoted': this.post.userVote === 'Down' }
+                },
+                voteCountClassObject: function () {
+                    return {
+                        'upvoted': this.post.userVote === 'Up',
+                        'downvoted': this.post.userVote === 'Down'
+                    }
+                },
+                createdText: function () {
+                    return agofromnow(new Date(this.post.created));
                 }
             },
             methods: {
-                incrementCounter: function () {
-                    this.counter++;
-                },
                 upvote: function () {
+                    console.log('upvoted');
                     return;
                 },
                 downvote: function () {
+                    console.log('downvoted');
                     return;
                 },
                 togglePostDescription: function () {
-                    return;
+                    return this.showPostDescription = !this.showPostDescription;
                 }
             },
             template: `@{await Html.RenderPartialAsync("Vue/PostCardTemplate");}`
