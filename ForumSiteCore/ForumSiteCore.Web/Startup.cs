@@ -24,6 +24,8 @@ using NSwag.AspNetCore;
 using WebMarkupMin.AspNetCore2;
 using WebMarkupMin.Core;
 using WebMarkupMin.NUglify;
+using Microsoft.AspNetCore.SpaServices.Webpack;
+using System.IO;
 
 namespace ForumSiteCore.Web
 {
@@ -92,6 +94,11 @@ namespace ForumSiteCore.Web
         {
             if (env.IsDevelopment())
             {
+                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+                {
+                    ProjectPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp"),
+                    HotModuleReplacement = true
+                });
                 app.UseSwaggerUi3WithApiExplorer();
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
