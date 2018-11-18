@@ -1,5 +1,5 @@
 <template>
-    <li class="post-card media border rounded p-2 m-1" v-if="post">
+    <li class="post-card media border rounded p-2 m-1">
         <div class="d-inline-flex justify-content-between flex-column mr-3">
             <div class="text-center upvote">
                 <i title="upvote" v-on:click="upvote" class="fas fa-arrow-up fa-lg" v-bind:class="upvoted"></i>

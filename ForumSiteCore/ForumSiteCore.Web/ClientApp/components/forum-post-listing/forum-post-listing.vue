@@ -7,12 +7,9 @@
             </h2>
         </div>
         <div class="forum-content">
-            <post-card></post-card>
             <ul class="list-unstyled">
                 <post-card v-for="post in forumPostListing.posts" v-bind:key="post.id" v-bind:post="post"></post-card>
-            </ul>
-            
-            <post-card v-for="post in forumPostListing.posts" v-bind:key="post.id" v-bind:post="post"></post-card>
+            </ul>            
         </div>
         <div class="forum-menu" v-html="convertedMarkdown"></div>
     </div>
