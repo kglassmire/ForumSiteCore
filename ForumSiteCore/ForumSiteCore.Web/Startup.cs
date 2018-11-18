@@ -21,11 +21,9 @@ using ForumSiteCore.Web.Controllers;
 using CacheManager.Core;
 using ForumSiteCore.Business;
 using NSwag.AspNetCore;
-using WebMarkupMin.AspNetCore2;
-using WebMarkupMin.Core;
-using WebMarkupMin.NUglify;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using System.IO;
+using NJsonSchema;
 
 namespace ForumSiteCore.Web
 {
@@ -48,20 +46,6 @@ namespace ForumSiteCore.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
-            //services.AddWebMarkupMin(options =>
-            //{
-            //    options.AllowMinificationInDevelopmentEnvironment = false;                
-            //})
-            //.AddHtmlMinification(options =>
-            //{
-            //    var settings = new HtmlMinificationSettings();
-            //    settings.WhitespaceMinificationMode = WhitespaceMinificationMode.Medium;
-            //    options.MinificationSettings = settings;
-                
-            //    options.JsMinifierFactory = new CrockfordJsMinifierFactory();
-            //    options.CssMinifierFactory = new KristensenCssMinifierFactory();                
-            //});
 
             services.AddScoped(typeof(ForumService));
             services.AddScoped(typeof(PostService));
@@ -86,6 +70,8 @@ namespace ForumSiteCore.Web
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginVMValidator>());
 
+            services.AddSwaggerDocument();
+
             ConfigureIdentity(services);
         }
 
@@ -99,7 +85,8 @@ namespace ForumSiteCore.Web
                     ProjectPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp"),
                     HotModuleReplacement = true
                 });
-                app.UseSwaggerUi3WithApiExplorer();
+                app.UseSwagger();
+                app.UseSwaggerUi3();
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
