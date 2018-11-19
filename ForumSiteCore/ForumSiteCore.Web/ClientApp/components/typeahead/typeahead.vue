@@ -18,7 +18,7 @@
 </template>
 
 <script>
-
+    import axios from 'axios';
     export default {
         data: function() {
             return {
@@ -36,16 +36,16 @@
             search: _.debounce(function () {
                 self = this;
                 if (self.searchTerms.length > 0) {
-                    fetch('/api/forums/search/' + self.searchTerms)
-                        .then(responseStream => responseStream.json())
-                        .then(function (response) {
-                            self.searchResults = [];
-                            self.menuCursor = null;
-                            for (var i = 0; i < response.data.length; i++) {
-                                self.searchResults.push(response.data[i]);
-                            }
-                        })
-                        .catch(error => console.log(error));
+                    axios.get('/api/forums/search/' + self.searchTerms)
+                    .then((response) => {
+                        self.searchResults = [];
+                        self.menuCursor = null;
+                        for (var i = 0; i < response.data.data.length; i++) {
+                            self.searchResults.push(response.data.data[i]);
+                        }
+                    }, (error) => {
+                        console.log(error);
+                    });
                 }
                 else {
                     self.searchResults = [];

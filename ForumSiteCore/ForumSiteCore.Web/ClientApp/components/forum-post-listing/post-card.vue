@@ -36,6 +36,7 @@
     </li>
 </template>
 <script>
+import axios from 'axios';
     export default {
         props: ['post'],
         data: function () {

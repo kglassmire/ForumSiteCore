@@ -15,11 +15,6 @@ module.exports = (env = {}, argv = {}) => {
       path: path.resolve(__dirname, '../wwwroot/dist'),
       publicPath: "/dist/"
     },
-    optimization: {
-        splitChunks: {
-        chunks: 'all'
-      }
-    },
     module: {
       rules: [
         {
