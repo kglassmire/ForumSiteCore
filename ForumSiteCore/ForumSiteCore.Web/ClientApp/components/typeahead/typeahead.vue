@@ -18,7 +18,7 @@
 </template>
 
 <script>
-    import axios from 'axios';
+    import forumService from '../../services/forumservice.js';
     export default {
         data: function() {
             return {
@@ -36,12 +36,12 @@
             search: _.debounce(function () {
                 self = this;
                 if (self.searchTerms.length > 0) {
-                    axios.get('/api/forums/search/' + self.searchTerms)
+                    forumService.search(self.searchTerms)
                     .then((response) => {
                         self.searchResults = [];
                         self.menuCursor = null;
-                        for (var i = 0; i < response.data.data.length; i++) {
-                            self.searchResults.push(response.data.data[i]);
+                        for (var i = 0; i < response.data.length; i++) {
+                            self.searchResults.push(response.data[i]);
                         }
                     }, (error) => {
                         console.log(error);
@@ -51,36 +51,36 @@
                     self.searchResults = [];
                 }
             }, 500),
-                onKeydown: function (event) {
-                    let keysToProcess = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Escape', 'Enter'];
-                    if (keysToProcess.includes(event.key)) {
-                        if (this.hasResults) {
-                            if (event.key === 'Escape') {
-                                this.searchTerms = '';
-                                this.searchResults = [];
-                                return;
-                            }
-                            if (event.key === 'Enter') {
-                                window.location.href = `/f/${this.searchResults[this.menuCursor]}/hot`;
-                                return;
-                            }
-                            if (this.menuCursor === null) {
-                                this.menuCursor = 0;
-                            } else {
-                                if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') {
-                                    if (this.menuCursor + 1 <= (this.searchResults.length - 1)) {
-                                        this.menuCursor++;
-                                    }
+            onKeydown: function (event) {
+                let keysToProcess = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Escape', 'Enter'];
+                if (keysToProcess.includes(event.key)) {
+                    if (this.hasResults) {
+                        if (event.key === 'Escape') {
+                            this.searchTerms = '';
+                            this.searchResults = [];
+                            return;
+                        }
+                        if (event.key === 'Enter') {
+                            window.location.href = `/f/${this.searchResults[this.menuCursor]}/hot`;
+                            return;
+                        }
+                        if (this.menuCursor === null) {
+                            this.menuCursor = 0;
+                        } else {
+                            if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') {
+                                if (this.menuCursor + 1 <= (this.searchResults.length - 1)) {
+                                    this.menuCursor++;
                                 }
-                                if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
-                                    if (this.menuCursor - 1 >= 0) {
-                                        this.menuCursor--;
-                                    }
+                            }
+                            if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
+                                if (this.menuCursor - 1 >= 0) {
+                                    this.menuCursor--;
                                 }
                             }
                         }
                     }
-                },
+                }
+            },
             onBlur: function () {
                 if (this.searchTerms.length == 0) {
                     this.searchResults = [];
