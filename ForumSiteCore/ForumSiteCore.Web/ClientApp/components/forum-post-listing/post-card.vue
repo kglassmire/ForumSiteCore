@@ -3,7 +3,7 @@
         <div class="d-inline-flex justify-content-between flex-column mr-3">
             <div class="text-center upvote">
                 <i title="upvote" v-on:click="upvote" class="fas fa-arrow-up fa-lg" v-bind:class="upvoted"></i>
-            </div>
+            </div>            
             <h4 class="text-center" v-bind:class="voteCountClassObject">
                 <strong>{{ post.upvotes - post.downvotes }}</strong>
             </h4>

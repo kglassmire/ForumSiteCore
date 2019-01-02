@@ -46,7 +46,7 @@ namespace ForumSiteCore.Web.Controllers
             ForumSearchResponse response = null;
             if (searchResults.Count == 0)
             {
-                response = new ForumSearchResponse { Data = null, Message = "No search results found", Status = "failure" };
+                response = new ForumSearchResponse { Data = new List<String>(), Message = "No search results found", Status = "failure" };
             }
             else
             {
@@ -73,7 +73,7 @@ namespace ForumSiteCore.Web.Controllers
         {
             Log.Debug("loading /f/New/{Name}...", name);
 
-            ForumPostListingVM forumPostListing = _forumService.New(DateTime.Now.AddYears(-5), name, 25);
+            ForumPostListingVM forumPostListing = _forumService.New(DateTime.Now.AddYears(-10), name, 25);
 
             return CreateForumPostListingResponse(name, forumPostListing, Consts.POST_LISTING_TYPE_NEW);
         }
@@ -84,7 +84,7 @@ namespace ForumSiteCore.Web.Controllers
         {
             Log.Debug("loading /f/Top/{Name}...", name);
 
-            ForumPostListingVM forumPostListing = _forumService.Top(DateTime.Now.AddYears(-5), name, 25);
+            ForumPostListingVM forumPostListing = _forumService.Top(DateTime.Now.AddYears(-10), name, 25);
 
             return CreateForumPostListingResponse(name, forumPostListing, Consts.POST_LISTING_TYPE_TOP);
         }

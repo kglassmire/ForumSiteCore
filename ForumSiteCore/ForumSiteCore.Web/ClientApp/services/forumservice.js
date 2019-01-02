@@ -2,15 +2,14 @@ import axios from 'axios';
 
 export class ForumService {
 
-    search(searchTerms) {
-        return axios.get('/api/forums/search/' + searchTerms)
-        .then((response) => {
-            return response.data;
-        })
-        .catch( (error) => {
-            return error;
-        });
-    }
+  search(searchTerms) {
+    console.log('searching for: ' + searchTerms);
+    return axios.get('/api/forums/search/' + searchTerms);
+  }
+
+  getPosts(name, forumListingType) {
+    return axios.get('/api/forums/' + name + '/' + forumListingType);
+  }
 }
 
 const forumService = new ForumService();

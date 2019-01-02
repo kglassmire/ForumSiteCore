@@ -9,7 +9,7 @@
         <div class="forum-content">
             <ul class="list-unstyled">
                 <post-card v-for="post in forumPostListing.posts" v-bind:key="post.id" v-bind:post="post"></post-card>
-            </ul>            
+            </ul>
         </div>
         <div class="forum-menu" v-html="convertedMarkdown"></div>
     </div>
@@ -18,23 +18,57 @@
 <script>
 
     import PostCardComponent from './post-card.vue';
-    export default { 
-        data: function () {
+    import forumService from '../../services/forumservice.js';
+    export default {
+        data() {
             return {
-                forumPostListing: window.__INITIAL_STATE__,
+                forumPostListing: window.__INITIAL_STATE__,                
                 message: '',
-                converter: new showdown.Converter()
+                converter: new showdown.Converter(),
+                bottom: false
             }
         },
         computed: {
-            convertedMarkdown: function () {
-                // `this` points to the vm instance
-                var self = this;
-                return self.converter.makeHtml(self.forumPostListing.forum.description);
+            convertedMarkdown() {
+
+                return this.converter.makeHtml(this.forumPostListing.forum.description);
             }
         },
         methods: {
-            retrievePosts: function (name) {
+            scroll() {
+                window.onscroll = () => {
+                    let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= document.documentElement.offsetHeight;
+                    if (bottomOfWindow) {
+                        this.retrievePosts(this.forumPostListing.forum.name);
+                    }
+                };
+            },
+            retrievePosts(name) {                
+                forumService.getPosts(name, this.forumPostListing.forumListingType)
+                    .then(response => {                        
+                        for (let i = 0; i < response.data.data.posts.length; i++) {
+                            if (!_.find(this.forumPostListing.posts, { id: response.data.data.posts[i].id })) {
+                                this.forumPostListing.posts.push(response.data.data.posts[i]);
+                            } else {
+                                console.log('duplicate found -- skipping');
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    });                
+            }
+        },
+        mounted() {
+            this.scroll();
+        },
+        components: {
+            'post-card': PostCardComponent
+        }
+    }
+</script>
+
+            <!--retrievePosts: function (name) {
                 let self = this;
                 fetch('api/forums/' + name + '/hot')
                     .then(responseStream => responseStream.json())
@@ -44,11 +78,4 @@
                             self.forumPostListing.posts.push(response.data.posts[i]);
                         }
                     })
-                    .catch(error => console.log(error))
-            }
-        },
-        components: {
-            'post-card': PostCardComponent
-        }
-    }
-</script>
+                    .catch(error => console.log(error))-->

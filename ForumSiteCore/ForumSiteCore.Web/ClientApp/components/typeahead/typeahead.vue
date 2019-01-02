@@ -34,20 +34,22 @@
         },
         methods: {
             search: _.debounce(function () {
-                self = this;
-                if (self.searchTerms.length > 0) {
-                    forumService.search(self.searchTerms)
-                    .then((response) => {
-                        self.searchResults = [];
-                        self.menuCursor = null;
-                        for (var i = 0; i < response.data.length; i++) {
-                            self.searchResults.push(response.data[i]);
-                        }
-                    }, (error) => {
-                        console.log(error);
-                    });
-                }
-                else {
+                if (this.searchTerms.length > 0) {
+                    forumService.search(this.searchTerms)
+                        .then(response => {
+                            this.searchResults = [];
+                            this.menuCursor = null;
+                            if (response.data) {
+                                for (var i = 0; i < response.data.data.length; i++) {
+                                    this.searchResults.push(response.data.data[i]);
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        });
+                            
+                } else {
                     self.searchResults = [];
                 }
             }, 500),

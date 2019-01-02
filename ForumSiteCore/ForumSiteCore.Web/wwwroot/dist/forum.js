@@ -64,7 +64,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "1a615d8b93a14e0b2dd1";
+/******/ 	var hotCurrentHash = "3f44cbd31419e4b2b04b";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1356,7 +1356,7 @@ eval("var Vue // late bind\nvar version\nvar map = Object.create(null)\nif (type
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _post_card_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./post-card.vue */ \"./components/forum-post-listing/post-card.vue\");\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ({ \n    data: function () {\n        return {\n            forumPostListing: window.__INITIAL_STATE__,\n            message: '',\n            converter: new showdown.Converter()\n        }\n    },\n    computed: {\n        convertedMarkdown: function () {\n            // `this` points to the vm instance\n            var self = this;\n            return self.converter.makeHtml(self.forumPostListing.forum.description);\n        }\n    },\n    methods: {\n        retrievePosts: function (name) {\n            let self = this;\n            fetch('api/forums/' + name + '/hot')\n                .then(responseStream => responseStream.json())\n                .then(function (response) {\n                    console.log(self.forumPostListing.posts.length);\n                    for (i = 0; i < response.data.posts.length; i++) {\n                        self.forumPostListing.posts.push(response.data.posts[i]);\n                    }\n                })\n                .catch(error => console.log(error))\n        }\n    },\n    components: {\n        'post-card': _post_card_vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"]\n    }\n});\n\n\n//# sourceURL=webpack:///./components/forum-post-listing/forum-post-listing.vue?./node_modules/vue-loader/lib??vue-loader-options");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _post_card_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./post-card.vue */ \"./components/forum-post-listing/post-card.vue\");\n/* harmony import */ var _services_forumservice_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/forumservice.js */ \"./services/forumservice.js\");\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n\n\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n    data() {\n        return {\n            forumPostListing: window.__INITIAL_STATE__,                \n            message: '',\n            converter: new showdown.Converter(),\n            bottom: false\n        }\n    },\n    computed: {\n        convertedMarkdown() {\n\n            return this.converter.makeHtml(this.forumPostListing.forum.description);\n        }\n    },\n    methods: {\n        scroll() {\n            window.onscroll = () => {\n                let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= document.documentElement.offsetHeight;\n                if (bottomOfWindow) {\n                    this.retrievePosts(this.forumPostListing.forum.name);\n                }\n            };\n        },\n        retrievePosts(name) {                \n            _services_forumservice_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"].getPosts(name, this.forumPostListing.forumListingType)\n                .then(response => {                        \n                    for (let i = 0; i < response.data.data.posts.length; i++) {\n                        if (!_.find(this.forumPostListing.posts, { id: response.data.data.posts[i].id })) {\n                            this.forumPostListing.posts.push(response.data.data.posts[i]);\n                        } else {\n                            console.log('duplicate found -- skipping');\n                        }\n                    }\n                })\n                .catch((error) => {\n                    console.log(error)\n                });                \n        }\n    },\n    mounted() {\n        this.scroll();\n    },\n    components: {\n        'post-card': _post_card_vue__WEBPACK_IMPORTED_MODULE_0__[\"default\"]\n    }\n});\n\n\n//# sourceURL=webpack:///./components/forum-post-listing/forum-post-listing.vue?./node_modules/vue-loader/lib??vue-loader-options");
 
 /***/ }),
 
@@ -1472,6 +1472,18 @@ eval("var g;\n\n// This works in non-strict mode\ng = (function() {\n\treturn th
 /***/ (function(module, exports) {
 
 eval("module.exports = function(module) {\n\tif (!module.webpackPolyfill) {\n\t\tmodule.deprecate = function() {};\n\t\tmodule.paths = [];\n\t\t// module.parent = undefined by default\n\t\tif (!module.children) module.children = [];\n\t\tObject.defineProperty(module, \"loaded\", {\n\t\t\tenumerable: true,\n\t\t\tget: function() {\n\t\t\t\treturn module.l;\n\t\t\t}\n\t\t});\n\t\tObject.defineProperty(module, \"id\", {\n\t\t\tenumerable: true,\n\t\t\tget: function() {\n\t\t\t\treturn module.i;\n\t\t\t}\n\t\t});\n\t\tmodule.webpackPolyfill = 1;\n\t}\n\treturn module;\n};\n\n\n//# sourceURL=webpack:///(webpack)/buildin/module.js?");
+
+/***/ }),
+
+/***/ "./services/forumservice.js":
+/*!**********************************!*\
+  !*** ./services/forumservice.js ***!
+  \**********************************/
+/*! exports provided: ForumService, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ForumService\", function() { return ForumService; });\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ \"./node_modules/axios/index.js\");\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);\n\r\n\r\nclass ForumService {\r\n\r\n  search(searchTerms) {\r\n    console.log('searching for: ' + searchTerms);\r\n    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/forums/search/' + searchTerms);\r\n  }\r\n\r\n  getPosts(name, forumListingType) {\r\n    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/forums/' + name + '/' + forumListingType);\r\n  }\r\n}\r\n\r\nconst forumService = new ForumService();\r\n/* harmony default export */ __webpack_exports__[\"default\"] = (forumService);\n\n//# sourceURL=webpack:///./services/forumservice.js?");
 
 /***/ }),
 
