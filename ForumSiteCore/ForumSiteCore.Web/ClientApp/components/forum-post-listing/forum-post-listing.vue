@@ -10,6 +10,9 @@
             <ul class="list-unstyled">
                 <post-card v-for="post in forumPostListing.posts" v-bind:key="post.id" v-bind:post="post"></post-card>
             </ul>
+            <div v-if="noMorePosts" class="alert alert-primary" role="alert">
+                No more posts!
+            </div>
         </div>
         <div class="forum-menu" v-html="convertedMarkdown"></div>
     </div>
@@ -25,7 +28,9 @@
                 forumPostListing: window.__INITIAL_STATE__,                
                 message: '',
                 converter: new showdown.Converter(),
-                bottom: false
+                bottom: false,
+                noMorePosts: false
+
             }
         },
         computed: {
@@ -37,15 +42,20 @@
         methods: {
             scroll() {
                 window.onscroll = () => {
-                    let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= document.documentElement.offsetHeight;
+                    let bottomOfWindow = (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 2;
+                    console.log('window.innerHeight + window.pageYOffset: ' + (window.innerHeight + window.pageYOffset));
+                    console.log('document.body.offsetHeight: ' + document.body.offsetHeight);
                     if (bottomOfWindow) {
                         this.retrievePosts(this.forumPostListing.forum.name);
                     }
                 };
             },
             retrievePosts(name) {                
-                forumService.getPosts(name, this.forumPostListing.forumListingType)
-                    .then(response => {                        
+                forumService.getPosts(name, this.forumPostListing.forumListingType, this.forumPostListing.posts[this.forumPostListing.posts.length - 1].hotScore)
+                    .then(response => {                 
+                        if (response.data.data.posts.length === 0) {
+                            this.noMorePosts = true;
+                        }
                         for (let i = 0; i < response.data.data.posts.length; i++) {
                             if (!_.find(this.forumPostListing.posts, { id: response.data.data.posts[i].id })) {
                                 this.forumPostListing.posts.push(response.data.data.posts[i]);

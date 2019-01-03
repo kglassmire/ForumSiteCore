@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Remove="Migrations\20180825151945_AddCommentsBestScor.cs" />
+    <Compile Remove="Migrations\20190102044516_AddHotScoreForumIdIndex.cs" />
   </ItemGroup>
 
   <ItemGroup>

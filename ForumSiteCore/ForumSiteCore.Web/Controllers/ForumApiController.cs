@@ -58,11 +58,11 @@ namespace ForumSiteCore.Web.Controllers
 
         [HttpGet("{name}/hot")]
         [ProducesResponseType(typeof(ForumPostListingResponse), 200)]
-        public IActionResult Hot(String name)
+        public IActionResult Hot(String name, Decimal? after = null)
         {
             Log.Debug("loading /f/Hot/{Name}...", name);
 
-            ForumPostListingVM forumPostListing = _forumService.Hot(name, 25);
+            ForumPostListingVM forumPostListing = _forumService.Hot(name, 25, after);
 
             return CreateForumPostListingResponse(name, forumPostListing, Consts.POST_LISTING_TYPE_HOT);
         }

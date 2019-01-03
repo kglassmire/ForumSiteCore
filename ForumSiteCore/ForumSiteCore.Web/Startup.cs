@@ -69,7 +69,7 @@ namespace ForumSiteCore.Web
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginVMValidator>());
-
+            services.AddRouting(options => options.LowercaseUrls = true);
             services.AddSwaggerDocument();
 
             ConfigureIdentity(services);

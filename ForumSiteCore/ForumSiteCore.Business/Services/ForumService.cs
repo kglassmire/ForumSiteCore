@@ -27,9 +27,10 @@ namespace ForumSiteCore.Business.Services
             _userActivitiesService = userActivitiesService;
         }
 
-        public ForumPostListingVM Hot(String forumName, Int32 postLimit = 25)
+        public ForumPostListingVM Hot(String forumName, Int32 postLimit = 25, Decimal? prevHotScore = null)
         {
             var predicate = CreateForumWhereClause(forumName);
+            predicate = BuildPagingWhereClauseHot(predicate, prevHotScore);
 
             var posts = _context.Posts
                 .Include(x => x.User)
@@ -40,6 +41,14 @@ namespace ForumSiteCore.Business.Services
                 .ToList();
 
             return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_HOT);
+        }
+
+        private ExpressionStarter<Post> BuildPagingWhereClauseHot(ExpressionStarter<Post> predicate, decimal? prevHotScore)
+        {
+            if (prevHotScore.HasValue)
+                predicate = predicate.And(x => x.HotScore < prevHotScore);
+
+            return predicate;
         }
 
         private ForumPostListingVM PrepareForumPostListing(string forumName, List<Post> posts, String postListingType)

@@ -36,7 +36,7 @@
     </li>
 </template>
 <script>
-import axios from 'axios';
+    import axios from 'axios';
     export default {
         props: ['post'],
         data: function () {
@@ -59,15 +59,15 @@ import axios from 'axios';
                 return self.converter.makeHtml(self.post.description);
             },
             upvoted: function () {
-                return { 'upvoted': this.post.userVote === 'Up' }
+                return { 'upvoted': this.post.userVote === 1 }
             },
             downvoted: function () {
-                return { 'downvoted': this.post.userVote === 'Down' }
+                return { 'downvoted': this.post.userVote === 2 }
             },
             voteCountClassObject: function () {
                 return {
-                    'upvoted': this.post.userVote === 'Up',
-                    'downvoted': this.post.userVote === 'Down'
+                    'upvoted': this.post.userVote === 1,
+                    'downvoted': this.post.userVote === 2
                 }
             },
             createdText: function () {

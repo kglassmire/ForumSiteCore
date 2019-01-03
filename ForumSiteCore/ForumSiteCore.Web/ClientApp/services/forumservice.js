@@ -7,8 +7,8 @@ export class ForumService {
     return axios.get('/api/forums/search/' + searchTerms);
   }
 
-  getPosts(name, forumListingType) {
-    return axios.get('/api/forums/' + name + '/' + forumListingType);
+  getPosts(name, forumListingType, after) {
+    return axios.get('/api/forums/' + name + '/' + forumListingType + '?after=' + after);
   }
 }
 
