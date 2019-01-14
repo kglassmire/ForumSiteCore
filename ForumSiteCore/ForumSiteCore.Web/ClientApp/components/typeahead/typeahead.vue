@@ -40,8 +40,8 @@
                             this.searchResults = [];
                             this.menuCursor = null;
                             if (response.data) {
-                                for (var i = 0; i < response.data.data.length; i++) {
-                                    this.searchResults.push(response.data.data[i]);
+                                for (var i = 0; i < response.data.results.length; i++) {
+                                    this.searchResults.push(response.data.results[i]);
                                 }
                             }
                         })

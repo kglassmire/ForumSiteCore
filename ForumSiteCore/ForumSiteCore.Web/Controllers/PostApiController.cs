@@ -63,25 +63,18 @@ namespace ForumSiteCore.Web.Controllers
             return Ok();
         }
 
+
         [Authorize]
-        [HttpGet("save/{id}")]
+        [HttpPost("save/{id}")]
+        [ProducesResponseType(typeof(ForumSaveVM), 200)]
         public IActionResult Save(Int64 id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
+            var postSaveVM = _postService.Save(id, _userAccessor.UserId);
 
-            var result = false;
-            result = _postService.Save(id, _userAccessor.UserId);
-
-            if (!result)
-            {
-                Log.Information("Post Save failed for post id: {Id} for user: {User}", id, _userAccessor.UserName);
-                return BadRequest();
-            }
-
-            return Ok();
+            return Ok(postSaveVM);
         }
 
+    
         [Authorize]
         [HttpPost("vote/{id}")]
         public IActionResult Vote([FromBody]VotePostVM model)

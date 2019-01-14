@@ -7,16 +7,10 @@ using System.Linq;
 
 namespace ForumSiteCore.Business.ViewModels
 {    
-    public class ForumPostListingVM
+    public class ForumPostListingVM : BaseVM
     {
-        public ForumPostListingVM(ForumDto forum, IList<PostDto> posts, String forumListingType)
-        {
-            Posts = posts;
-            Forum = forum;
-            ForumListingType = forumListingType;
-        }
         public ForumDto Forum { get; set; }
         public IList<PostDto> Posts { get; set; }
-        public String ForumListingType { get; set; }
+        public String ForumListingType { get; set; }        
     }
 }

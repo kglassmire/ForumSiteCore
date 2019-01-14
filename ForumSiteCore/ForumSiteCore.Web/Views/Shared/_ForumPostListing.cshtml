@@ -1,11 +1,11 @@
-﻿@model ForumPostListingResponse
+﻿@model ForumPostListingVM
 <div id="forum-post-list">
 </div>
 
 @section scripts
 {
     <script type="text/javascript">
-        window.__INITIAL_STATE__ = @Html.Raw(Model.Data.ToJson());
+        window.__INITIAL_STATE__ = @Html.Raw(Model.ToJson());
     </script>
     <script src="~/dist/forum.js"></script>
 }

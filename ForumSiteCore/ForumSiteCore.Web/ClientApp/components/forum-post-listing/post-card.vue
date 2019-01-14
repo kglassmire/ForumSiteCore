@@ -28,7 +28,7 @@
 
             <div class="d-flex flex-row mb-1 mt-1">
                 <h6 class="mr-3"><i class="far fa-comment-alt"></i> {{ post.commentsCount }} comments</h6>
-                <h6><i v-bind:class="post.userSaved === false ? 'far fa-bookmark': 'fas fa-bookmark'"></i> {{post.userSaved ? "saved" : "save"}}</h6>
+                <h6 v-on:click="savePost"><i v-bind:class="post.userSaved === false ? 'far fa-bookmark': 'fas fa-bookmark'"></i> {{post.userSaved ? "saved" : "save"}}</h6>
             </div>
         </div>
     
@@ -36,10 +36,10 @@
     </li>
 </template>
 <script>
-    import axios from 'axios';
+    import postService from '../../services/postservice.js';
     export default {
         props: ['post'],
-        data: function () {
+        data() {
             return {
                 counter: 0,
                 converter: new showdown.Converter(),
@@ -47,43 +47,49 @@
             };
         },
         computed: {
-            totalScoreTitle: function () {
+            totalScoreTitle() {
                 return `${this.post.upvotes - this.post.downvotes} (${this.post.upvotes}|${this.post.downvotes})`;
             },
-            showForumName: function () {
+            showForumName() {
                 return true;
             },
-            convertedMarkdown: function () {
+            convertedMarkdown() {
                 // `this` points to the vm instance
                 var self = this;
                 return self.converter.makeHtml(self.post.description);
             },
-            upvoted: function () {
+            upvoted() {
                 return { 'upvoted': this.post.userVote === 1 }
             },
-            downvoted: function () {
+            downvoted() {
                 return { 'downvoted': this.post.userVote === 2 }
             },
-            voteCountClassObject: function () {
+            voteCountClassObject() {
                 return {
                     'upvoted': this.post.userVote === 1,
                     'downvoted': this.post.userVote === 2
                 }
             },
-            createdText: function () {
+            createdText() {
                 return agofromnow(new Date(this.post.created));
             }
         },
         methods: {
-            upvote: function () {
+            savePost() {
+                postService.save(this.post.id)
+                    .then(response => {
+                        console.log(response.data.message);
+                        this.post.userSaved = response.data.saved;
+                    })
+                    .catch(error => console.log(error));
+            },
+            upvote() {
                 console.log('upvoted');
-                return;
             },
-            downvote: function () {
+            downvote() {
                 console.log('downvoted');
-                return;
             },
-            togglePostDescription: function () {
+            togglePostDescription() {
                 return this.showPostDescription = !this.showPostDescription;
             }
         }

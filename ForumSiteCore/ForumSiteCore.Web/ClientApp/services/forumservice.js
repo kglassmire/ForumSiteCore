@@ -10,6 +10,10 @@ export class ForumService {
   getPosts(name, forumListingType, after) {
     return axios.get('/api/forums/' + name + '/' + forumListingType + '?after=' + after);
   }
+
+  save(id) {
+    return axios.post('/api/forums/save/' + id);
+  }
 }
 
 const forumService = new ForumService();

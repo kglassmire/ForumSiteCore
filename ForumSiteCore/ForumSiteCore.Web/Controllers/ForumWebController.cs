@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ForumSiteCore.Business.Responses;
+using ForumSiteCore.Business.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ForumSiteCore.Web.Controllers
@@ -39,7 +40,7 @@ namespace ForumSiteCore.Web.Controllers
             
             var objectResult = (ObjectResult)result;
 
-            if (objectResult.Value is ForumPostListingResponse)
+            if (objectResult.Value is ForumPostListingVM)
             {
                 return View("_ForumPostListing", objectResult.Value);
             }

@@ -9,11 +9,29 @@ using ForumSiteCore.Business.Models;
 using ForumSiteCore.Business.ViewModels;
 using ForumSiteCore.Utility;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace ForumSiteCore.Business.Services
 {
     public class PostService
     {
+        private const string CommentTreeCTE = 
+@"WITH RECURSIVE comment_tree AS
+(
+    SELECT c.*, 0 as level, array[c.id] as path
+    FROM    comments c
+    WHERE c.post_id = {0}
+        and c.parent_id is null
+
+    UNION ALL
+
+SELECT cc.*, level + 1, comment_tree.path || cc.id
+FROM    comment_tree
+INNER JOIN comments cc
+ON      cc.parent_id = comment_tree.id
+
+WHERE cc.post_id = {0}
+)";
         private readonly ApplicationDbContext _context;
         private readonly UserActivitiesService _userActivitiesService;
         public PostService(ApplicationDbContext context, UserActivitiesService userActivitiesService)
@@ -48,14 +66,31 @@ namespace ForumSiteCore.Business.Services
             return post;
         }
 
+        public List<CommentsTree> BestCommentsTree(Int64 id)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(CommentTreeCTE);
+            sb.AppendLine("SELECT * FROM comment_tree order by comment_tree.path, comment_tree.best_score");
+            var sql = sb.ToString();
+
+            var commentsTree = _context
+                .Query<CommentsTree>()
+                .FromSql(sql, id);
+                            
+            return commentsTree.ToList();
+        }
+
         public PostCommentListingVM Best(Int64 id)
         {
+            var commentsTree = BestCommentsTree(id);
             var comments = _context.Comments
+                .Include(x => x.Children)
                 .Include(x => x.User)
                 .Include(x => x.Post)
                 .Where(x => x.PostId.Equals(id))
                 .ToList();
-                
+            
+            
             PostDto postDto;
             IList<CommentDto> commentDtos;
 
@@ -104,29 +139,30 @@ namespace ForumSiteCore.Business.Services
             return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_NEW);
         }
 
-        public Boolean Save(Int64 postId, Int64 userId)
+        public PostSaveVM Save(Int64 postId, Int64 userId)
         {
-            // there's a possibility that this user has had this saved but they "unsaved" it. Let's check.
+            // see if the user already saved this at one point
             if (_userActivitiesService.UserPostsSaved.ContainsKey(postId))
             {
+                // they did save it. Is the save "inactive"?
                 if (_userActivitiesService.UserPostsSaved[postId] == true)
                 {
-                    // take care of it in db
+                    // set it to inactive
                     if (UpdatePostSaveInactive(postId, userId, false))
                     {
                         // update our cache item
                         _userActivitiesService.UserPostsSaved[postId] = false;
-                        return true;
+                        return new PostSaveVM { Status = "success", Saved = true, Message = "PostSave existed and was set from inactive to active" };
                     }
                 }
-                else // looks like they want to inactivate this postsave
+                else // looks like they want to activate this postsave
                 {
                     // take care of it in db
                     if (UpdatePostSaveInactive(postId, userId, true))
                     {
                         // update our cache item
                         _userActivitiesService.UserPostsSaved[postId] = true;
-                        return true;
+                        return new PostSaveVM { Status = "success", Saved = false, Message = "PostSave existed and was set from active to inactive" };
                     }
                 }
             }
@@ -135,11 +171,11 @@ namespace ForumSiteCore.Business.Services
                 if (AddPostSave(postId, userId))
                 {
                     _userActivitiesService.UserPostsSaved.Add(postId, false);
-                    return true;
+                    return new PostSaveVM { Status = "success", Saved = true, Message = "PostSave was created and set to active" };
                 }
             }
 
-            return false;
+            return new PostSaveVM { Status = "failure", Saved = false, Message = "PostSave creation failed" };
         }
 
         public PostCommentListingVM Top(Int64 id)
@@ -203,6 +239,36 @@ namespace ForumSiteCore.Business.Services
             return false;
         }
 
+        private Boolean AddPostSave(Int64 postId, Int64 userId)
+        {
+            using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
+            {
+                try
+                {
+                    var postSave = new PostSave();
+                    postSave.Created = postSave.Updated = DateTimeOffset.Now;
+
+                    postSave.PostId = postId;
+                    postSave.UserId = userId;
+
+                    _context.PostSaves.Add(postSave);
+
+                    if (_context.SaveChanges() == 1)
+                    {
+                        transaction.Commit();
+                        return true;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Failed to add PostSave");
+                    transaction.Rollback();
+                }
+            }
+
+            return false;
+        }
+
         private Boolean AddPostVote(Int64 postId, Int64 userId, Boolean direction)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
@@ -233,20 +299,22 @@ namespace ForumSiteCore.Business.Services
 
             return false;
         }
+        private void MapDtos(IList<Comment> comments, out PostDto postDto, out IList<CommentDto> commentDtos)
+        {
+            Post post = comments.FirstOrDefault().Post;
+            postDto = Mapper.Map<PostDto>(post);
+            commentDtos = Mapper.Map<IList<CommentDto>>(comments);
+        }
 
-        private Boolean AddPostSave(Int64 postId, Int64 userId)
+        private Boolean UpdatePostSaveInactive(Int64 postId, Int64 userId, Boolean inactive)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {
                 try
                 {
-                    var postSave = new PostSave();
-                    postSave.Created = postSave.Updated = DateTimeOffset.Now;
-
-                    postSave.PostId = postId;
-                    postSave.UserId = userId;
-
-                    _context.PostSaves.Add(postSave);
+                    var postSave = _context.PostSaves.SingleOrDefault(x => x.PostId.Equals(postId) && x.UserId.Equals(userId));
+                    postSave.Inactive = inactive;
+                    postSave.Updated = DateTimeOffset.Now;
 
                     if (_context.SaveChanges() == 1)
                     {
@@ -256,19 +324,12 @@ namespace ForumSiteCore.Business.Services
                 }
                 catch (Exception e)
                 {
-                    Log.Error(e, "Failed to add PostSave");
+                    Log.Error(e, "Failed to toggle PostSave inactive state");
                     transaction.Rollback();
                 }
             }
 
-            return false;            
-        }
-
-        private void MapDtos(IList<Comment> comments, out PostDto postDto, out IList<CommentDto> commentDtos)
-        {
-            Post post = comments.FirstOrDefault().Post;
-            postDto = Mapper.Map<PostDto>(post);
-            commentDtos = Mapper.Map<IList<CommentDto>>(comments);
+            return false;
         }
 
         private Boolean UpdatePostVoteDirection(Int64 postId, Int64 userId, Boolean direction)
@@ -317,32 +378,6 @@ namespace ForumSiteCore.Business.Services
                 {
                     Log.Error(e, "Failed to toggle PostVote inactive state");
                     transaction.Rollback();                    
-                }
-            }
-
-            return false;
-        }
-
-        private Boolean UpdatePostSaveInactive(Int64 postId, Int64 userId, Boolean inactive)
-        {
-            using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
-            {
-                try
-                {
-                    var postSave = _context.PostSaves.SingleOrDefault(x => x.PostId.Equals(postId) && x.UserId.Equals(userId));
-                    postSave.Inactive = inactive;
-                    postSave.Updated = DateTimeOffset.Now;
-
-                    if (_context.SaveChanges() == 1)
-                    {
-                        transaction.Commit();
-                        return true;
-                    }
-                }
-                catch(Exception e)
-                {
-                    Log.Error(e, "Failed to toggle PostSave inactive state");
-                    transaction.Rollback();
                 }
             }
 
