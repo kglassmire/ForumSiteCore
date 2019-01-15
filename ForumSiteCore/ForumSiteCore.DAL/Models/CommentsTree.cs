@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ForumSiteCore.DAL.Models
 {
-    public class CommentsTree
+    public class CommentTree
     {
         public Int64 Id { get; set; }
         public Int64? ParentId { get; set; }

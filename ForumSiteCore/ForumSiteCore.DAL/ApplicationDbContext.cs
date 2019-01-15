@@ -19,7 +19,7 @@ namespace ForumSiteCore.DAL
         public DbSet<Comment> Comments { get; set; }
         public DbSet<CommentVote> CommentVotes { get; set; }
         public DbSet<CommentSave> CommentSaves { get; set; }
-        public DbQuery<CommentsTree> CommentsTree { get; set; }
+        public DbQuery<CommentTree> CommentsTree { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -36,6 +36,7 @@ namespace ForumSiteCore.DAL
             builder.HasPostgresExtension("citext");
             builder.Entity<Forum>().HasIndex(x => x.Name).IsUnique();
             builder.Entity<Post>().HasIndex(x => new { x.ForumId, x.HotScore });
+            
             foreach (var entity in builder.Model.GetEntityTypes())
             {
                 // Replace table names

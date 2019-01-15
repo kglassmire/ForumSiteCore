@@ -20,12 +20,7 @@ namespace ForumSiteCore.DAL.Models
         public Int64 CommentsCount { get; set; }
         public Int64 SavesCount { get; set; }
         public Decimal BestScore { get; set; }
-        public Decimal ControversyScore { get; set; }
-        
-        [NotMapped]
-        public Int32 Level { get; set; }
-        [NotMapped]
-        public Int64[] Path { get; set; }
+        public Decimal ControversyScore { get; set; }                
 
         public List<CommentSave> CommentSaves { get; set; }
         public List<CommentVote> CommentVotes { get; set; }

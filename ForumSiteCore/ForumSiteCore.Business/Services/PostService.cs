@@ -10,28 +10,12 @@ using ForumSiteCore.Business.ViewModels;
 using ForumSiteCore.Utility;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using System.Diagnostics;
 
 namespace ForumSiteCore.Business.Services
 {
     public class PostService
     {
-        private const string CommentTreeCTE = 
-@"WITH RECURSIVE comment_tree AS
-(
-    SELECT c.*, 0 as level, array[c.id] as path
-    FROM    comments c
-    WHERE c.post_id = {0}
-        and c.parent_id is null
-
-    UNION ALL
-
-SELECT cc.*, level + 1, comment_tree.path || cc.id
-FROM    comment_tree
-INNER JOIN comments cc
-ON      cc.parent_id = comment_tree.id
-
-WHERE cc.post_id = {0}
-)";
         private readonly ApplicationDbContext _context;
         private readonly UserActivitiesService _userActivitiesService;
         public PostService(ApplicationDbContext context, UserActivitiesService userActivitiesService)
@@ -66,31 +50,15 @@ WHERE cc.post_id = {0}
             return post;
         }
 
-        public List<CommentsTree> BestCommentsTree(Int64 id)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(CommentTreeCTE);
-            sb.AppendLine("SELECT * FROM comment_tree order by comment_tree.path, comment_tree.best_score");
-            var sql = sb.ToString();
-
-            var commentsTree = _context
-                .Query<CommentsTree>()
-                .FromSql(sql, id);
-                            
-            return commentsTree.ToList();
-        }
-
         public PostCommentListingVM Best(Int64 id)
         {
-            var commentsTree = BestCommentsTree(id);
-            var comments = _context.Comments
-                .Include(x => x.Children)
+            var comments = _context.CommentsTree
+                .FromSql("select * from public.comment_tree({0})", id)
                 .Include(x => x.User)
-                .Include(x => x.Post)
-                .Where(x => x.PostId.Equals(id))
+                .Include(x => x.Post)                
+                .OrderBy(x => x.Path).ThenBy(x => x.BestScore)
                 .ToList();
-            
-            
+
             PostDto postDto;
             IList<CommentDto> commentDtos;
 
@@ -222,7 +190,7 @@ WHERE cc.post_id = {0}
                         var data = _userActivitiesService.UserPostsVoted[postId];
                         data.Direction = !curDirection;
                         data.Inactive = false;
-                        
+
                         return true;
                     }
                 }
@@ -299,11 +267,20 @@ WHERE cc.post_id = {0}
 
             return false;
         }
+
+
+        private void MapDtos(IList<CommentTree> comments, out PostDto postDto, out IList<CommentDto> commentDtos)
+        {
+            Post post = comments.FirstOrDefault().Post;
+            postDto = Mapper.Map<PostDto>(post);
+            commentDtos = Mapper.Map<List<CommentDto>>(comments);
+        }
+
         private void MapDtos(IList<Comment> comments, out PostDto postDto, out IList<CommentDto> commentDtos)
         {
             Post post = comments.FirstOrDefault().Post;
             postDto = Mapper.Map<PostDto>(post);
-            commentDtos = Mapper.Map<IList<CommentDto>>(comments);
+            commentDtos = Mapper.Map<List<CommentDto>>(comments);
         }
 
         private Boolean UpdatePostSaveInactive(Int64 postId, Int64 userId, Boolean inactive)

@@ -28,7 +28,7 @@
 
             <div class="d-flex flex-row mb-1 mt-1">
                 <h6 class="mr-3"><i class="far fa-comment-alt"></i> {{ post.commentsCount }} comments</h6>
-                <h6 v-on:click="savePost"><i v-bind:class="post.userSaved === false ? 'far fa-bookmark': 'fas fa-bookmark'"></i> {{post.userSaved ? "saved" : "save"}}</h6>
+                <a v-on:click="savePost"><h6><i v-bind:class="post.userSaved === false ? 'far fa-bookmark': 'fas fa-bookmark'"></i> {{post.userSaved ? "saved" : "save"}}</h6></a>
             </div>
         </div>
     

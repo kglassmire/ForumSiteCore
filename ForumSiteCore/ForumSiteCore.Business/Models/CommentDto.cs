@@ -17,6 +17,9 @@ namespace ForumSiteCore.Business.Models
         //public Int64 TotalScore => Upvotes - Downvotes;
         //public Int64 Upvotes { get; set; }
         //public Int64 Downvotes { get; set; }
+        public Int32 Level { get; set; }
+        public Int64[] Path { get; set; }
+
         public Int64 CommentsCount { get; set; }
         public Int64 SavesCount { get; set; }
         public Decimal BestScore { get; set; }
