@@ -8,7 +8,8 @@ module.exports = (env = {}, argv = {}) => {
     mode: argv.mode || 'development', // we default to development when no 'mode' arg is passed
     entry: {
       main: './components/typeahead/app.js',
-      forum: './components/forum-post-listing/app.js'
+      forum: './components/forum-post-listing/app.js',
+      post: './components/post-comment-listing/app.js'
     },
     output: {
       filename: '[name].js',
