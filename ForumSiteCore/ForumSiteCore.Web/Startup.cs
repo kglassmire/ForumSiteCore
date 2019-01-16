@@ -23,7 +23,6 @@ using ForumSiteCore.Business;
 using NSwag.AspNetCore;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using System.IO;
-using NJsonSchema;
 
 namespace ForumSiteCore.Web
 {
@@ -52,24 +51,30 @@ namespace ForumSiteCore.Web
             services.AddScoped(typeof(CommentService));
             services.AddScoped(typeof(UserActivitiesService));
             services.AddScoped(typeof(ForumApiController));
+            services.AddScoped<IEmailSender, EmailSender>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUserAccessor<Int64>, UserAccessor>();
+
             services.AddCacheManagerConfiguration(cfg => cfg
                 .WithMicrosoftMemoryCacheHandle()
                 .WithExpiration(ExpirationMode.Sliding, TimeSpan.FromSeconds(60)));
                 //.And.WithMicrosoftLogging(f => f.AddSerilog()));
             services.AddCacheManager();
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("ForumSiteCore.DAL")));
+
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()                
                 .AddDefaultTokenProviders();
-            services.AddScoped<IEmailSender, EmailSender>();
+            
             services.AddResponseCaching();
+
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginVMValidator>());
             services.AddRouting(options => options.LowercaseUrls = true);
+
             services.AddSwaggerDocument();
 
             ConfigureIdentity(services);

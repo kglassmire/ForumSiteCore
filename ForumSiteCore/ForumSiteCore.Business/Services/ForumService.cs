@@ -7,6 +7,7 @@ using ForumSiteCore.DAL.Models;
 using ForumSiteCore.Utility;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,13 @@ namespace ForumSiteCore.Business.Services
         private readonly ApplicationDbContext _context;
         private readonly IUserAccessor<Int64> _userAccessor;
         private readonly UserActivitiesService _userActivitiesService;
-        public ForumService(ApplicationDbContext context, IUserAccessor<Int64> userAccessor, UserActivitiesService userActivitiesService)
+        private readonly ILogger<ForumService> _logger;
+        public ForumService(ApplicationDbContext context, IUserAccessor<Int64> userAccessor, UserActivitiesService userActivitiesService, ILogger<ForumService> logger)
         {
             _context = context;
             _userAccessor = userAccessor;
             _userActivitiesService = userActivitiesService;
+            _logger = logger;
         }
 
         public ForumPostListingVM Controversial(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
@@ -45,6 +48,8 @@ namespace ForumSiteCore.Business.Services
 
         public ForumSearchVM ForumSearch(String search)
         {
+            _logger.LogInformation("Searching for forums containing: {0}", search);
+
             var results = (from f in _context.Forums
                            where EF.Functions.Like(f.Name, String.Format("%{0}%", search))
                            orderby f.Name
