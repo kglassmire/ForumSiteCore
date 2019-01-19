@@ -37,16 +37,16 @@ namespace ForumSiteCore.Web.Controllers
             PostCommentListingVM postCommentListingVM = null; ;
             switch (lookup)
             {
-                case Const.LookupBest:
+                case LookupConsts.LookupBest:
                     postCommentListingVM = _postService.Best(id);
                     break;
-                case Const.LookupNew:
+                case LookupConsts.LookupNew:
                     postCommentListingVM = _postService.New(id);
                     break;
-                case Const.LookupTop:
+                case LookupConsts.LookupTop:
                     postCommentListingVM = _postService.Top(id);
                     break;
-                case Const.LookupControversial:
+                case LookupConsts.LookupControversial:
                     postCommentListingVM = _postService.Controversial(id);
                     break;
             }
