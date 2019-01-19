@@ -23,12 +23,7 @@ namespace ForumSiteCore.Business.Services
         {
             _context = context;
             _userActivitiesService = userActivitiesService;
-        }
-
-        public Boolean RemoveRange(Int64[] postIds)
-        {
-            return true;
-        }
+        }        
 
         public Post Add(Post post)
         {
