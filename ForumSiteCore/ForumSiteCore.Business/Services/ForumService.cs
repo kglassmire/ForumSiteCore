@@ -48,7 +48,7 @@ namespace ForumSiteCore.Business.Services
 
         public ForumSearchVM ForumSearch(String search)
         {
-            _logger.LogInformation("Searching for forums containing: {0}", search);
+            _logger.LogDebug("Searching for forums containing: {0}", search);
 
             var results = (from f in _context.Forums
                            where EF.Functions.Like(f.Name, String.Format("%{0}%", search))

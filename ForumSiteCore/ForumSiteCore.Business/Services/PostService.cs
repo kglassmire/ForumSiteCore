@@ -63,7 +63,7 @@ namespace ForumSiteCore.Business.Services
             IList<CommentDto> commentDtos;
 
             MapDtos(comments, out postDto, out commentDtos);
-            _userActivitiesService.ProcessComments(commentDtos);
+            _userActivitiesService.ProcessComments(postDto, commentDtos);
 
             return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_BEST);
         }
@@ -80,7 +80,7 @@ namespace ForumSiteCore.Business.Services
             IList<CommentDto> commentDtos;
 
             MapDtos(comments, out postDto, out commentDtos);
-            _userActivitiesService.ProcessComments(commentDtos);
+            _userActivitiesService.ProcessComments(postDto, commentDtos);
 
             return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_CONTROVERSIAL);
         }
@@ -102,7 +102,7 @@ namespace ForumSiteCore.Business.Services
             IList<CommentDto> commentDtos;
 
             MapDtos(comments, out postDto, out commentDtos);
-            _userActivitiesService.ProcessComments(commentDtos);
+            _userActivitiesService.ProcessComments(postDto, commentDtos);
 
             return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_NEW);
         }
@@ -158,7 +158,7 @@ namespace ForumSiteCore.Business.Services
             IList<CommentDto> commentDtos;
 
             MapDtos(comments, out postDto, out commentDtos);
-            _userActivitiesService.ProcessComments(commentDtos);
+            _userActivitiesService.ProcessComments(postDto, commentDtos);
 
             return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_TOP);
         }
