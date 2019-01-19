@@ -3,15 +3,17 @@ using System;
 using ForumSiteCore.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ForumSiteCore.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190119140528_AddNullablePostId")]
+    partial class AddNullablePostId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,9 +238,6 @@ namespace ForumSiteCore.DAL.Migrations
 
                     b.HasIndex("CommentId")
                         .HasName("ix_comment_votes_comment_id");
-
-                    b.HasIndex("PostId")
-                        .HasName("ix_comment_votes_post_id");
 
                     b.HasIndex("UserId")
                         .HasName("ix_comment_votes_user_id");
@@ -596,11 +595,6 @@ namespace ForumSiteCore.DAL.Migrations
                         .HasForeignKey("CommentId")
                         .HasConstraintName("fk_comment_votes_comments_comment_id")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ForumSiteCore.DAL.Models.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .HasConstraintName("fk_comment_votes_posts_post_id");
 
                     b.HasOne("ForumSiteCore.DAL.Models.ApplicationUser", "User")
                         .WithMany()

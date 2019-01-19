@@ -70,10 +70,12 @@ namespace ForumSiteCore.Business.Services
 
         public PostCommentListingVM Controversial(Int64 id)
         {
-            var comments = _context.Comments
+            var comments = _context.CommentsTree
+                .FromSql("select * from public.comment_tree({0})", id)
                 .Include(x => x.User)
                 .Include(x => x.Post)
                 .Where(x => x.PostId.Equals(id))
+                .OrderBy(x => x.Path).ThenBy(x => x.ControversyScore)
                 .ToList();
 
             PostDto postDto;
@@ -92,10 +94,12 @@ namespace ForumSiteCore.Business.Services
 
         public PostCommentListingVM New(Int64 id)
         {
-            var comments = _context.Comments
+            var comments = _context.CommentsTree
+                .FromSql("select * from public.comment_tree({0})", id)
                 .Include(x => x.User)
                 .Include(x => x.Post)
                 .Where(x => x.PostId.Equals(id))
+                .OrderBy(x => x.Path).ThenBy(x => x.Created)
                 .ToList();
 
             PostDto postDto;
@@ -148,10 +152,12 @@ namespace ForumSiteCore.Business.Services
 
         public PostCommentListingVM Top(Int64 id)
         {
-            var comments = _context.Comments
+            var comments = _context.CommentsTree
+                .FromSql("select * from public.comment_tree({0})", id)
                 .Include(x => x.User)
                 .Include(x => x.Post)
                 .Where(x => x.PostId.Equals(id))
+                .OrderBy(x => x.Path).ThenBy(x => x.Upvotes - x.Downvotes)
                 .ToList();
 
             PostDto postDto;

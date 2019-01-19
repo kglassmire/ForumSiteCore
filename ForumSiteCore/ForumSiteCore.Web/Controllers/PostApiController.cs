@@ -17,6 +17,8 @@ namespace ForumSiteCore.Web.Controllers
     [ApiController]
     public class PostApiController : ControllerBase
     {
+        private readonly String[] _acceptedLookups = new []{ "best", "top", "new", "controversial" };
+
         private PostService _postService;
         private IUserAccessor<Int64> _userAccessor;
         public PostApiController(PostService postService, IUserAccessor<Int64> userAccessor)
@@ -25,32 +27,31 @@ namespace ForumSiteCore.Web.Controllers
             _userAccessor = userAccessor;
         }
 
-        [HttpGet("{id}/comments/best")]
-        public PostCommentListingVM Best(Int64 id)
+        [HttpGet("{id}/comments/{lookup}")]
+        [ResponseCache(VaryByQueryKeys = new[] { "lookup", "id" }, Duration = 10, Location = ResponseCacheLocation.Any)]
+        public IActionResult Get(String lookup, Int64 id)
         {
-            Log.Debug("loading /api/posts/{id}/comments/best...", id);
-            return _postService.Best(id);
-        }
+            if (!_acceptedLookups.Contains(lookup))
+                return BadRequest();
 
-        [HttpGet("{id}/comments/top")]
-        public PostCommentListingVM Top(Int64 id)
-        {
-            Log.Debug("loading /api/posts/{id}/comments/top...", id);
-            return _postService.Top(id);
-        }
+            PostCommentListingVM postCommentListingVM = null; ;
+            switch (lookup)
+            {
+                case Const.LookupBest:
+                    postCommentListingVM = _postService.Best(id);
+                    break;
+                case Const.LookupNew:
+                    postCommentListingVM = _postService.New(id);
+                    break;
+                case Const.LookupTop:
+                    postCommentListingVM = _postService.Top(id);
+                    break;
+                case Const.LookupControversial:
+                    postCommentListingVM = _postService.Controversial(id);
+                    break;
+            }
 
-        [HttpGet("{id}/comments/controversial")]
-        public PostCommentListingVM Controversial(Int64 id)
-        {
-            Log.Debug("loading /api/posts/{id}/comments/controversial...", id);
-            return _postService.Controversial(id);
-        }
-
-        [HttpGet("{id}/comments/new")]
-        public PostCommentListingVM New(Int64 id)
-        {
-            Log.Debug("loading /api/posts/{id}/comments/new...", id);
-            return _postService.New(id);
+            return Ok(postCommentListingVM);
         }
 
         [Authorize]

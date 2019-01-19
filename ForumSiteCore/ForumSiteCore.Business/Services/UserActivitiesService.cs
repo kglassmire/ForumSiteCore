@@ -21,7 +21,6 @@ namespace ForumSiteCore.Business.Services
         private ICacheManager<object> _cache;
         private ApplicationDbContext _context;
         private IUserAccessor<Int64> _userAccessor;
-        private Int64? _partialLoadIdentifier;
 
         public UserActivitiesService(ApplicationDbContext context, ICacheManager<object> cache, IUserAccessor<Int64> userAccessor)
         {
@@ -251,7 +250,7 @@ namespace ForumSiteCore.Business.Services
         {
             if (postId.HasValue)
                 return _context.CommentVotes
-                    .Where(x => x.UserId.Equals(userId) && x.Comment.PostId.Equals(postId))
+                    .Where(x => x.UserId.Equals(userId) && x.PostId.Equals(postId))
                     .Select(x => new KeyValuePair<Int64, UserActivitiesVoteItem>(x.CommentId, new UserActivitiesVoteItem(x.Direction, x.Inactive)))
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);            
 

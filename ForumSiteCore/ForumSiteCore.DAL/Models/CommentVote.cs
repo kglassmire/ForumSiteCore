@@ -14,9 +14,11 @@ namespace ForumSiteCore.DAL.Models
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
         public Boolean Inactive { get; set; }
-        
+        public Int64? PostId { get; set; }
+
         public Comment Comment { get; set; }
-        public ApplicationUser User { get; set; }        
+        public ApplicationUser User { get; set; }  
+        public Post Post { get; set; }
 
     }
 }
