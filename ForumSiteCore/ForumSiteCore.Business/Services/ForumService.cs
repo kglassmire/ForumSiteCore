@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using ForumSiteCore.Business.Consts;
 using ForumSiteCore.Business.Interfaces;
 using ForumSiteCore.Business.Models;
 using ForumSiteCore.Business.ViewModels;
 using ForumSiteCore.DAL;
 using ForumSiteCore.DAL.Models;
-using ForumSiteCore.Utility;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -43,7 +43,7 @@ namespace ForumSiteCore.Business.Services
                 .Take(postLimit)
                 .ToList();
 
-            return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_CONTROVERSIAL);
+            return PrepareForumPostListing(forumName, posts, LookupConsts.LookupControversial);
         }
 
         public ForumSearchVM ForumSearch(String search)
@@ -112,7 +112,7 @@ namespace ForumSiteCore.Business.Services
                 .Take(postLimit)
                 .ToList();
 
-            return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_HOT);
+            return PrepareForumPostListing(forumName, posts, LookupConsts.LookupHot);
         }
 
         public ForumPostListingVM New(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
@@ -128,11 +128,14 @@ namespace ForumSiteCore.Business.Services
                 .Take(postLimit)
                 .ToList();
 
-            return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_NEW);
+            return PrepareForumPostListing(forumName, posts, LookupConsts.LookupNew);
         }
 
-        public ForumSaveVM Save(Int64 forumId, Int64 userId)
+        public ForumSaveVM Save(Int64 forumId)
         {
+            if (ForumIsHome(forumId) || ForumIsAll(forumId))
+                throw new Exception("Home and All cannot be saved");
+
             // see if the user already saved this at one point
             if (_userActivitiesService.UserForumsSaved.ContainsKey(forumId))
             {
@@ -140,7 +143,7 @@ namespace ForumSiteCore.Business.Services
                 if (_userActivitiesService.UserForumsSaved[forumId] == true)
                 {
                     // set it to active
-                    if (UpdateForumSaveInactive(forumId, userId, false))
+                    if (UpdateForumSaveInactive(forumId, _userAccessor.UserId, false))
                     {
                         // update our cache item -- it's saved (active).
                         _userActivitiesService.UserForumsSaved[forumId] = false;
@@ -150,7 +153,7 @@ namespace ForumSiteCore.Business.Services
                 else // looks like they want to activate this postsave
                 {
                     // take care of it in db
-                    if (UpdateForumSaveInactive(forumId, userId, true))
+                    if (UpdateForumSaveInactive(forumId, _userAccessor.UserId, true))
                     {
                         // update our cache item
                         _userActivitiesService.UserForumsSaved[forumId] = true;
@@ -160,7 +163,7 @@ namespace ForumSiteCore.Business.Services
             }
             else
             {
-                if (AddForumSave(forumId, userId))
+                if (AddForumSave(forumId, _userAccessor.UserId))
                 {
                     _userActivitiesService.UserForumsSaved.Add(forumId, false);
                     return new ForumSaveVM { Status = "success", Saved = true, Message = "ForumSave was created and set to active" };
@@ -182,7 +185,7 @@ namespace ForumSiteCore.Business.Services
                 .OrderByDescending(x => x.Upvotes - x.Downvotes)
                 .ToList();
 
-            return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_TOP);
+            return PrepareForumPostListing(forumName, posts, LookupConsts.LookupTop);
         }
 
         private Boolean AddForumSave(Int64 forumId, Int64 userId)
@@ -253,9 +256,19 @@ namespace ForumSiteCore.Business.Services
             return forumName.Equals("all", StringComparison.OrdinalIgnoreCase);
         }
 
+        private Boolean ForumIsAll(Int64 id)
+        {
+            return id == 0;
+        }
+
         private Boolean ForumIsHome(String forumName)
         {
             return forumName.Equals("home", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private Boolean ForumIsHome(Int64 id)
+        {
+            return id == -1;
         }
 
         private void MapDtos(String forumName, List<Post> posts, out ForumDto forumDto, out IList<PostDto> postDtos)

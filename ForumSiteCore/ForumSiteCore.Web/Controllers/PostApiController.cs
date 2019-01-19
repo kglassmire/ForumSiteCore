@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ForumSiteCore.Web.Utility;
-using ForumSiteCore.Business.Enums;
 using ForumSiteCore.Business.Interfaces;
 using ForumSiteCore.Business.Services;
 using ForumSiteCore.Business.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using ForumSiteCore.Business.Consts;
 
 namespace ForumSiteCore.Web.Controllers
 {    

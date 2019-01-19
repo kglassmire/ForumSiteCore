@@ -3,15 +3,17 @@ using System;
 using ForumSiteCore.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ForumSiteCore.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190119220003_AddNullablePostIdCommentSaves")]
+    partial class AddNullablePostIdCommentSaves
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,7 +188,7 @@ namespace ForumSiteCore.DAL.Migrations
                     b.Property<bool>("Inactive")
                         .HasColumnName("inactive");
 
-                    b.Property<long>("PostId")
+                    b.Property<long?>("PostId")
                         .HasColumnName("post_id");
 
                     b.Property<DateTimeOffset>("Updated")
@@ -200,9 +202,6 @@ namespace ForumSiteCore.DAL.Migrations
 
                     b.HasIndex("CommentId")
                         .HasName("ix_comment_saves_comment_id");
-
-                    b.HasIndex("PostId")
-                        .HasName("ix_comment_saves_post_id");
 
                     b.HasIndex("UserId")
                         .HasName("ix_comment_saves_user_id");
@@ -586,12 +585,6 @@ namespace ForumSiteCore.DAL.Migrations
                         .WithMany("CommentSaves")
                         .HasForeignKey("CommentId")
                         .HasConstraintName("fk_comment_saves_comments_comment_id")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ForumSiteCore.DAL.Models.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .HasConstraintName("fk_comment_saves_posts_post_id")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ForumSiteCore.DAL.Models.ApplicationUser", "User")

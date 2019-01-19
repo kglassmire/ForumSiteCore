@@ -20,13 +20,11 @@ namespace ForumSiteCore.Web.Controllers
     {
         private readonly ForumService _forumService;
         private readonly UserActivitiesService _userActivitiesService;
-        private IUserAccessor<Int64> _userAccessor;
 
-        public ForumApiController(ForumService forumService, UserActivitiesService userActivitiesService, IUserAccessor<Int64> userAccessor)
+        public ForumApiController(ForumService forumService, UserActivitiesService userActivitiesService)
         {
             _forumService = forumService;
             _userActivitiesService = userActivitiesService;
-            _userAccessor = userAccessor;
         }
 
         [Authorize]
@@ -34,7 +32,7 @@ namespace ForumSiteCore.Web.Controllers
         [ProducesResponseType(typeof(ForumSaveVM), 200)]
         public IActionResult Save(Int64 id)
         {
-            var forumSaveVM = _forumService.Save(id, _userAccessor.UserId);
+            var forumSaveVM = _forumService.Save(id);
 
             return Ok(forumSaveVM);
         }
@@ -51,7 +49,7 @@ namespace ForumSiteCore.Web.Controllers
         }
 
         [HttpGet("search/{search}")]
-        [ResponseCache(VaryByQueryKeys = new[] { "*" }, Duration = 60, Location = ResponseCacheLocation.Client)]
+        [ResponseCache(VaryByQueryKeys = new[] { "*" }, Duration = 60, Location = ResponseCacheLocation.Any)]
         [ProducesResponseType(typeof(ForumSearchVM), 200)]
         public IActionResult ForumSearch(String search)
         {

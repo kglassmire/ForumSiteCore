@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ForumSiteCore.Business.Enums
+namespace ForumSiteCore.Business.Consts
 {
     public static class LookupConsts
     {

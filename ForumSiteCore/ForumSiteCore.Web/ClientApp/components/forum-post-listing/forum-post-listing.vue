@@ -16,7 +16,7 @@
         </div>
         <div class="forum-menu">
             <div><h2>f/{{forumPostListing.forum.name}}</h2></div>
-            <button v-on:click="saveForum" v-bind:class="forumSubscribedButtonClass">{{forumSubscribed ? 'Subscribed' : 'Subscribe'}}</button>
+            <button v-if="forumCanBeSubscribed" v-on:click="saveForum" v-bind:class="forumSubscribedButtonClass">{{forumSubscribed ? 'Subscribed' : 'Subscribe'}}</button>
             <div v-html="convertedMarkdown"></div>
         </div>
     </div>
@@ -45,6 +45,9 @@
             },
             convertedMarkdown() {
                 return this.converter.makeHtml(this.forumPostListing.forum.description);
+            },
+            forumCanBeSubscribed() {
+                return this.forumPostListing.forum.id !== 0 && this.forumPostListing.forum.id !== -1;
             }
         },
         methods: {

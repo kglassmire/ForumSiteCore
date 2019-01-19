@@ -11,6 +11,7 @@ using ForumSiteCore.Utility;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Diagnostics;
+using ForumSiteCore.Business.Consts;
 
 namespace ForumSiteCore.Business.Services
 {
@@ -22,6 +23,11 @@ namespace ForumSiteCore.Business.Services
         {
             _context = context;
             _userActivitiesService = userActivitiesService;
+        }
+
+        public Boolean RemoveRange(Int64[] postIds)
+        {
+            return true;
         }
 
         public Post Add(Post post)
@@ -65,7 +71,7 @@ namespace ForumSiteCore.Business.Services
             MapDtos(comments, out postDto, out commentDtos);
             _userActivitiesService.ProcessComments(postDto, commentDtos);
 
-            return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_BEST);
+            return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupBest);
         }
 
         public PostCommentListingVM Controversial(Int64 id)
@@ -84,7 +90,7 @@ namespace ForumSiteCore.Business.Services
             MapDtos(comments, out postDto, out commentDtos);
             _userActivitiesService.ProcessComments(postDto, commentDtos);
 
-            return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_CONTROVERSIAL);
+            return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupControversial);
         }
 
         public Boolean Downvote(Int64 postId, Int64 userId)
@@ -108,7 +114,7 @@ namespace ForumSiteCore.Business.Services
             MapDtos(comments, out postDto, out commentDtos);
             _userActivitiesService.ProcessComments(postDto, commentDtos);
 
-            return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_NEW);
+            return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupNew);
         }
 
         public PostSaveVM Save(Int64 postId, Int64 userId)
@@ -166,7 +172,7 @@ namespace ForumSiteCore.Business.Services
             MapDtos(comments, out postDto, out commentDtos);
             _userActivitiesService.ProcessComments(postDto, commentDtos);
 
-            return new PostCommentListingVM(postDto, commentDtos, Consts.COMMENT_LISTING_TYPE_TOP);
+            return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupTop);
         }
 
         public Boolean Upvote(Int64 postId, Int64 userId)
