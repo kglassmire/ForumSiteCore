@@ -1,0 +1,12 @@
+﻿@model PostCommentListingVM
+<div id="post-comment-list">
+</div>
+
+@section scripts
+{
+    
+    <script type="text/javascript">
+        window.__INITIAL_STATE__ = @Html.Raw(Model.ToJson());
+    </script>
+    <script src="~/dist/forum.js"></script>
+}

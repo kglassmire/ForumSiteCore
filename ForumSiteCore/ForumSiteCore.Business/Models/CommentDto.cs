@@ -14,13 +14,16 @@ namespace ForumSiteCore.Business.Models
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
 
-        //public Int64 TotalScore => Upvotes - Downvotes;
-        //public Int64 Upvotes { get; set; }
-        //public Int64 Downvotes { get; set; }
+        public Int64 TotalScore => Upvotes - Downvotes;
+        public Int64 Upvotes { get; set; }
+        public Int64 Downvotes { get; set; }
+        public Int32 Level { get; set; }
+        public Int64[] Path { get; set; }
+
         public Int64 CommentsCount { get; set; }
         public Int64 SavesCount { get; set; }
-        public Int64 BestScore { get; set; }
-        public Int64 ControversyScore { get; set; }
+        public Decimal BestScore { get; set; }
+        public Decimal ControversyScore { get; set; }
         public String UserName { get; set; }
         public VotedType UserVote { get; set; }
         public Boolean UserCreated { get; set; }

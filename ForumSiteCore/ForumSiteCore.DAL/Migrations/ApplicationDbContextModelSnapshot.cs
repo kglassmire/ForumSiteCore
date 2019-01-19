@@ -15,9 +15,9 @@ namespace ForumSiteCore.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Npgsql:PostgresExtension:citext", "'citext', '', ''")
+                .HasAnnotation("Npgsql:PostgresExtension:citext", ",,")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
-                .HasAnnotation("ProductVersion", "2.1.2-rtm-30932")
+                .HasAnnotation("ProductVersion", "2.2.1-servicing-10028")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("ForumSiteCore.DAL.Models.ApplicationRole", b =>
@@ -222,6 +222,9 @@ namespace ForumSiteCore.DAL.Migrations
                     b.Property<bool>("Inactive")
                         .HasColumnName("inactive");
 
+                    b.Property<long?>("PostId")
+                        .HasColumnName("post_id");
+
                     b.Property<DateTimeOffset>("Updated")
                         .HasColumnName("updated");
 
@@ -233,6 +236,9 @@ namespace ForumSiteCore.DAL.Migrations
 
                     b.HasIndex("CommentId")
                         .HasName("ix_comment_votes_comment_id");
+
+                    b.HasIndex("PostId")
+                        .HasName("ix_comment_votes_post_id");
 
                     b.HasIndex("UserId")
                         .HasName("ix_comment_votes_user_id");
@@ -362,11 +368,11 @@ namespace ForumSiteCore.DAL.Migrations
                     b.HasKey("Id")
                         .HasName("pk_posts");
 
-                    b.HasIndex("ForumId")
-                        .HasName("ix_posts_forum_id");
-
                     b.HasIndex("UserId")
                         .HasName("ix_posts_user_id");
+
+                    b.HasIndex("ForumId", "HotScore")
+                        .HasName("ix_posts_forum_id_hot_score");
 
                     b.ToTable("posts");
                 });
@@ -551,7 +557,7 @@ namespace ForumSiteCore.DAL.Migrations
             modelBuilder.Entity("ForumSiteCore.DAL.Models.Comment", b =>
                 {
                     b.HasOne("ForumSiteCore.DAL.Models.Comment", "Parent")
-                        .WithMany()
+                        .WithMany("Children")
                         .HasForeignKey("ParentId")
                         .HasConstraintName("fk_comments_comments_parent_id");
 
@@ -590,6 +596,11 @@ namespace ForumSiteCore.DAL.Migrations
                         .HasForeignKey("CommentId")
                         .HasConstraintName("fk_comment_votes_comments_comment_id")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ForumSiteCore.DAL.Models.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .HasConstraintName("fk_comment_votes_posts_post_id");
 
                     b.HasOne("ForumSiteCore.DAL.Models.ApplicationUser", "User")
                         .WithMany()

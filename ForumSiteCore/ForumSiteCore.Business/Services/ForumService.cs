@@ -7,6 +7,7 @@ using ForumSiteCore.DAL.Models;
 using ForumSiteCore.Utility;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -20,16 +21,88 @@ namespace ForumSiteCore.Business.Services
         private readonly ApplicationDbContext _context;
         private readonly IUserAccessor<Int64> _userAccessor;
         private readonly UserActivitiesService _userActivitiesService;
-        public ForumService(ApplicationDbContext context, IUserAccessor<Int64> userAccessor, UserActivitiesService userActivitiesService)
+        private readonly ILogger<ForumService> _logger;
+        public ForumService(ApplicationDbContext context, IUserAccessor<Int64> userAccessor, UserActivitiesService userActivitiesService, ILogger<ForumService> logger)
         {
             _context = context;
             _userAccessor = userAccessor;
             _userActivitiesService = userActivitiesService;
+            _logger = logger;
         }
 
-        public ForumPostListingVM Hot(String forumName, Int32 postLimit = 25)
+        public ForumPostListingVM Controversial(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
             var predicate = CreateForumWhereClause(forumName);
+            predicate = predicate.And(x => x.Created >= howFarBack);
+
+            var posts = _context.Posts
+                .Include(x => x.User)
+                .Include(x => x.Forum)
+                .Where(predicate)
+                .OrderByDescending(x => x.ControversyScore)
+                .Take(postLimit)
+                .ToList();
+
+            return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_CONTROVERSIAL);
+        }
+
+        public ForumSearchVM ForumSearch(String search)
+        {
+            _logger.LogDebug("Searching for forums containing: {0}", search);
+
+            var results = (from f in _context.Forums
+                           where EF.Functions.Like(f.Name, String.Format("%{0}%", search))
+                           orderby f.Name
+                           select f).Take(25);
+            IList<String> returnedData;
+            String message;
+            String status;
+
+            returnedData = results.Select(x => x.Name).ToList();
+            if (returnedData.Count == 0)
+            {
+                returnedData = new List<String>();
+                message = "No search results found";
+                status = "failure";
+            }
+            else
+            {
+                message = $"{returnedData.Count} Search results found";
+                status = "success";
+            }
+
+            var vm = new ForumSearchVM
+            {
+                Results = returnedData,
+                Status = status,
+                Message = message
+            };
+
+            return vm;
+        }
+
+        public ForumDto Get(Int64 forumId)
+        {
+            var forum = _context.Forums
+                .Include(x => x.User)
+                .SingleOrDefault(x => x.Id.Equals(forumId));
+
+            return Mapper.Map<ForumDto>(forum);
+        }
+
+        public ForumDto GetByName(String forumName)
+        {
+            var forum = _context.Forums
+                .Include(x => x.User)
+                .SingleOrDefault(x => x.Name.Equals(forumName));
+
+            return Mapper.Map<ForumDto>(forum);
+        }
+
+        public ForumPostListingVM Hot(String forumName, Int32 postLimit = 25, Decimal? prevHotScore = null)
+        {
+            var predicate = CreateForumWhereClause(forumName);
+            predicate = BuildPagingWhereClauseHot(predicate, prevHotScore);
 
             var posts = _context.Posts
                 .Include(x => x.User)
@@ -40,17 +113,6 @@ namespace ForumSiteCore.Business.Services
                 .ToList();
 
             return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_HOT);
-        }
-
-        private ForumPostListingVM PrepareForumPostListing(string forumName, List<Post> posts, String postListingType)
-        {
-            ForumDto forumDto;
-            IList<PostDto> postDtos;
-
-            MapDtos(forumName, posts, out forumDto, out postDtos);
-            _userActivitiesService.ProcessPosts(postDtos);
-
-            return new ForumPostListingVM(forumDto, postDtos, postListingType);
         }
 
         public ForumPostListingVM New(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
@@ -69,6 +131,45 @@ namespace ForumSiteCore.Business.Services
             return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_NEW);
         }
 
+        public ForumSaveVM Save(Int64 forumId, Int64 userId)
+        {
+            // see if the user already saved this at one point
+            if (_userActivitiesService.UserForumsSaved.ContainsKey(forumId))
+            {
+                // they did save it. Is the save "inactive"?
+                if (_userActivitiesService.UserForumsSaved[forumId] == true)
+                {
+                    // set it to active
+                    if (UpdateForumSaveInactive(forumId, userId, false))
+                    {
+                        // update our cache item -- it's saved (active).
+                        _userActivitiesService.UserForumsSaved[forumId] = false;
+                        return new ForumSaveVM { Status = "success", Saved = true, Message = "ForumSave existed and was set from inactive to active" };
+                    }
+                }
+                else // looks like they want to activate this postsave
+                {
+                    // take care of it in db
+                    if (UpdateForumSaveInactive(forumId, userId, true))
+                    {
+                        // update our cache item
+                        _userActivitiesService.UserForumsSaved[forumId] = true;
+                        return new ForumSaveVM { Status = "success", Saved = false, Message = "ForumSave existed and was set from active to inactive" };
+                    }
+                }
+            }
+            else
+            {
+                if (AddForumSave(forumId, userId))
+                {
+                    _userActivitiesService.UserForumsSaved.Add(forumId, false);
+                    return new ForumSaveVM { Status = "success", Saved = true, Message = "ForumSave was created and set to active" };
+                }
+            }
+
+            return new ForumSaveVM { Status = "failure", Saved = false, Message = "ForumSave creation failed" };
+        }
+
         public ForumPostListingVM Top(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
             var predicate = CreateForumWhereClause(forumName);
@@ -84,96 +185,48 @@ namespace ForumSiteCore.Business.Services
             return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_TOP);
         }
 
-        public ForumPostListingVM Controversial(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
+        private Boolean AddForumSave(Int64 forumId, Int64 userId)
         {
-            var predicate = CreateForumWhereClause(forumName);
-            predicate = predicate.And(x => x.Created >= howFarBack);
-
-            var posts = _context.Posts
-                .Include(x => x.User)
-                .Include(x => x.Forum)
-                .Where(predicate)
-                .OrderByDescending(x => x.ControversyScore)
-                .Take(postLimit)
-                .ToList();
-            
-            return PrepareForumPostListing(forumName, posts, Consts.POST_LISTING_TYPE_CONTROVERSIAL);
-        }
-        
-        public IList<String> ForumSearch(String search)
-        {
-            var results = (from f in _context.Forums                          
-                          where EF.Functions.Like(f.Name, String.Format("%{0}%", search))
-                          orderby f.Name
-                          select f).Take(25);
-
-            return results.Select(x => x.Name).ToList();
-        }
-
-        public ForumDto GetByName(String forumName)
-        {
-            var forum = _context.Forums
-                .Include(x => x.User)
-                .SingleOrDefault(x => x.Name.Equals(forumName));
-
-            return Mapper.Map<ForumDto>(forum);
-        }
-
-        public ForumDto Get(Int64 forumId)
-        {
-            var forum = _context.Forums
-                .Include(x => x.User)
-                .SingleOrDefault(x => x.Id.Equals(forumId));
-
-            return Mapper.Map<ForumDto>(forum);
-        }
-
-        public Boolean Save(Int64 forumId, Int64 userId, Boolean saving)
-        {
-            var forumSave = _context.ForumSaves.SingleOrDefault(x => x.ForumId.Equals(forumId) && x.UserId.Equals(userId));
-
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {
-                var result = false;
                 try
                 {
-                    if (forumSave == null)
+                    var forumSave = new ForumSave();
+                    forumSave.Created = forumSave.Updated = DateTimeOffset.Now;
+
+                    forumSave.ForumId = forumId;
+                    forumSave.UserId = userId;
+
+                    _context.ForumSaves.Add(forumSave);
+
+                    if (_context.SaveChanges() == 1)
                     {
-                        forumSave = new ForumSave();
-                        forumSave.Created = forumSave.Updated = DateTimeOffset.Now;
-
-                        forumSave.ForumId = forumId;
-                        forumSave.UserId = userId;
-                        _context.ForumSaves.Add(forumSave);
+                        transaction.Commit();
+                        return true;
                     }
-                    else
-                    {
-                        if (saving == forumSave.Inactive)
-                        {
-                            forumSave.Inactive = !saving;
-                            forumSave.Updated = DateTimeOffset.Now;
-
-                        }
-                    }
-
-                    result = _context.SaveChanges() == 1;
-                    transaction.Commit();
                 }
                 catch (Exception e)
                 {
-                    result = false;
-                    Log.Error(e, "Error while saving forum");
+                    Log.Error(e, "Failed to add ForumSave");
                     transaction.Rollback();
                 }
-
-                return result;
             }
+
+            return false;
+        }
+
+        private ExpressionStarter<Post> BuildPagingWhereClauseHot(ExpressionStarter<Post> predicate, decimal? prevHotScore)
+        {
+            if (prevHotScore.HasValue)
+                predicate = predicate.And(x => x.HotScore < prevHotScore);
+
+            return predicate;
         }
 
         private ExpressionStarter<Post> CreateForumWhereClause(String forumName)
         {
             var predicate = PredicateBuilder.New<Post>(true);
-            
+
             if (ForumIsAll(forumName))
             {
                 // do all stuff
@@ -193,6 +246,16 @@ namespace ForumSiteCore.Business.Services
             }
 
             return predicate;
+        }
+
+        private Boolean ForumIsAll(String forumName)
+        {
+            return forumName.Equals("all", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private Boolean ForumIsHome(String forumName)
+        {
+            return forumName.Equals("home", StringComparison.OrdinalIgnoreCase);
         }
 
         private void MapDtos(String forumName, List<Post> posts, out ForumDto forumDto, out IList<PostDto> postDtos)
@@ -228,9 +291,9 @@ namespace ForumSiteCore.Business.Services
                 };
                 Log.Information("MapDtos => ForumIsHome");
             }
-            else 
+            else
             {
-                
+
                 if (posts.Count > 0)
                 {
                     var forum = posts.FirstOrDefault().Forum;
@@ -241,20 +304,55 @@ namespace ForumSiteCore.Business.Services
                     var forum = GetByName(forumName);
                     forumDto = Mapper.Map<ForumDto>(forum);
                 }
-                
+
             }
             postDtos = Mapper.Map<IList<PostDto>>(posts);
         }
 
-        private Boolean ForumIsAll(String forumName)
+        private ForumPostListingVM PrepareForumPostListing(string forumName, List<Post> posts, String postListingType)
         {
-            return forumName.Equals("all", StringComparison.OrdinalIgnoreCase);
-        }
+            ForumDto forumDto;
+            IList<PostDto> postDtos;
 
-        private Boolean ForumIsHome(String forumName)
+            MapDtos(forumName, posts, out forumDto, out postDtos);
+            _userActivitiesService.ProcessPosts(postDtos);
+            _userActivitiesService.ProcessForums(new List<ForumDto>{ forumDto });
+
+            var forumPostListing = new ForumPostListingVM
+            {
+                Forum = forumDto,
+                Posts = postDtos,
+                ForumListingType = postListingType,
+                Message = $"Retrieved {postListingType} items for forum {forumName}",
+                Status = "success"
+            };
+
+            return forumPostListing;
+        }
+        private Boolean UpdateForumSaveInactive(Int64 forumId, Int64 userId, Boolean inactive)
         {
-            return forumName.Equals("home", StringComparison.OrdinalIgnoreCase);
-        }
+            using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
+            {
+                try
+                {
+                    var forumSave = _context.ForumSaves.SingleOrDefault(x => x.ForumId.Equals(forumId) && x.UserId.Equals(userId));
+                    forumSave.Inactive = inactive;
+                    forumSave.Updated = DateTimeOffset.Now;
 
+                    if (_context.SaveChanges() == 1)
+                    {
+                        transaction.Commit();
+                        return true;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Failed to toggle ForumSave inactive state");
+                    transaction.Rollback();
+                }
+            }
+
+            return false;
+        }
     }
 }

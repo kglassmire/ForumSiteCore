@@ -13,8 +13,7 @@ namespace ForumSiteCore.DAL
         {
             var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-            builder.UseNpgsql("Server=localhost; Database=forumsitecore; UserId=postgres; Password=development");
-
+            builder.UseNpgsql("Server=localhost; Database=forumsitecore; UserId=postgres; Password=development", opts => opts.CommandTimeout((int)TimeSpan.FromMinutes(60).TotalSeconds));            
             return new ApplicationDbContext(builder.Options);
         }
     }

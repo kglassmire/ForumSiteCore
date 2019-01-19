@@ -16,8 +16,8 @@ namespace ForumSiteCore.Web.Utility
         {
             var settings = new JsonSerializerSettings
             {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Converters = new List<JsonConverter> { new StringEnumConverter() }
+                ContractResolver = new CamelCasePropertyNamesContractResolver()//,
+                //Converters = new List<JsonConverter> { new StringEnumConverter() }
             };
 
             return JsonConvert.SerializeObject(value, settings);

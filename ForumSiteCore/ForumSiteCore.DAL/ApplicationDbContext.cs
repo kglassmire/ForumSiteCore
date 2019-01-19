@@ -19,6 +19,7 @@ namespace ForumSiteCore.DAL
         public DbSet<Comment> Comments { get; set; }
         public DbSet<CommentVote> CommentVotes { get; set; }
         public DbSet<CommentSave> CommentSaves { get; set; }
+        public DbQuery<CommentTree> CommentsTree { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -32,10 +33,10 @@ namespace ForumSiteCore.DAL
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
-
             builder.HasPostgresExtension("citext");
             builder.Entity<Forum>().HasIndex(x => x.Name).IsUnique();
-
+            builder.Entity<Post>().HasIndex(x => new { x.ForumId, x.HotScore });
+            
             foreach (var entity in builder.Model.GetEntityTypes())
             {
                 // Replace table names

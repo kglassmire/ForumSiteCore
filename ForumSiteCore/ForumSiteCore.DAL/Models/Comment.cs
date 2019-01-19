@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,11 +20,12 @@ namespace ForumSiteCore.DAL.Models
         public Int64 CommentsCount { get; set; }
         public Int64 SavesCount { get; set; }
         public Decimal BestScore { get; set; }
-        public Decimal ControversyScore { get; set; }
+        public Decimal ControversyScore { get; set; }                
 
         public List<CommentSave> CommentSaves { get; set; }
         public List<CommentVote> CommentVotes { get; set; }
         public Comment Parent { get; set; }
+        public List<Comment> Children { get; set; }
         public Post Post { get; set; }
         public ApplicationUser User { get; set; }
     }

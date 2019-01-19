@@ -21,9 +21,8 @@ using ForumSiteCore.Web.Controllers;
 using CacheManager.Core;
 using ForumSiteCore.Business;
 using NSwag.AspNetCore;
-using WebMarkupMin.AspNetCore2;
-using WebMarkupMin.Core;
-using WebMarkupMin.NUglify;
+using Microsoft.AspNetCore.SpaServices.Webpack;
+using System.IO;
 
 namespace ForumSiteCore.Web
 {
@@ -47,42 +46,36 @@ namespace ForumSiteCore.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            //services.AddWebMarkupMin(options =>
-            //{
-            //    options.AllowMinificationInDevelopmentEnvironment = false;                
-            //})
-            //.AddHtmlMinification(options =>
-            //{
-            //    var settings = new HtmlMinificationSettings();
-            //    settings.WhitespaceMinificationMode = WhitespaceMinificationMode.Medium;
-            //    options.MinificationSettings = settings;
-                
-            //    options.JsMinifierFactory = new CrockfordJsMinifierFactory();
-            //    options.CssMinifierFactory = new KristensenCssMinifierFactory();                
-            //});
-
             services.AddScoped(typeof(ForumService));
             services.AddScoped(typeof(PostService));
             services.AddScoped(typeof(CommentService));
             services.AddScoped(typeof(UserActivitiesService));
             services.AddScoped(typeof(ForumApiController));
+            services.AddScoped<IEmailSender, EmailSender>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUserAccessor<Int64>, UserAccessor>();
+
             services.AddCacheManagerConfiguration(cfg => cfg
                 .WithMicrosoftMemoryCacheHandle()
                 .WithExpiration(ExpirationMode.Sliding, TimeSpan.FromSeconds(60)));
                 //.And.WithMicrosoftLogging(f => f.AddSerilog()));
             services.AddCacheManager();
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("ForumSiteCore.DAL")));
+
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()                
                 .AddDefaultTokenProviders();
-            services.AddScoped<IEmailSender, EmailSender>();
+            
             services.AddResponseCaching();
+
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginVMValidator>());
+            services.AddRouting(options => options.LowercaseUrls = true);
+
+            services.AddSwaggerDocument();
 
             ConfigureIdentity(services);
         }
@@ -92,7 +85,13 @@ namespace ForumSiteCore.Web
         {
             if (env.IsDevelopment())
             {
-                app.UseSwaggerUi3WithApiExplorer();
+                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+                {
+                    ProjectPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp"),
+                    HotModuleReplacement = true
+                });
+                app.UseSwagger();
+                app.UseSwaggerUi3();
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
