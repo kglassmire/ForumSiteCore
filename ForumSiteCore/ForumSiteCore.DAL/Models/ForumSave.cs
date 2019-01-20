@@ -12,7 +12,7 @@ namespace ForumSiteCore.DAL.Models
         public Int64 ForumId { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
-        public Boolean Inactive { get; set; }
+        public Boolean Saved { get; set; }
 
         public Forum Forum { get; set; }
         public ApplicationUser User { get; set; }

@@ -11,8 +11,9 @@ export class ForumService {
     return axios.get('/api/forums/' + name + '/' + forumListingType + '?after=' + after);
   }
 
-  save(id) {
-    var forumSaveVM = { forumId: id };
+  save(forum) {
+    console.log(`ForumSave is currently ${forum.userSaved} -- attempting to set to ${!forum.userSaved}`);
+    var forumSaveVM = { forumId: forum.id, saved: !forum.userSaved };
     return axios.post('/api/forums/save/', forumSaveVM);
   }
 }

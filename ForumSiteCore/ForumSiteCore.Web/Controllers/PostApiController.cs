@@ -21,11 +21,9 @@ namespace ForumSiteCore.Web.Controllers
         private readonly String[] _acceptedLookups = new []{ "best", "top", "new", "controversial" };
 
         private PostService _postService;
-        private IUserAccessor<Int64> _userAccessor;
         public PostApiController(PostService postService, IUserAccessor<Int64> userAccessor)
         {
             _postService = postService;
-            _userAccessor = userAccessor;
         }
 
         [HttpGet("{id}/comments/{lookup}")]
@@ -67,11 +65,11 @@ namespace ForumSiteCore.Web.Controllers
 
 
         [Authorize]
-        [HttpPost("save/{id}")]
-        [ProducesResponseType(typeof(ForumSaveVM), 200)]
-        public IActionResult Save([FromBody]ForumSaveVM model)
+        [HttpPost("save")]
+        [ProducesResponseType(typeof(PostSaveVM), 200)]
+        public IActionResult Save([FromBody]PostSaveVM model)
         {
-            var postSaveVM = _postService.Save(model.ForumId, _userAccessor.UserId);
+            var postSaveVM = _postService.Save(model.PostId, model.Saved);
 
             return Ok(postSaveVM);
         }
@@ -85,13 +83,7 @@ namespace ForumSiteCore.Web.Controllers
                 return BadRequest();
 
             PostVoteVM postVoteVm;
-            postVoteVm = _postService.Vote(model.PostId, _userAccessor.UserId, EnumTranslator.VoteTypeToDirection(model.VoteType));
-            
-            if (postVoteVm.Status == "error")
-            {
-                Log.Information("Post Upvote failed for post id: {Id} for user: {User}", model.PostId, _userAccessor.UserName);
-                return BadRequest();
-            }
+            postVoteVm = _postService.Vote(model.PostId, EnumTranslator.VoteTypeToDirection(model.VoteType));           
                 
             return Ok(postVoteVm);
         }        

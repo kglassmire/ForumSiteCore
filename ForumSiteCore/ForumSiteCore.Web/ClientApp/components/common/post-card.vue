@@ -76,7 +76,7 @@
         },
         methods: {
             savePost() {
-                postService.save(this.post.id)
+                postService.save(this.post)
                     .then(response => {
                         console.log(response.data.message);
                         this.post.userSaved = response.data.saved;
@@ -84,7 +84,6 @@
                     .catch(error => console.log(error));
             },
             vote(voteType) {                
-
                 var oldVoteType = this.post.userVote;
                 var newVoteType = voteType;
                 if (voteType === this.post.userVote) {
@@ -94,7 +93,7 @@
                 postService.vote(this.post.id, newVoteType)
                     .then(response => {
                         console.log(response.data.message);
-                        this.post.userVote = newVoteType;
+                        this.post.userVote = response.data.voteType;
                         postService.updateCounts(this.post, oldVoteType, newVoteType);
                     })
                     .catch(error => console.log(error));

@@ -1,8 +1,10 @@
 ﻿import axios from 'axios';
 
 export class PostService {
-  save(id) {
-    var postSaveVM = { postId: id };
+  save(post) {
+    console.log(`PostSave is currently ${post.userSaved} -- attempting to set to ${!post.userSaved}`);
+    var postSaveVM = { postId: post.id, saved: !post.userSaved };
+    console.log(postSaveVM);
     return axios.post('/api/posts/save/', postSaveVM);
   }
   vote(id, voteType) {

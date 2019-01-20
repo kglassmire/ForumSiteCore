@@ -65,9 +65,9 @@ namespace ForumSiteCore.Business.Services
                     }
                     else
                     {
-                        if (saving == commentSave.Inactive)
+                        if (saving == commentSave.Saved)
                         {
-                            commentSave.Inactive = !saving;
+                            commentSave.Saved = saving;
                             commentSave.Updated = DateTimeOffset.Now;
                         }
                     }

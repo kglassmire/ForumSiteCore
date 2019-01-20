@@ -35,12 +35,12 @@ namespace ForumSiteCore.Web.Controllers
         [HttpGet("{name}/{lookup}")]
         [ProducesResponseType(typeof(ForumPostListingVM), 200)]
         public IActionResult Get(String name, String lookup, Decimal? after = null)
-        {
-            if (!_acceptedLookups.Contains(lookup))
+        {            
+            if (!_acceptedLookups.Contains(lookup.ToLower()))
                 return BadRequest();
 
             ForumPostListingVM forumPostListingVM = null; ;
-            switch (lookup)
+            switch (lookup.ToLower())
             {
                 case LookupConsts.LookupHot:
                     forumPostListingVM = _forumService.Hot(name, 25, after);
@@ -60,11 +60,11 @@ namespace ForumSiteCore.Web.Controllers
         }
 
         [Authorize]
-        [HttpPost("save/{id}")]
+        [HttpPost("save")]
         [ProducesResponseType(typeof(ForumSaveVM), 200)]
         public IActionResult Save([FromBody]ForumSaveVM model)
         {
-            var forumSaveVM = _forumService.Save(model.ForumId);
+            var forumSaveVM = _forumService.Save(model.ForumId, model.Saved);
 
             return Ok(forumSaveVM);
         }

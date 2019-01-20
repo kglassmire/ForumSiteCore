@@ -6,9 +6,9 @@ using System.Text;
 
 namespace ForumSiteCore.Business.Validators
 {
-    public class VotePostVMValidator : AbstractValidator<PostVoteVM>
+    public class PostVoteVMValidator : AbstractValidator<PostVoteVM>
     {
-        public VotePostVMValidator()
+        public PostVoteVMValidator()
         {
             RuleFor(x => x.PostId)
                 .NotEmpty()

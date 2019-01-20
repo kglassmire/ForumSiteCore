@@ -32,6 +32,8 @@ namespace ForumSiteCore.Business.Services
 
         public ForumPostListingVM Controversial(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
+
+            _logger.LogDebug("Retrieving controversial forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
             predicate = predicate.And(x => x.Created >= howFarBack);
 
@@ -101,6 +103,7 @@ namespace ForumSiteCore.Business.Services
 
         public ForumPostListingVM Hot(String forumName, Int32 postLimit = 25, Decimal? prevHotScore = null)
         {
+            _logger.LogDebug("Retrieving hot forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
             predicate = BuildPagingWhereClauseHot(predicate, prevHotScore);
 
@@ -117,6 +120,7 @@ namespace ForumSiteCore.Business.Services
 
         public ForumPostListingVM New(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
+            _logger.LogDebug("Retrieving new forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
             predicate = predicate.And(x => x.Created >= howFarBack);
 
@@ -131,42 +135,38 @@ namespace ForumSiteCore.Business.Services
             return PrepareForumPostListing(forumName, posts, LookupConsts.LookupNew);
         }
 
-        public ForumSaveVM Save(Int64 forumId)
-        {
+        public ForumSaveVM Save(Int64 forumId, Boolean saved)
+        {           
             if (ForumIsHome(forumId) || ForumIsAll(forumId))
                 throw new Exception("Home and All cannot be saved");
 
-            // see if the user already saved this at one point
+            _logger.LogDebug("Saving Forum {Forum} with value {Saved}", forumId, saved);
+
             if (_userActivitiesService.GetUserForumsSaved().ContainsKey(forumId))
             {
-                // they did save it. Is the save "inactive"?
-                if (_userActivitiesService.GetUserForumsSaved()[forumId] == true)
+                _logger.LogDebug("ForumSave already exists, updating value...");
+                if (UpdateForumSave(forumId, saved))
                 {
-                    // set it to active
-                    if (UpdateForumSaveInactive(forumId, _userAccessor.UserId, false))
-                    {
-                        // update our cache item -- it's saved (active).
-                        _userActivitiesService.GetUserForumsSaved()[forumId] = false;
-                        return new ForumSaveVM { Status = "success", Saved = true, Message = "ForumSave existed and was set from inactive to active" };
-                    }
-                }
-                else // looks like they want to activate this postsave
-                {
-                    // take care of it in db
-                    if (UpdateForumSaveInactive(forumId, _userAccessor.UserId, true))
-                    {
-                        // update our cache item
-                        _userActivitiesService.GetUserForumsSaved()[forumId] = true;
-                        return new ForumSaveVM { Status = "success", Saved = false, Message = "ForumSave existed and was set from active to inactive" };
-                    }
+                    var forumSaveCache = _userActivitiesService.GetUserForumsSaved();
+                    forumSaveCache[forumId] = saved;
+                    _userActivitiesService.SetUserForumsSaved(forumSaveCache);
+
+                    ForumSaveVM savedForum = new ForumSaveVM { Status = "success", Saved = saved, Message = String.Format("ForumSave was updated and set to {0}", saved) };
+                    _logger.LogDebug("Forum {@Forum} saved", savedForum);
+                    return savedForum;
                 }
             }
             else
             {
-                if (AddForumSave(forumId, _userAccessor.UserId))
+                if (AddForumSave(forumId))
                 {
-                    _userActivitiesService.GetUserForumsSaved().Add(forumId, false);
-                    return new ForumSaveVM { Status = "success", Saved = true, Message = "ForumSave was created and set to active" };
+                    var forumSaveCache = _userActivitiesService.GetUserForumsSaved();
+                    forumSaveCache.Add(forumId, true);
+                    _userActivitiesService.SetUserForumsSaved(forumSaveCache);
+
+                    ForumSaveVM savedForum = new ForumSaveVM { Status = "success", Saved = saved, Message = "ForumSave was created and set to active" };
+                    _logger.LogDebug("Forum {@Forum} saved", savedForum);
+                    return savedForum;
                 }
             }
 
@@ -175,6 +175,7 @@ namespace ForumSiteCore.Business.Services
 
         public ForumPostListingVM Top(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
         {
+            _logger.LogDebug("Retrieving top forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
             predicate = predicate.And(x => x.Created >= howFarBack);
 
@@ -188,7 +189,7 @@ namespace ForumSiteCore.Business.Services
             return PrepareForumPostListing(forumName, posts, LookupConsts.LookupTop);
         }
 
-        private Boolean AddForumSave(Int64 forumId, Int64 userId)
+        private Boolean AddForumSave(Int64 forumId)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {
@@ -198,7 +199,7 @@ namespace ForumSiteCore.Business.Services
                     forumSave.Created = forumSave.Updated = DateTimeOffset.Now;
 
                     forumSave.ForumId = forumId;
-                    forumSave.UserId = userId;
+                    forumSave.UserId = _userAccessor.UserId;
 
                     _context.ForumSaves.Add(forumSave);
 
@@ -342,14 +343,14 @@ namespace ForumSiteCore.Business.Services
 
             return forumPostListing;
         }
-        private Boolean UpdateForumSaveInactive(Int64 forumId, Int64 userId, Boolean inactive)
+        private Boolean UpdateForumSave(Int64 forumId, Boolean save)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {
                 try
                 {
-                    var forumSave = _context.ForumSaves.SingleOrDefault(x => x.ForumId.Equals(forumId) && x.UserId.Equals(userId));
-                    forumSave.Inactive = inactive;
+                    var forumSave = _context.ForumSaves.SingleOrDefault(x => x.ForumId.Equals(forumId) && x.UserId.Equals(_userAccessor.UserId));
+                    forumSave.Saved = save;
                     forumSave.Updated = DateTimeOffset.Now;
 
                     if (_context.SaveChanges() == 1)

@@ -33,11 +33,7 @@ namespace ForumSiteCore.Web.Controllers
             if (String.IsNullOrWhiteSpace(lookup))
                 lookup = "hot";
 
-            if (lookup.Equals("hot", StringComparison.OrdinalIgnoreCase))
-            {
-                result = _forumApiController.Get(name, lookup);
-            }
-            
+            result = _forumApiController.Get(name, lookup);            
             var objectResult = (ObjectResult)result;
 
             if (objectResult.Value is ForumPostListingVM)

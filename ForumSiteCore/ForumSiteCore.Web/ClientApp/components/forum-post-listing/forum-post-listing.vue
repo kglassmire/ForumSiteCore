@@ -52,7 +52,7 @@
         },
         methods: {
             saveForum() {
-                forumService.save(this.forumPostListing.forum.id)
+                forumService.save(this.forumPostListing.forum)
                     .then(response => {
                         console.log(response.data.message);
                         this.forumPostListing.forum.userSaved = response.data.saved;

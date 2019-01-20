@@ -3,6 +3,7 @@ using ForumSiteCore.Business.Interfaces;
 using ForumSiteCore.Business.Models;
 using ForumSiteCore.DAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace ForumSiteCore.Business.Services
 {
     public class UserActivitiesService
     {
+        private readonly ILogger<UserActivitiesService> _logger;
         private const string UserCommentsCreatedCacheKeyTemplate = "user-{0}-comments-created";
         private const string UserCommentsSavedCacheKeyTemplate = "user-{0}-comments-saved";
         private const string UserCommentsVotedCacheKeyTemplate = "user-{0}-comments-voted";
@@ -22,11 +24,12 @@ namespace ForumSiteCore.Business.Services
         private ApplicationDbContext _context;
         private IUserAccessor<Int64> _userAccessor;
 
-        public UserActivitiesService(ApplicationDbContext context, ICacheManager<object> cache, IUserAccessor<Int64> userAccessor)
+        public UserActivitiesService(ApplicationDbContext context, ICacheManager<object> cache, IUserAccessor<Int64> userAccessor, ILogger<UserActivitiesService> logger)
         {
             _context = context;
             _cache = cache;
             _userAccessor = userAccessor;
+            _logger = logger;
         }
 
         public HashSet<long> GetUserCommentsCreated()
@@ -71,7 +74,7 @@ namespace ForumSiteCore.Business.Services
             //return (Dictionary<Int64, UserActivitiesVoteItem>)_cache.GetOrAdd(UserCommentsVotedCacheKey, valueFactory => UserCommentsVotedInternal(_userAccessor.UserId));
         }
 
-        public void SetUserCommentsVoted(Dictionary<long, UserActivitiesVoteItem> value)
+        public void SetUserCommentsVoted(Dictionary<long, Boolean?> value)
         {
             _cache.AddOrUpdate(UserCommentsVotedCacheKey, value, v => value);
         }
@@ -165,11 +168,7 @@ namespace ForumSiteCore.Business.Services
                     // is comment in comments saved
                     if (userCommentsSaved.ContainsKey(comment.Id))
                     {
-                        // is it active ?
-                        if (userCommentsSaved[comment.Id] == false)
-                        {
-                            comment.UserSaved = true;
-                        }                        
+                        comment.UserSaved = userCommentsSaved[comment.Id];
                     }
                 }
             }
@@ -186,12 +185,8 @@ namespace ForumSiteCore.Business.Services
             {
                 // is forum in forums saved
                 if (userForumsSaved.ContainsKey(forum.Id))
-                {
-                    // is it active ?
-                    if (userForumsSaved[forum.Id] == false)
-                    {
-                        forum.UserSaved = true;
-                    }
+                {                
+                    forum.UserSaved = userForumsSaved[forum.Id];                    
                 }
             }
         }
@@ -237,11 +232,7 @@ namespace ForumSiteCore.Business.Services
                 // is comment in comments saved
                 if (userPostsSaved.ContainsKey(post.Id))
                 {
-                    // is it active ?
-                    if (userPostsSaved[post.Id] == false)
-                    {
-                        post.UserSaved = true;
-                    }
+                    post.UserSaved = userPostsSaved[post.Id];                    
                 }
             }
         }
@@ -258,8 +249,8 @@ namespace ForumSiteCore.Business.Services
         {
             return _context.CommentSaves
                 .Where(x => x.UserId.Equals(userId))
-                .Select(x => new { x.CommentId, x.Inactive })
-                .ToDictionary(kvp => kvp.CommentId, kvp => kvp.Inactive);
+                .Select(x => new { x.CommentId, x.Saved })
+                .ToDictionary(kvp => kvp.CommentId, kvp => kvp.Saved);
         }
 
         private Dictionary<Int64, Boolean?> UserCommentsVotedInternal(Int64 userId, Int64? postId = null)
@@ -280,8 +271,8 @@ namespace ForumSiteCore.Business.Services
         {
             return _context.ForumSaves
                 .Where(x => x.UserId.Equals(userId))
-                .Select(x => new { x.ForumId, x.Inactive })
-                .ToDictionary(kvp => kvp.ForumId, kvp => kvp.Inactive);
+                .Select(x => new { x.ForumId, x.Saved })
+                .ToDictionary(kvp => kvp.ForumId, kvp => kvp.Saved);
         }
 
         private HashSet<Int64> UserPostsCreatedInternal(Int64 userId)
@@ -296,8 +287,8 @@ namespace ForumSiteCore.Business.Services
         {
             return _context.PostSaves
                 .Where(x => x.UserId.Equals(userId))
-                .Select(x => new { x.PostId, x.Inactive })
-                .ToDictionary(kvp => kvp.PostId, kvp => kvp.Inactive);
+                .Select(x => new { x.PostId, x.Saved })
+                .ToDictionary(kvp => kvp.PostId, kvp => kvp.Saved);
         }
 
         private Dictionary<Int64, Boolean?> UserPostsVotedInternal(Int64 userId)
@@ -308,17 +299,4 @@ namespace ForumSiteCore.Business.Services
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
     }
-
-
-    public class UserActivitiesVoteItem
-    {
-        public UserActivitiesVoteItem(Boolean? direction, Boolean inactive)
-        {
-            Direction = direction;
-            Inactive = inactive;
-        }
-
-        public Boolean? Direction { get; set; }
-        public Boolean Inactive { get; set; }
-    }  
 }
