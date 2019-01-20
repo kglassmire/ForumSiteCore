@@ -64,7 +64,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "cef2382906f321a72b90";
+/******/ 	var hotCurrentHash = "be1ea1ce240ce5529eb1";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1423,7 +1423,7 @@ eval("module.exports = function(module) {\n\tif (!module.webpackPolyfill) {\n\t\
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ForumService\", function() { return ForumService; });\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ \"./node_modules/axios/index.js\");\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);\n\r\n\r\nclass ForumService {\r\n\r\n  search(searchTerms) {\r\n    console.log('searching for: ' + searchTerms);\r\n    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/forums/search/' + searchTerms);\r\n  }\r\n\r\n  getPosts(name, forumListingType, after) {\r\n    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/forums/' + name + '/' + forumListingType + '?after=' + after);\r\n  }\r\n\r\n  save(id) {\r\n    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/forums/save/' + id);\r\n  }\r\n}\r\n\r\nconst forumService = new ForumService();\r\n/* harmony default export */ __webpack_exports__[\"default\"] = (forumService);\n\n//# sourceURL=webpack:///./services/forumservice.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ForumService\", function() { return ForumService; });\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ \"./node_modules/axios/index.js\");\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);\n\r\n\r\nclass ForumService {\r\n\r\n  search(searchTerms) {\r\n    console.log('searching for: ' + searchTerms);\r\n    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/forums/search/' + searchTerms);\r\n  }\r\n\r\n  getPosts(name, forumListingType, after) {\r\n    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/forums/' + name + '/' + forumListingType + '?after=' + after);\r\n  }\r\n\r\n  save(id) {\r\n    var forumSaveVM = { forumId: id };\r\n    return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/forums/save/', forumSaveVM);\r\n  }\r\n}\r\n\r\nconst forumService = new ForumService();\r\n/* harmony default export */ __webpack_exports__[\"default\"] = (forumService);\n\n//# sourceURL=webpack:///./services/forumservice.js?");
 
 /***/ }),
 
