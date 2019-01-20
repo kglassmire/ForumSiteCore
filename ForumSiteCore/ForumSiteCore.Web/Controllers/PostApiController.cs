@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using ForumSiteCore.Business.Consts;
+using ForumSiteCore.Business.Enums;
 
 namespace ForumSiteCore.Web.Controllers
 {    
@@ -68,42 +69,31 @@ namespace ForumSiteCore.Web.Controllers
         [Authorize]
         [HttpPost("save/{id}")]
         [ProducesResponseType(typeof(ForumSaveVM), 200)]
-        public IActionResult Save(Int64 id)
+        public IActionResult Save([FromBody]ForumSaveVM model)
         {
-            var postSaveVM = _postService.Save(id, _userAccessor.UserId);
+            var postSaveVM = _postService.Save(model.ForumId, _userAccessor.UserId);
 
             return Ok(postSaveVM);
         }
 
     
         [Authorize]
-        [HttpPost("vote/{id}")]
-        public IActionResult Vote([FromBody]VotePostVM model)
+        [HttpPost("vote")]
+        public IActionResult Vote([FromBody]PostVoteVM model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = false;
-            if (model.Direction == true)
-            {
-                result = _postService.Upvote(model.Id, _userAccessor.UserId);
-            }
-            else if (model.Direction == false)
-            {
-                result = _postService.Downvote(model.Id, _userAccessor.UserId);
-            }
-            else
-            {
-                result = false;
-            }
+            PostVoteVM postVoteVm;
+            postVoteVm = _postService.Vote(model.PostId, _userAccessor.UserId, EnumTranslator.VoteTypeToDirection(model.VoteType));
             
-            if (!result)
+            if (postVoteVm.Status == "error")
             {
-                Log.Information("Post Upvote failed for post id: {Id} for user: {User}", model.Id, _userAccessor.UserName);
+                Log.Information("Post Upvote failed for post id: {Id} for user: {User}", model.PostId, _userAccessor.UserName);
                 return BadRequest();
             }
                 
-            return Ok();
+            return Ok(postVoteVm);
         }        
     }
 }

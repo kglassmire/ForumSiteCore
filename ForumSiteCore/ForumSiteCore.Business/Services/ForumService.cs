@@ -137,16 +137,16 @@ namespace ForumSiteCore.Business.Services
                 throw new Exception("Home and All cannot be saved");
 
             // see if the user already saved this at one point
-            if (_userActivitiesService.UserForumsSaved.ContainsKey(forumId))
+            if (_userActivitiesService.GetUserForumsSaved().ContainsKey(forumId))
             {
                 // they did save it. Is the save "inactive"?
-                if (_userActivitiesService.UserForumsSaved[forumId] == true)
+                if (_userActivitiesService.GetUserForumsSaved()[forumId] == true)
                 {
                     // set it to active
                     if (UpdateForumSaveInactive(forumId, _userAccessor.UserId, false))
                     {
                         // update our cache item -- it's saved (active).
-                        _userActivitiesService.UserForumsSaved[forumId] = false;
+                        _userActivitiesService.GetUserForumsSaved()[forumId] = false;
                         return new ForumSaveVM { Status = "success", Saved = true, Message = "ForumSave existed and was set from inactive to active" };
                     }
                 }
@@ -156,7 +156,7 @@ namespace ForumSiteCore.Business.Services
                     if (UpdateForumSaveInactive(forumId, _userAccessor.UserId, true))
                     {
                         // update our cache item
-                        _userActivitiesService.UserForumsSaved[forumId] = true;
+                        _userActivitiesService.GetUserForumsSaved()[forumId] = true;
                         return new ForumSaveVM { Status = "success", Saved = false, Message = "ForumSave existed and was set from active to inactive" };
                     }
                 }
@@ -165,7 +165,7 @@ namespace ForumSiteCore.Business.Services
             {
                 if (AddForumSave(forumId, _userAccessor.UserId))
                 {
-                    _userActivitiesService.UserForumsSaved.Add(forumId, false);
+                    _userActivitiesService.GetUserForumsSaved().Add(forumId, false);
                     return new ForumSaveVM { Status = "success", Saved = true, Message = "ForumSave was created and set to active" };
                 }
             }

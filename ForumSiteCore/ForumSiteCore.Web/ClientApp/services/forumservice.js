@@ -12,7 +12,8 @@ export class ForumService {
   }
 
   save(id) {
-    return axios.post('/api/forums/save/' + id);
+    var forumSaveVM = { forumId: id };
+    return axios.post('/api/forums/save/', forumSaveVM);
   }
 }
 

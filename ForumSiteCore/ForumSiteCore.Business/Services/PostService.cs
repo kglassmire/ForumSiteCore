@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Diagnostics;
 using ForumSiteCore.Business.Consts;
+using ForumSiteCore.Business.Enums;
+using ForumSiteCore.Business.Interfaces;
 
 namespace ForumSiteCore.Business.Services
 {
@@ -19,10 +21,12 @@ namespace ForumSiteCore.Business.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly UserActivitiesService _userActivitiesService;
-        public PostService(ApplicationDbContext context, UserActivitiesService userActivitiesService)
+        private readonly IUserAccessor<Int64> _userAccessor;
+        public PostService(ApplicationDbContext context, UserActivitiesService userActivitiesService, IUserAccessor<Int64> userAccessor)
         {
             _context = context;
             _userActivitiesService = userActivitiesService;
+            _userAccessor = userAccessor;
         }        
 
         public Post Add(Post post)
@@ -36,7 +40,7 @@ namespace ForumSiteCore.Business.Services
                     _context.Posts.Add(post);
 
                     // user automatically upvotes their own post.
-                    Upvote(post.Id, post.UserId);
+                    Vote(post.Id, post.UserId, true);
                     result = _context.SaveChanges() == 1;
                     transaction.Commit();
                 }
@@ -88,10 +92,6 @@ namespace ForumSiteCore.Business.Services
             return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupControversial);
         }
 
-        public Boolean Downvote(Int64 postId, Int64 userId)
-        {
-            return Vote(postId, userId, false);
-        }
 
         public PostCommentListingVM New(Int64 id)
         {
@@ -115,16 +115,16 @@ namespace ForumSiteCore.Business.Services
         public PostSaveVM Save(Int64 postId, Int64 userId)
         {
             // see if the user already saved this at one point
-            if (_userActivitiesService.UserPostsSaved.ContainsKey(postId))
+            if (_userActivitiesService.GetUserPostsSaved().ContainsKey(postId))
             {
                 // they did save it. Is the save "inactive"?
-                if (_userActivitiesService.UserPostsSaved[postId] == true)
+                if (_userActivitiesService.GetUserPostsSaved()[postId] == true)
                 {
                     // set it to inactive
                     if (UpdatePostSaveInactive(postId, userId, false))
                     {
                         // update our cache item
-                        _userActivitiesService.UserPostsSaved[postId] = false;
+                        _userActivitiesService.GetUserPostsSaved()[postId] = false;
                         return new PostSaveVM { Status = "success", Saved = true, Message = "PostSave existed and was set from inactive to active" };
                     }
                 }
@@ -134,7 +134,7 @@ namespace ForumSiteCore.Business.Services
                     if (UpdatePostSaveInactive(postId, userId, true))
                     {
                         // update our cache item
-                        _userActivitiesService.UserPostsSaved[postId] = true;
+                        _userActivitiesService.GetUserPostsSaved()[postId] = true;
                         return new PostSaveVM { Status = "success", Saved = false, Message = "PostSave existed and was set from active to inactive" };
                     }
                 }
@@ -143,7 +143,7 @@ namespace ForumSiteCore.Business.Services
             {
                 if (AddPostSave(postId, userId))
                 {
-                    _userActivitiesService.UserPostsSaved.Add(postId, false);
+                    _userActivitiesService.GetUserPostsSaved().Add(postId, false);
                     return new PostSaveVM { Status = "success", Saved = true, Message = "PostSave was created and set to active" };
                 }
             }
@@ -170,48 +170,33 @@ namespace ForumSiteCore.Business.Services
             return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupTop);
         }
 
-        public Boolean Upvote(Int64 postId, Int64 userId)
+        public PostVoteVM Vote(Int64 postId, Int64 userId, Boolean? direction)
         {
-            return Vote(postId, userId, true);
-        }
+            if (_userActivitiesService.GetUserPostsVoted().ContainsKey(postId)) // post vote already exists
+            {                 
+                UpdatePostVoteDirection(postId, _userAccessor.UserId, direction);
+                // get cache values one more time
+                // set the direction on the specific item
+                // update the cache
+                var postsVoted = _userActivitiesService.GetUserPostsVoted();                
+                postsVoted[postId] = direction;                
+                _userActivitiesService.SetUserPostsVoted(postsVoted);
 
-        internal Boolean Vote(Int64 postId, Int64 userId, Boolean direction)
-        {
-            if (_userActivitiesService.UserPostsVoted.ContainsKey(postId))
-            {
-                // if the direction being voted is the same as what's stored, then they are trying to delete their vote -- set to inactive
-                if (_userActivitiesService.UserPostsVoted[postId].Direction == direction)
-                {
-                    Boolean curInactiveState = _userActivitiesService.UserPostsVoted[postId].Inactive;
-                    if (UpdatePostVoteInactive(postId, userId, !curInactiveState))
-                    {
-                        _userActivitiesService.UserPostsVoted[postId].Inactive = !curInactiveState;
-                        return true;
-                    }
-                }
-                else // change the direction -- if we're changing direction we're resetting active status.
-                {
-                    Boolean curDirection = _userActivitiesService.UserPostsVoted[postId].Direction;
-                    if (UpdatePostVoteDirection(postId, userId, !curDirection))
-                    {
-                        var data = _userActivitiesService.UserPostsVoted[postId];
-                        data.Direction = !curDirection;
-                        data.Inactive = false;
-
-                        return true;
-                    }
-                }
+                return new PostVoteVM { Message = "success on vote", PostId = postId, Status = "success" };
             }
-            else // no post vote exists -- time to add -- defaulting to inactive being false.
+            else // no post vote exists -- time to add
             {
                 if (AddPostVote(postId, userId, direction))
                 {
-                    _userActivitiesService.UserPostsVoted.Add(postId, new UserActivitiesVoteItem(direction, false));
-                    return false;
+                    var postsVoted = _userActivitiesService.GetUserPostsVoted();
+                    postsVoted.Add(postId, direction);
+                    _userActivitiesService.SetUserPostsVoted(postsVoted);
+
+                    return new PostVoteVM { Message = "Success on vote", PostId = postId, Status = "success" };
                 }
             }
 
-            return false;
+            return new PostVoteVM { Message = "Error voting post", PostId = postId, Status = "error" };
         }
 
         private Boolean AddPostSave(Int64 postId, Int64 userId)
@@ -244,7 +229,7 @@ namespace ForumSiteCore.Business.Services
             return false;
         }
 
-        private Boolean AddPostVote(Int64 postId, Int64 userId, Boolean direction)
+        private Boolean AddPostVote(Int64 postId, Int64 userId, Boolean? direction)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {
@@ -255,7 +240,6 @@ namespace ForumSiteCore.Business.Services
                     postVote.UserId = userId;
                     postVote.PostId = postId;
                     postVote.Direction = direction;
-                    postVote.Inactive = false;
 
                     _context.PostVotes.Add(postVote);
 
@@ -316,7 +300,7 @@ namespace ForumSiteCore.Business.Services
             return false;
         }
 
-        private Boolean UpdatePostVoteDirection(Int64 postId, Int64 userId, Boolean direction)
+        private Boolean UpdatePostVoteDirection(Int64 postId, Int64 userId, Boolean? direction)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {
@@ -336,32 +320,6 @@ namespace ForumSiteCore.Business.Services
                 {
                     Log.Error(e, "Failed to toggle PostVote direction");
                     transaction.Rollback();
-                }
-            }
-
-            return false;
-        }
-
-        private Boolean UpdatePostVoteInactive(Int64 postId, Int64 userId, Boolean inactive)
-        {
-            using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
-            {
-                try
-                {
-                    var postVote = _context.PostVotes.SingleOrDefault(x => x.PostId.Equals(postId) && x.UserId.Equals(userId));
-                    postVote.Inactive = inactive;
-                    postVote.Updated = DateTimeOffset.Now;
-
-                    if (_context.SaveChanges() == 1)
-                    {
-                        transaction.Commit();
-                        return true;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e, "Failed to toggle PostVote inactive state");
-                    transaction.Rollback();                    
                 }
             }
 

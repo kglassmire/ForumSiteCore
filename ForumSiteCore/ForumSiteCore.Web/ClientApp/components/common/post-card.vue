@@ -2,13 +2,13 @@
     <li class="post-card media border rounded p-2 m-1">
         <div class="d-inline-flex justify-content-between flex-column mr-3">
             <div class="text-center upvote">
-                <i title="upvote" v-on:click="upvote" class="fas fa-arrow-up fa-lg" v-bind:class="upvoted"></i>
+                <i title="upvote" v-on:click="vote(1)" class="fas fa-arrow-up fa-lg" v-bind:class="upvoted"></i>
             </div>            
             <h4 class="text-center" v-bind:class="voteCountClassObject">
                 <strong>{{ post.upvotes - post.downvotes }}</strong>
             </h4>
             <div class="text-center downvote">
-                <i title="downvote" v-on:click="downvote" class="fas fa-arrow-down fa-lg" v-bind:class="downvoted"></i>
+                <i title="downvote" v-on:click="vote(-1)" class="fas fa-arrow-down fa-lg" v-bind:class="downvoted"></i>
             </div>
         </div>
         <img class="align-self-start mr-3" alt="image">
@@ -62,12 +62,12 @@
                 return { 'upvoted': this.post.userVote === 1 }
             },
             downvoted() {
-                return { 'downvoted': this.post.userVote === 2 }
+                return { 'downvoted': this.post.userVote === -1 }
             },
             voteCountClassObject() {
                 return {
                     'upvoted': this.post.userVote === 1,
-                    'downvoted': this.post.userVote === 2
+                    'downvoted': this.post.userVote === -1
                 }
             },
             createdText() {
@@ -83,11 +83,21 @@
                     })
                     .catch(error => console.log(error));
             },
-            upvote() {
-                console.log('upvoted');
-            },
-            downvote() {
-                console.log('downvoted');
+            vote(voteType) {                
+
+                var oldVoteType = this.post.userVote;
+                var newVoteType = voteType;
+                if (voteType === this.post.userVote) {
+
+                    newVoteType = 0;
+                }                                
+                postService.vote(this.post.id, newVoteType)
+                    .then(response => {
+                        console.log(response.data.message);
+                        this.post.userVote = newVoteType;
+                        postService.updateCounts(this.post, oldVoteType, newVoteType);
+                    })
+                    .catch(error => console.log(error));
             },
             togglePostDescription() {
                 return this.showPostDescription = !this.showPostDescription;

@@ -25,7 +25,7 @@ namespace ForumSiteCore.Business.Models
         public Decimal BestScore { get; set; }
         public Decimal ControversyScore { get; set; }
         public String UserName { get; set; }
-        public VotedType UserVote { get; set; }
+        public VoteType UserVote { get; set; }
         public Boolean UserCreated { get; set; }
         public Boolean UserSaved { get; set; }
 
