@@ -9,6 +9,7 @@
     <Compile Remove="Migrations\20190102044516_AddHotScoreForumIdIndex.cs" />
     <Compile Remove="Migrations\20190119015252_AddNullablePostIdToCommentVote.cs" />
     <Compile Remove="Migrations\20190119021942_CreateAllTriggers.cs" />
+    <Compile Remove="Migrations\20190120051627_ConvertVotesToByte.cs" />
   </ItemGroup>
 
   <ItemGroup>

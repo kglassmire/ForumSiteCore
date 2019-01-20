@@ -5,9 +5,9 @@ using System.Text;
 
 namespace ForumSiteCore.Business.ViewModels
 {
-    public class VotePostVM
+    public class PostVoteVM : BaseVM
     {
-        public Int64 Id { get; set; }
-        public Boolean Direction { get; set; }        
+        public Int64 PostId { get; set; }
+        public VoteType VoteType { get; set; }        
     }
 }

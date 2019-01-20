@@ -62,9 +62,9 @@ namespace ForumSiteCore.Web.Controllers
         [Authorize]
         [HttpPost("save/{id}")]
         [ProducesResponseType(typeof(ForumSaveVM), 200)]
-        public IActionResult Save(Int64 id)
+        public IActionResult Save([FromBody]ForumSaveVM model)
         {
-            var forumSaveVM = _forumService.Save(id);
+            var forumSaveVM = _forumService.Save(model.ForumId);
 
             return Ok(forumSaveVM);
         }

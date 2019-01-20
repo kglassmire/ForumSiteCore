@@ -6,14 +6,14 @@ using System.Text;
 
 namespace ForumSiteCore.Business.Validators
 {
-    public class VotePostVMValidator : AbstractValidator<VotePostVM>
+    public class VotePostVMValidator : AbstractValidator<PostVoteVM>
     {
         public VotePostVMValidator()
         {
-            RuleFor(x => x.Id)
+            RuleFor(x => x.PostId)
                 .NotEmpty()
                 .WithMessage("Post Id is required");
-            RuleFor(x => x.Direction)
+            RuleFor(x => x.VoteType)
                 .NotEmpty()
                 .WithMessage("Vote Direction is required");
         }

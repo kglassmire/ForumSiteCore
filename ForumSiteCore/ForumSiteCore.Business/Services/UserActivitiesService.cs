@@ -36,7 +36,7 @@ namespace ForumSiteCore.Business.Services
 
         public void SetUserCommentsCreated(HashSet<long> value)
         {
-            _cache.Put(UserCommentsCreatedCacheKey, value);
+            _cache.AddOrUpdate(UserCommentsCreatedCacheKey, value, v => value);
         }
 
         public Dictionary<long, bool> GetUserCommentsSaved()
@@ -46,26 +46,26 @@ namespace ForumSiteCore.Business.Services
 
         public void SetUserCommentsSaved(Dictionary<long, bool> value)
         {
-            _cache.Put(UserCommentsSavedCacheKey, value);
+            _cache.AddOrUpdate(UserCommentsSavedCacheKey, value, v => value);
         }
 
-        public Dictionary<long, UserActivitiesVoteItem> GetUserCommentsVoted(Int64? postId)
+        public Dictionary<long, Boolean?> GetUserCommentsVoted(Int64? postId)
         {
-            Dictionary<Int64, UserActivitiesVoteItem> castedCacheItem = null;
+            Dictionary<Int64, Boolean?> castedCacheItem = null;
             var cacheItems = _cache.Get(UserCommentsVotedCacheKey);
             if (cacheItems == null)
             {
-                castedCacheItem = new Dictionary<long, UserActivitiesVoteItem>();
+                castedCacheItem = new Dictionary<long, Boolean?>();
             }
             else
             {
-                castedCacheItem = (Dictionary<long, UserActivitiesVoteItem>)cacheItems;
+                castedCacheItem = (Dictionary<long, Boolean?>)cacheItems;
             }
                 
 
             var newItems = UserCommentsVotedInternal(_userAccessor.UserId, postId);
-            var latestCacheItems = Utility.CollectionExtensions.MergeDictionaries<Int64, UserActivitiesVoteItem>(new List<Dictionary<Int64, UserActivitiesVoteItem>>{ castedCacheItem, newItems});
-            _cache.AddOrUpdate(UserCommentsVotedCacheKey, latestCacheItems, x => latestCacheItems, 5);
+            var latestCacheItems = Utility.CollectionExtensions.MergeDictionaries<Int64, Boolean?>(new List<Dictionary<Int64, Boolean?>>{ castedCacheItem, newItems});
+            _cache.AddOrUpdate(UserCommentsVotedCacheKey, latestCacheItems, x => latestCacheItems);
 
             return latestCacheItems;
             //return (Dictionary<Int64, UserActivitiesVoteItem>)_cache.GetOrAdd(UserCommentsVotedCacheKey, valueFactory => UserCommentsVotedInternal(_userAccessor.UserId));
@@ -73,31 +73,47 @@ namespace ForumSiteCore.Business.Services
 
         public void SetUserCommentsVoted(Dictionary<long, UserActivitiesVoteItem> value)
         {
-            _cache.Put(UserCommentsVotedCacheKey, value);
+            _cache.AddOrUpdate(UserCommentsVotedCacheKey, value, v => value);
         }
 
-        public Dictionary<Int64, Boolean> UserForumsSaved
+        public Dictionary<long, bool> GetUserForumsSaved()
         {
-            get => (Dictionary<Int64, Boolean>)_cache.GetOrAdd(UserForumsSavedCacheKey, valueFactory => UserForumsSavedInternal(_userAccessor.UserId));
-            set => _cache.Put(UserForumsSavedCacheKey, value);
+            return (Dictionary<Int64, Boolean>)_cache.GetOrAdd(UserForumsSavedCacheKey, valueFactory => UserForumsSavedInternal(_userAccessor.UserId));
         }
 
-        public HashSet<Int64> UserPostsCreated
+        public void SetUserForumsSaved(Dictionary<long, bool> value)
         {
-            get => (HashSet<Int64>)_cache.GetOrAdd(UserPostsCreatedCacheKey, valueFactory => UserPostsCreatedInternal(_userAccessor.UserId));
-            set => _cache.Put(UserPostsCreatedCacheKey, value);
+            _cache.AddOrUpdate(UserForumsSavedCacheKey, value, v => value);
         }
 
-        public Dictionary<Int64, Boolean> UserPostsSaved
+        public HashSet<long> GetUserPostsCreated()
         {
-            get => (Dictionary<Int64, Boolean>)_cache.GetOrAdd(UserPostsSavedCacheKey, valueFactory => UserPostsSavedInternal(_userAccessor.UserId));
-            set => _cache.Put(UserPostsSavedCacheKey, value);
+            return (HashSet<Int64>)_cache.GetOrAdd(UserPostsCreatedCacheKey, valueFactory => UserPostsCreatedInternal(_userAccessor.UserId));
         }
 
-        public Dictionary<Int64, UserActivitiesVoteItem> UserPostsVoted
+        public void SetUserPostsCreated(HashSet<long> value)
         {
-            get => (Dictionary<Int64, UserActivitiesVoteItem>)_cache.GetOrAdd(UserPostsVotedCacheKey, valueFactory => UserPostsVotedInternal(_userAccessor.UserId));
-            set => _cache.Put(UserPostsVotedCacheKey, value);
+            _cache.AddOrUpdate(UserPostsCreatedCacheKey, value, v => value);
+        }
+
+        public Dictionary<long, bool> GetUserPostsSaved()
+        {
+            return (Dictionary<Int64, Boolean>)_cache.GetOrAdd(UserPostsSavedCacheKey, valueFactory => UserPostsSavedInternal(_userAccessor.UserId));
+        }
+
+        public void SetUserPostsSaved(Dictionary<long, bool> value)
+        {
+            _cache.AddOrUpdate(UserPostsSavedCacheKey, value, v => value);
+        }
+
+        public Dictionary<long, bool?> GetUserPostsVoted()
+        {
+            return (Dictionary<Int64, Boolean?>)_cache.GetOrAdd(UserPostsVotedCacheKey, valueFactory => UserPostsVotedInternal(_userAccessor.UserId));
+        }
+
+        public void SetUserPostsVoted(Dictionary<long, bool?> value)
+        {
+            _cache.AddOrUpdate(UserPostsVotedCacheKey, value, v => value);
         }
 
         private string UserCommentsCreatedCacheKey => String.Format(UserCommentsCreatedCacheKeyTemplate, _userAccessor.UserId);
@@ -123,20 +139,20 @@ namespace ForumSiteCore.Business.Services
                 if (userCommentsVoted.ContainsKey(comment.Id))
                 {
                     // if it is active then check the direction
-                    if (userCommentsVoted[comment.Id].Inactive == false)
+                    if (userCommentsVoted[comment.Id].HasValue)
                     {
-                        if (userCommentsVoted[comment.Id].Direction == true)
+                        if (userCommentsVoted[comment.Id] == true)
                         {
-                            comment.UserVote = Enums.VotedType.Up;
+                            comment.UserVote = Enums.VoteType.Up;
                         }
                         else
                         {
-                            comment.UserVote = Enums.VotedType.Down;
+                            comment.UserVote = Enums.VoteType.Down;
                         }
                     }
                     else // otherwise it "has no vote"
                     {
-                        comment.UserVote = Enums.VotedType.None;
+                        comment.UserVote = Enums.VoteType.None;
                     }
 
                    
@@ -164,7 +180,7 @@ namespace ForumSiteCore.Business.Services
             if (!_userAccessor.User.Identity.IsAuthenticated)
                 return;
 
-            var userForumsSaved = UserForumsSaved;
+            var userForumsSaved = GetUserForumsSaved();
 
             foreach(var forum in forums)
             {
@@ -185,9 +201,9 @@ namespace ForumSiteCore.Business.Services
             if (!_userAccessor.User.Identity.IsAuthenticated)
                 return;
 
-            var userPostsVoted = UserPostsVoted;
-            var userPostsSaved = UserPostsSaved;
-            var userPostsCreated = UserPostsCreated;
+            var userPostsVoted = GetUserPostsVoted();
+            var userPostsSaved = GetUserPostsSaved();
+            var userPostsCreated = GetUserPostsCreated();
 
             foreach (var post in posts)
             {
@@ -195,20 +211,20 @@ namespace ForumSiteCore.Business.Services
                 if (userPostsVoted.ContainsKey(post.Id))
                 {
                     // if it is active then check the direction
-                    if (userPostsVoted[post.Id].Inactive == false)
+                    if (userPostsVoted[post.Id].HasValue)
                     {
-                        if (userPostsVoted[post.Id].Direction == true)
+                        if (userPostsVoted[post.Id] == true)
                         {
-                            post.UserVote = Enums.VotedType.Up;
+                            post.UserVote = Enums.VoteType.Up;
                         }
                         else
                         {
-                            post.UserVote = Enums.VotedType.Down;
+                            post.UserVote = Enums.VoteType.Down;
                         }
                     }
                     else // otherwise it "has no vote"
                     {
-                        post.UserVote = Enums.VotedType.None;
+                        post.UserVote = Enums.VoteType.None;
                     }
                 }
 
@@ -246,17 +262,17 @@ namespace ForumSiteCore.Business.Services
                 .ToDictionary(kvp => kvp.CommentId, kvp => kvp.Inactive);
         }
 
-        private Dictionary<Int64, UserActivitiesVoteItem> UserCommentsVotedInternal(Int64 userId, Int64? postId = null)
+        private Dictionary<Int64, Boolean?> UserCommentsVotedInternal(Int64 userId, Int64? postId = null)
         {
             if (postId.HasValue)
                 return _context.CommentVotes
                     .Where(x => x.UserId.Equals(userId) && x.PostId.Equals(postId))
-                    .Select(x => new KeyValuePair<Int64, UserActivitiesVoteItem>(x.CommentId, new UserActivitiesVoteItem(x.Direction, x.Inactive)))
-                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);            
+                    .Select(x => new KeyValuePair<Int64, Boolean?>(x.CommentId, x.Direction))
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             return _context.CommentVotes
                 .Where(x => x.UserId.Equals(userId))
-                .Select(x => new KeyValuePair<Int64, UserActivitiesVoteItem>(x.CommentId, new UserActivitiesVoteItem(x.Direction, x.Inactive)))
+                .Select(x => new KeyValuePair<Int64, Boolean?>(x.CommentId, x.Direction))
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
@@ -284,11 +300,11 @@ namespace ForumSiteCore.Business.Services
                 .ToDictionary(kvp => kvp.PostId, kvp => kvp.Inactive);
         }
 
-        private Dictionary<Int64, UserActivitiesVoteItem> UserPostsVotedInternal(Int64 userId)
+        private Dictionary<Int64, Boolean?> UserPostsVotedInternal(Int64 userId)
         {
             return _context.PostVotes
                 .Where(x => x.UserId.Equals(userId))
-                .Select(x => new KeyValuePair<Int64, UserActivitiesVoteItem>(x.PostId, new UserActivitiesVoteItem(x.Direction, x.Inactive)))
+                .Select(x => new KeyValuePair<Int64, Boolean?>(x.PostId, x.Direction))
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
     }
@@ -296,13 +312,13 @@ namespace ForumSiteCore.Business.Services
 
     public class UserActivitiesVoteItem
     {
-        public UserActivitiesVoteItem(Boolean direction, Boolean inactive)
+        public UserActivitiesVoteItem(Boolean? direction, Boolean inactive)
         {
             Direction = direction;
             Inactive = inactive;
         }
 
-        public Boolean Direction { get; set; }
+        public Boolean? Direction { get; set; }
         public Boolean Inactive { get; set; }
     }  
 }

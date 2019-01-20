@@ -4,10 +4,10 @@ using System.Text;
 
 namespace ForumSiteCore.Business.Enums
 {
-    public enum VotedType
+    public enum VoteType
     {
-        None,
-        Up,
-        Down
+        None = 0,
+        Up = 1,
+        Down = -1
     }
 }

@@ -11,10 +11,12 @@ namespace ForumSiteCore.Business.Services
     public class CommentService
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserActivitiesService _userActivitiesService;
 
-        public CommentService(ApplicationDbContext context)
+        public CommentService(ApplicationDbContext context, UserActivitiesService userActivitiesService)
         {
             _context = context;
+            _userActivitiesService = userActivitiesService;
         }
 
         public Comment Add(Comment comment)
@@ -28,7 +30,7 @@ namespace ForumSiteCore.Business.Services
                     _context.Comments.Add(comment);
 
                     // user automatically upvotes their own post.
-                    Upvote(comment.Id, comment.UserId);
+                    Vote(comment.Id, comment.UserId, true);
                     result = _context.SaveChanges() == 1;
                     transaction.Commit();
                 }
@@ -84,61 +86,9 @@ namespace ForumSiteCore.Business.Services
             }
         }
 
-        public Boolean Downvote(Int64 commentId, Int64 userId)
+        public Boolean Vote(Int64 postId, Int64 userId, Boolean direction)
         {
-            return Vote(commentId, userId, false);
-        }
-
-        public Boolean Upvote(Int64 commentId, Int64 userId)
-        {
-            return Vote(commentId, userId, true);
-        }
-
-        internal Boolean Vote(Int64 commentId, Int64 userId, Boolean direction)
-        {
-            using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
-            {
-                var result = false;
-                try
-                {
-                    var commentVote = _context.CommentVotes.SingleOrDefault(x => x.CommentId.Equals(commentId) && x.UserId.Equals(userId));
-                    if (commentVote == null)
-                    {
-                        commentVote = new CommentVote();
-                        commentVote.Created = commentVote.Updated = DateTimeOffset.Now;
-                        commentVote.UserId = userId;
-                        commentVote.CommentId = commentId;
-                        commentVote.Direction = direction;
-
-                        _context.CommentVotes.Add(commentVote);
-                    }
-                    else
-                    {
-                        if (commentVote.Direction == direction)
-                        {
-                            commentVote.Inactive = !commentVote.Inactive;
-                            commentVote.Updated = DateTimeOffset.Now;
-                        }
-                        else
-                        {
-                            commentVote.Direction = direction;
-                            commentVote.Updated = DateTimeOffset.Now;
-                        }
-                    }
-                    result = _context.SaveChanges() == 1;
-                    transaction.Commit();
-                }
-                catch (Exception e)
-                {
-                    result = false;
-                    Log.Error(e, "Error while voting comment");
-                    transaction.Rollback();
-                    
-                }
-
-                return result;
-            }
-
+            return false;
         }
     }
 }
