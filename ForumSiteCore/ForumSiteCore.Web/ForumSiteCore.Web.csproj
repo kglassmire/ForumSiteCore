@@ -5,9 +5,11 @@
     <UserSecretsId>aspnet-ForumSiteCore.Web-F1B5FCCF-9352-4C00-AF04-1A3766C1DB25</UserSecretsId>
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
+  <!--
   <PropertyGroup>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
+  -->
 
   <ItemGroup>
     <PackageReference Include="CacheManager.Microsoft.Extensions.Configuration" Version="1.2.0" />

@@ -35,7 +35,7 @@ namespace ForumSiteCore.Web.Controllers
 
             if (lookup.Equals("hot", StringComparison.OrdinalIgnoreCase))
             {
-                result = _forumApiController.Hot(name);
+                result = _forumApiController.Get(name, lookup);
             }
             
             var objectResult = (ObjectResult)result;

@@ -11,6 +11,7 @@ using Serilog;
 using ForumSiteCore.Business.Responses;
 using ForumSiteCore.Utility;
 using ForumSiteCore.Business.Interfaces;
+using ForumSiteCore.Business.Consts;
 
 namespace ForumSiteCore.Web.Controllers
 {
@@ -18,6 +19,8 @@ namespace ForumSiteCore.Web.Controllers
     [ApiController]
     public class ForumApiController : ControllerBase
     {
+        private readonly String[] _acceptedLookups = new[] { "hot", "top", "new", "controversial" };
+
         private readonly ForumService _forumService;
         private readonly UserActivitiesService _userActivitiesService;
 
@@ -25,6 +28,35 @@ namespace ForumSiteCore.Web.Controllers
         {
             _forumService = forumService;
             _userActivitiesService = userActivitiesService;
+        }
+                      
+        
+        [ResponseCache(VaryByQueryKeys = new[] { "name", "lookup", "after" }, Duration = 10, Location = ResponseCacheLocation.Any)]
+        [HttpGet("{name}/{lookup}")]
+        [ProducesResponseType(typeof(ForumPostListingVM), 200)]
+        public IActionResult Get(String name, String lookup, Decimal? after = null)
+        {
+            if (!_acceptedLookups.Contains(lookup))
+                return BadRequest();
+
+            ForumPostListingVM forumPostListingVM = null; ;
+            switch (lookup)
+            {
+                case LookupConsts.LookupHot:
+                    forumPostListingVM = _forumService.Hot(name, 25, after);
+                    break;
+                case LookupConsts.LookupNew:
+                    forumPostListingVM = _forumService.New(new DateTimeOffset(new DateTime(2010, 1, 1)), name);
+                    break;
+                case LookupConsts.LookupTop:
+                    forumPostListingVM = _forumService.Top(new DateTimeOffset(new DateTime(2010, 1, 1)), name);
+                    break;
+                case LookupConsts.LookupControversial:
+                    forumPostListingVM = _forumService.Controversial(new DateTimeOffset(new DateTime(2010, 1, 1)), name);
+                    break;
+            }
+
+            return Ok(forumPostListingVM);
         }
 
         [Authorize]
@@ -37,17 +69,6 @@ namespace ForumSiteCore.Web.Controllers
             return Ok(forumSaveVM);
         }
 
-        [HttpGet("{name}/controversial")]
-        [ProducesResponseType(typeof(ForumPostListingVM), 200)]
-        public IActionResult Controversial(String name)
-        {
-            Log.Debug("loading /f/Controversial/{Name}...", name);
-
-            ForumPostListingVM forumPostListing = _forumService.Controversial(DateTime.Now.AddYears(-5), name, 25);
-
-            return Ok(forumPostListing);
-        }
-
         [HttpGet("search/{search}")]
         [ResponseCache(VaryByQueryKeys = new[] { "*" }, Duration = 60, Location = ResponseCacheLocation.Any)]
         [ProducesResponseType(typeof(ForumSearchVM), 200)]
@@ -56,39 +77,6 @@ namespace ForumSiteCore.Web.Controllers
             var searchResults = _forumService.ForumSearch(search);
 
             return Ok(searchResults);
-        }
-
-        [HttpGet("{name}/hot")]
-        [ProducesResponseType(typeof(ForumPostListingVM), 200)]
-        public IActionResult Hot(String name, Decimal? after = null)
-        {
-            Log.Debug("loading /f/Hot/{Name}...", name);
-
-            ForumPostListingVM forumPostListing = _forumService.Hot(name, 25, after);
-
-            return Ok(forumPostListing);
-        }
-
-        [HttpGet("{name}/new")]
-        [ProducesResponseType(typeof(ForumPostListingVM), 200)]
-        public IActionResult New(String name)
-        {
-            Log.Debug("loading /f/New/{Name}...", name);
-
-            ForumPostListingVM forumPostListing = _forumService.New(DateTime.Now.AddYears(-10), name, 25);
-
-            return Ok(forumPostListing);
-        }
-
-        [HttpGet("{name}/top")]
-        [ProducesResponseType(typeof(ForumPostListingVM), 200)]
-        public IActionResult Top(String name)
-        {
-            Log.Debug("loading /f/Top/{Name}...", name);
-
-            ForumPostListingVM forumPostListing = _forumService.Top(DateTime.Now.AddYears(-10), name, 25);
-
-            return Ok(forumPostListing);
         }
     }
 }
