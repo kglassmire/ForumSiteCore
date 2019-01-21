@@ -3,7 +3,15 @@
 The goal of this web project is to create a clone of a fairly data intensive application that I'm familiar with (Reddit / Voat) and duplicate it with an ASP.NET Core stack.
 
 ## Reasons
-I don't generally get to work with open-source technologies in my day-to-day. I come from a SQL Server environment. I'd like to know more about other database platforms and if they could work for me in future personal projects and employment opportunities.
+I don't generally get to work with open-source technologies in my day-to-day. 
+
+I come from a SQL Server environment. I'd like to know more about other database platforms and if they could work for me in future personal projects and employment opportunities. Hence why I chose PostgreSQL. 
+
+I wanted to try a front-end technology that doesn't force me into making a single page application. Knockout.js used to be the go-to for this time of implementation but it is fairly outdated. Vue.js seems to fit the bill.
+
+I have very little experience with webpack and I wanted to configure a project with it from scratch so I understood it better.
+
+I want to explore application data caching mechanisms with distributed memory cache with Redis.
 
 ## Projects
 Inside of this ASP.NET solution there are multiple projects
