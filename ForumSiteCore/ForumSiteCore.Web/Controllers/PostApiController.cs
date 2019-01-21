@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using ForumSiteCore.Business.Consts;
 using ForumSiteCore.Business.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace ForumSiteCore.Web.Controllers
 {    
@@ -20,10 +21,13 @@ namespace ForumSiteCore.Web.Controllers
     {
         private readonly String[] _acceptedLookups = new []{ "best", "top", "new", "controversial" };
 
-        private PostService _postService;
-        public PostApiController(PostService postService, IUserAccessor<Int64> userAccessor)
+        private readonly PostService _postService;
+        private readonly ILogger<PostApiController> _logger;
+
+        public PostApiController(PostService postService, IUserAccessor<Int64> userAccessor, ILogger<PostApiController> logger)
         {
             _postService = postService;
+            _logger = logger;
         }
 
         [HttpGet("{id}/comments/{lookup}")]
@@ -57,7 +61,10 @@ namespace ForumSiteCore.Web.Controllers
         public IActionResult Create([FromBody]CreatePostVM model)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState.Errors());
+            }
+                
             
 
             return Ok();
@@ -67,6 +74,7 @@ namespace ForumSiteCore.Web.Controllers
         [Authorize]
         [HttpPost("save")]
         [ProducesResponseType(typeof(PostSaveVM), 200)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), 400)]
         public IActionResult Save([FromBody]PostSaveVM model)
         {
             var postSaveVM = _postService.Save(model.PostId, model.Saved);
@@ -77,11 +85,10 @@ namespace ForumSiteCore.Web.Controllers
     
         [Authorize]
         [HttpPost("vote")]
+        [ProducesResponseType(typeof(PostSaveVM), 200)]        
+        [ProducesResponseType(typeof(ValidationProblemDetails), 404)]
         public IActionResult Vote([FromBody]PostVoteVM model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-
             PostVoteVM postVoteVm;
             postVoteVm = _postService.Vote(model.PostId, EnumTranslator.VoteTypeToDirection(model.VoteType));           
                 

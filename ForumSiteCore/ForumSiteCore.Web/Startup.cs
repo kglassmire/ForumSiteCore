@@ -23,6 +23,8 @@ using ForumSiteCore.Business;
 using NSwag.AspNetCore;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using System.IO;
+using FluentValidation.AspNetCore;
+using ForumSiteCore.Business.Validators;
 
 namespace ForumSiteCore.Web
 {
@@ -71,8 +73,9 @@ namespace ForumSiteCore.Web
             services.AddResponseCaching();
 
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginVMValidator>());
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginVMValidator>());
+
             services.AddRouting(options => options.LowercaseUrls = true);
 
             services.AddSwaggerDocument();

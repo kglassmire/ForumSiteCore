@@ -28,8 +28,7 @@ namespace ForumSiteCore.Web.Controllers
         {
             _forumService = forumService;
             _userActivitiesService = userActivitiesService;
-        }
-                      
+        }                      
         
         [ResponseCache(VaryByQueryKeys = new[] { "name", "lookup", "after" }, Duration = 10, Location = ResponseCacheLocation.Any)]
         [HttpGet("{name}/{lookup}")]
@@ -62,6 +61,7 @@ namespace ForumSiteCore.Web.Controllers
         [Authorize]
         [HttpPost("save")]
         [ProducesResponseType(typeof(ForumSaveVM), 200)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), 400)]
         public IActionResult Save([FromBody]ForumSaveVM model)
         {
             var forumSaveVM = _forumService.Save(model.ForumId, model.Saved);
@@ -71,7 +71,7 @@ namespace ForumSiteCore.Web.Controllers
 
         [HttpGet("search/{search}")]
         [ResponseCache(VaryByQueryKeys = new[] { "*" }, Duration = 60, Location = ResponseCacheLocation.Any)]
-        [ProducesResponseType(typeof(ForumSearchVM), 200)]
+        [ProducesResponseType(typeof(ForumSearchVM), 200)]        
         public IActionResult ForumSearch(String search)
         {
             var searchResults = _forumService.ForumSearch(search);
