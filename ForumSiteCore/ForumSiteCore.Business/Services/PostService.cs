@@ -64,7 +64,7 @@ namespace ForumSiteCore.Business.Services
             _logger.LogDebug("Retrieving best post comment listing for {Post}", id);
 
             var comments = _context.Comments                
-                .Include(x => x.Post)
+                .Include(x => x.Post).ThenInclude(x => x.Forum)
                 .Include(x => x.User)
                 .Where(x => x.PostId.Equals(id))
                 .OrderByDescending(x => x.BestScore)
@@ -100,7 +100,7 @@ namespace ForumSiteCore.Business.Services
 
 
             var comments = _context.Comments
-                .Include(x => x.Post)
+                .Include(x => x.Post).ThenInclude(x => x.Forum)
                 .Include(x => x.User)
                 .Where(x => x.PostId.Equals(id))
                 .OrderByDescending(x => x.ControversyScore)
@@ -137,7 +137,7 @@ namespace ForumSiteCore.Business.Services
             _logger.LogDebug("Retrieving new post comment listing for {Post}", id);
 
             var comments = _context.Comments
-                .Include(x => x.Post)
+                .Include(x => x.Post).ThenInclude(x => x.Forum)
                 .Include(x => x.User)
                 .Where(x => x.PostId.Equals(id))
                 .OrderByDescending(x => x.Created)
@@ -202,7 +202,7 @@ namespace ForumSiteCore.Business.Services
             _logger.LogDebug("Retrieving top post comment listing for {Post}", id);
 
             var comments = _context.Comments
-                .Include(x => x.Post)
+                .Include(x => x.Post).ThenInclude(x => x.Forum)
                 .Include(x => x.User)
                 .Where(x => x.PostId.Equals(id))
                 .OrderByDescending(x => x.Upvotes - x.Downvotes)
