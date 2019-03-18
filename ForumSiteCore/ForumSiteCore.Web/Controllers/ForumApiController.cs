@@ -30,25 +30,31 @@ namespace ForumSiteCore.Web.Controllers
             _userActivitiesService = userActivitiesService;
         }                      
         
-        [ResponseCache(VaryByQueryKeys = new[] { "name", "lookup", "after" }, Duration = 10, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(VaryByQueryKeys = new[] { "name", "lookup", "after", "before", "count" }, Duration = 10, Location = ResponseCacheLocation.Any)]
         [HttpGet("{name}/{lookup}")]
         [ProducesResponseType(typeof(ForumPostListingVM), 200)]
-        public IActionResult Get(String name, String lookup, Decimal? after = null)
+        public IActionResult Get(String name, String lookup, String after = null, String before = null, String count = null)
         {            
             if (!_acceptedLookups.Contains(lookup.ToLower()))
                 return BadRequest();
+
+            if (!String.IsNullOrWhiteSpace(after) && !String.IsNullOrWhiteSpace(before))
+                throw new Exception("Query string params should not have 'after' and 'before' arguments");
+
+
 
             ForumPostListingVM forumPostListingVM = null; ;
             switch (lookup.ToLower())
             {
                 case LookupConsts.LookupHot:
-                    forumPostListingVM = _forumService.Hot(name, 25, after);
+                    forumPostListingVM = PrepareHotForumGet(name, before, after, count);
+                    //forumPostListingVM = _forumService.Hot(name, 25, afterDecimal);
                     break;
                 case LookupConsts.LookupNew:
-                    forumPostListingVM = _forumService.New(new DateTimeOffset(new DateTime(2010, 1, 1)), name);
+                    forumPostListingVM = _forumService.New(name, 25);
                     break;
                 case LookupConsts.LookupTop:
-                    forumPostListingVM = _forumService.Top(new DateTimeOffset(new DateTime(2010, 1, 1)), name);
+                    forumPostListingVM = PrepareTopForumGet(name, before, after, count);
                     break;
                 case LookupConsts.LookupControversial:
                     forumPostListingVM = _forumService.Controversial(new DateTimeOffset(new DateTime(2010, 1, 1)), name);
@@ -56,6 +62,36 @@ namespace ForumSiteCore.Web.Controllers
             }
 
             return Ok(forumPostListingVM);
+        }
+
+        private ForumPostListingVM PrepareHotForumGet(String name, String before = null, String after = null, String count = null)
+        {
+            Decimal? beforeDecimal = Decimal.TryParse(after, out Decimal beforeParsedValue) ? beforeParsedValue : (Decimal?)null;
+            Decimal? afterDecimal = Decimal.TryParse(after, out Decimal afterParsedValue) ? afterParsedValue : (Decimal?)null;
+
+            var forumPostListingVM = _forumService.Hot(name, 25, afterDecimal);
+            return forumPostListingVM;
+        }
+
+        private ForumPostListingVM PrepareTopForumGet(String name, String before = null, String after = null, String count = null)
+        {
+            Int64? beforeTicks = Int64.TryParse(after, out Int64 beforeParsedValue) ? beforeParsedValue : (Int64?)null;
+            Int64? afterTicks = Int64.TryParse(after, out Int64 afterParsedValue) ? afterParsedValue : (Int64?)null;
+            DateTimeOffset? beforeDateTimeOffset = null;
+            DateTimeOffset? afterDateTimeOffset = null;
+
+            if (beforeTicks.HasValue)
+            {
+                beforeDateTimeOffset = new DateTimeOffset?(new DateTimeOffset(new DateTime(beforeTicks.Value)));
+            }
+
+            if (afterTicks.HasValue)
+            {
+                afterDateTimeOffset = new DateTimeOffset?(new DateTimeOffset(new DateTime(afterTicks.Value)));
+            }
+
+            var forumPostListingVM = _forumService.Top(name, beforeDateTimeOffset, afterDateTimeOffset);
+            return forumPostListingVM;
         }
 
         [Authorize]

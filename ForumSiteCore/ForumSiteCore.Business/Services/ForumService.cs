@@ -124,11 +124,10 @@ namespace ForumSiteCore.Business.Services
             return PrepareForumPostListing(forumName, posts, LookupConsts.LookupHot);
         }
 
-        public ForumPostListingVM New(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
+        public ForumPostListingVM New(String forumName, Int32 postLimit = 25)
         {
             _logger.LogDebug("Retrieving new forum post listing for {Forum}", forumName);
-            var predicate = CreateForumWhereClause(forumName);
-            predicate = predicate.And(x => x.Created >= howFarBack);
+            var predicate = CreateForumWhereClause(forumName);            
 
             var posts = _context.Posts
                 .Include(x => x.User)
@@ -179,11 +178,11 @@ namespace ForumSiteCore.Business.Services
             return new ForumSaveVM { Status = "failure", Saved = false, Message = "ForumSave creation failed" };
         }
 
-        public ForumPostListingVM Top(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
+        public ForumPostListingVM Top(String forumName, DateTimeOffset? before = null, DateTimeOffset? after = null, Int32 postLimit = 25)
         {
             _logger.LogDebug("Retrieving top forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
-            predicate = predicate.And(x => x.Created >= howFarBack);
+            predicate = BuildPagingWhereClauseTop(predicate, before, after);
 
             var posts = _context.Posts
                 .Include(x => x.User)
@@ -231,6 +230,17 @@ namespace ForumSiteCore.Business.Services
                 predicate = predicate.And(x => x.HotScore < prevHotScore);
 
             return predicate;
+        }
+
+        private ExpressionStarter<Post> BuildPagingWhereClauseTop(ExpressionStarter<Post> predicate, DateTimeOffset? before = null, DateTimeOffset? after = null)
+        {
+            if (before.HasValue)
+                predicate = predicate.And(x => x.Created <= before);
+
+            if (after.HasValue)
+                predicate = predicate.And(x => x.Created < after);
+
+            return predicate;                
         }
 
         private ExpressionStarter<Post> CreateForumWhereClause(String forumName)
