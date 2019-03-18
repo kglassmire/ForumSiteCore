@@ -25,6 +25,7 @@
 </template>
 <script>
     import postService from '../../services/postservice.js';
+    import timeAgo from '../../services/timeAgo.js';
     export default {
         props: {
             comment: Object,
@@ -59,7 +60,7 @@
                 }
             },
             createdText() {
-                return agofromnow(new Date(this.comment.created));
+                return timeAgo.agofromnow(new Date(this.comment.created));
             }
         },
         methods: {

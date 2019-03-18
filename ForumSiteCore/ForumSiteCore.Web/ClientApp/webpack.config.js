@@ -9,7 +9,8 @@ module.exports = (env = {}, argv = {}) => {
     entry: {
       main: './components/typeahead/app.js',
       forum: './components/forum-post-listing/app.js',
-      post: './components/post-comment-listing/app.js'
+      post: './components/post-comment-listing/app.js',
+      site: './site/site.js'
     },
     output: {
       filename: '[name].js',

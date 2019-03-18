@@ -36,7 +36,8 @@
     </li>
 </template>
 <script>
-    import postService from '../../services/postservice.js';
+    import postService from '../../services/postservice.js';  
+    import timeAgo from '../../services/timeAgo.js';
     export default {
         props: ['post'],
         data() {
@@ -72,7 +73,7 @@
                 }
             },
             createdText() {
-                return agofromnow(new Date(this.post.created));
+                return timeAgo.agofromnow(new Date(this.post.created));
             }
         },
         methods: {

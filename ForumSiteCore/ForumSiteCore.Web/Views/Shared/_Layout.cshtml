@@ -9,14 +9,12 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous" />
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap-4.1.3/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     </environment>
 
     <environment exclude="Development">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"
               asp-fallback-href="~/lib/bootstrap-4.1.3/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     </environment>
     <environment include="Development">
         <!-- jquery, popper, bootstrap, vue, showdown, lodash, site -->
@@ -24,8 +22,7 @@
         <script src="~/lib/popper-1.14.3/popper.js"></script>
         <script src="~/lib/bootstrap-4.1.3/js/bootstrap.js"></script>
         <script src="~/lib/showdown-1.8.7/showdown.js"></script>
-        <script src="~/lib/lodash-4.17.11/lodash.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>        
+        <script src="~/lib/lodash-4.17.11/lodash.js"></script>       
     </environment>
     <environment exclude="Development">
         <!-- jquery, popper, bootstrap, vue, showdown, lodash, site -->
@@ -48,8 +45,7 @@
         </script>
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"
                 asp-fallback-src="~/lib/lodash-4.17.11/lodash.min.js"
-                crossorigin="anonymous"></script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>        
+                crossorigin="anonymous"></script>  
     </environment>
 </head>
 <body class="site">
@@ -86,5 +82,6 @@
 
     @RenderSection("Scripts", required: false)
     <script src="~/dist/main.js"></script>
+    <script src="~/dist/site.js"></script>
 </body>
 </html>
