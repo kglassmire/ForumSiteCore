@@ -14,7 +14,7 @@
         <!--<img class="align-self-start mr-3" alt="image">-->
         <div class="media-body mr-4">
             <span v-html="convertedMarkdown"></span>
-            <div class="d-flex flex-row mb-1 mt-1">
+            <div class="d-flex flex-row mb-1 mt-1" v-bind:title="comment.created">
                 Created {{ createdText }} by {{ comment.userName }}
             </div>
             <ul class="list-unstyled">

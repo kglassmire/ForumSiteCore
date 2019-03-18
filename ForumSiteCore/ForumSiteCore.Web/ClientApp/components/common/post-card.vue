@@ -22,7 +22,7 @@
             <p v-if="showPostDescription">
                 <span v-html="convertedMarkdown"></span>
             </p>
-            <div class="d-flex flex-row mb-1 mt-1">
+            <div class="d-flex flex-row mb-1 mt-1" v-bind:title="post.created">
                 Created {{ createdText }} by {{ post.userName }}<span v-if="post.showForumName">&nbsp;to <a v-bind:href="/f/ + post.forumName">{{ "f/" + post.forumName }}</a></span>
             </div>
 
@@ -51,7 +51,7 @@
         },
         computed: {
             commentsUrl() {
-                return `/f/${this.post.forumName}/${this.post.id}/comments/`;
+                return '/f/' + this.post.forumName + '/' + this.post.id + '/comments/';
             },
             totalScoreTitle() {
                 return `${this.post.upvotes - this.post.downvotes} (${this.post.upvotes}|${this.post.downvotes})`;
