@@ -5,6 +5,36 @@
             <h2>
                 f/{{forumPostListing.forum.name}}
             </h2>
+            <!-- Hot -->
+            <a type="button" v-bind:href="'/f/' + forumPostListing.forum.name + '/hot/'" class="btn btn-secondary">Hot</a>
+            <!-- New -->
+            <a type="button" v-bind:href="'/f/' + forumPostListing.forum.name + '/new/'" class="btn btn-secondary">New</a>
+            <!-- Top -->
+            <div class="btn-group">
+                <a type="button" v-bind:href="'/f/' + forumPostListing.forum.name + '/top/'" class="btn btn-secondary">Top</a>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Past Hour</a>
+                    <a class="dropdown-item" href="#">Past Day</a>
+                    <a class="dropdown-item" href="#">Past Year</a>
+                    <a class="dropdown-item" href="#">All Time</a>
+                </div>
+            </div>
+            <!-- Controversial -->
+            <div class="btn-group">
+                <a type="button" v-bind:href="'/f/' + forumPostListing.forum.name + '/controversial/'" class="btn btn-secondary">Controversial</a>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Past Hour</a>
+                    <a class="dropdown-item" href="#">Past Day</a>
+                    <a class="dropdown-item" href="#">Past Year</a>
+                    <a class="dropdown-item" href="#">All Time</a>
+                </div>
+            </div>
         </div>
         <div class="forum-content">
             <ul class="list-unstyled">
