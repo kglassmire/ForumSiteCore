@@ -189,6 +189,7 @@ namespace ForumSiteCore.Business.Services
                 .Include(x => x.Forum)
                 .Where(predicate)
                 .OrderByDescending(x => x.Upvotes - x.Downvotes)
+                .Take(postLimit)
                 .ToList();
 
             return PrepareForumPostListing(forumName, posts, LookupConsts.LookupTop);
