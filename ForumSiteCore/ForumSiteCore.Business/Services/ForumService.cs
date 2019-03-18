@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ForumSiteCore.Business.Consts;
+using ForumSiteCore.Business.Exceptions;
 using ForumSiteCore.Business.Interfaces;
 using ForumSiteCore.Business.Models;
 using ForumSiteCore.Business.ViewModels;
@@ -98,6 +99,11 @@ namespace ForumSiteCore.Business.Services
                 .Include(x => x.User)
                 .SingleOrDefault(x => x.Name.Equals(forumName));
 
+            // if we've gotten this far, this means we never had posts in the first place and we
+            // are now seeing if we just have a forum that has never had any posts created
+            if (forum == null)
+                throw new ForumNotFoundException(String.Format("Forum named {0} not found", forumName));
+
             return Mapper.Map<ForumDto>(forum);
         }
 
@@ -114,7 +120,7 @@ namespace ForumSiteCore.Business.Services
                 .OrderByDescending(x => x.HotScore)
                 .Take(postLimit)
                 .ToList();
-
+               
             return PrepareForumPostListing(forumName, posts, LookupConsts.LookupHot);
         }
 

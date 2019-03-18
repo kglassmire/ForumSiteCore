@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ForumSiteCore.Business.Exceptions;
 using ForumSiteCore.Business.Responses;
 using ForumSiteCore.Business.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace ForumSiteCore.Web.Controllers
         {
             _forumApiController = forumApiController;
         }
-
+        
         public IActionResult Index()
         {
             if (User.Identity.IsAuthenticated)
@@ -33,15 +34,20 @@ namespace ForumSiteCore.Web.Controllers
             if (String.IsNullOrWhiteSpace(lookup))
                 lookup = "hot";
 
-            result = _forumApiController.Get(name, lookup);            
-            var objectResult = (ObjectResult)result;
-
-            if (objectResult.Value is ForumPostListingVM)
+            try
             {
-                return View("_ForumPostListing", objectResult.Value);
-            }
+                result = _forumApiController.Get(name, lookup);
+                var objectResult = (ObjectResult)result;
 
-            throw new Exception("BAD RESULT");
+                if (objectResult.Value is ForumPostListingVM)
+                {
+                    return View("_ForumPostListing", objectResult.Value);
+                }
+            }
+            catch (ForumNotFoundException)
+            {}
+
+            return new NotFoundResult();
         }
 
     }

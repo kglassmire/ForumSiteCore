@@ -111,7 +111,7 @@ namespace ForumSiteCore.Web
             app.UseAuthentication();            
             app.UseResponseCaching();
             //app.UseWebMarkupMin();
-
+            app.UseStatusCodePagesWithReExecute("/Error/", "?statusCode={0}");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
