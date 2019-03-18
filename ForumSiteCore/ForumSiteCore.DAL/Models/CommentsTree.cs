@@ -8,8 +8,8 @@ namespace ForumSiteCore.DAL.Models
     {
         public Int64 Id { get; set; }
         public Int64? ParentId { get; set; }
-        public Int64 UserId { get; set; }
-        public Int64 PostId { get; set; }
+        public Int64? UserId { get; set; }
+        public Int64? PostId { get; set; }
         public String Description { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }

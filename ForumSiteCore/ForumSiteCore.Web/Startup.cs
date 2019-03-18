@@ -53,6 +53,7 @@ namespace ForumSiteCore.Web
             services.AddScoped(typeof(CommentService));
             services.AddScoped(typeof(UserActivitiesService));
             services.AddScoped(typeof(ForumApiController));
+            services.AddScoped(typeof(PostApiController));
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUserAccessor<Int64>, UserAccessor>();

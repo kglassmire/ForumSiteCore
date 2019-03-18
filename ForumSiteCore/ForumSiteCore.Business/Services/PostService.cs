@@ -62,18 +62,34 @@ namespace ForumSiteCore.Business.Services
         public PostCommentListingVM Best(Int64 id)
         {
             _logger.LogDebug("Retrieving best post comment listing for {Post}", id);
-            var comments = _context.CommentsTree
-                .FromSql("select * from public.comment_tree({0})", id)
+
+            var comments = _context.Comments                
+                .Include(x => x.Post)
                 .Include(x => x.User)
-                .Include(x => x.Post)                
-                .OrderBy(x => x.Path).ThenBy(x => x.BestScore)
+                .Where(x => x.PostId.Equals(id))
+                .OrderByDescending(x => x.BestScore)
                 .ToList();
 
-            PostDto postDto;
-            IList<CommentDto> commentDtos;
+            //https://stackoverflow.com/a/24273804
+            //var comments2 = _context.CommentsTree.FromSql("select * from public.comment_tree({0})", id)
+            //   .Include(x => x.User)
+            //   .Include(x => x.Post)
+            //   .Where(x => x.PostId.Equals(id))
+            //   .OrderBy(x => x.Path).ThenBy(x => x.BestScore)
+            //   .ToList();
 
-            MapDtos(comments, out postDto, out commentDtos);
-            _userActivitiesService.ProcessComments(postDto, commentDtos);
+            PostDto postDto;
+            IList<CommentDto> commentDtos = null;
+            if (comments.Any())
+            {
+                MapDtos(comments, out postDto, out commentDtos);
+                _userActivitiesService.ProcessPosts(new List<PostDto> { postDto });
+                _userActivitiesService.ProcessComments(postDto, commentDtos);
+            }
+            else
+            {
+                postDto = Get(id);
+            }
 
             return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupBest);
         }
@@ -81,40 +97,65 @@ namespace ForumSiteCore.Business.Services
         public PostCommentListingVM Controversial(Int64 id)
         {
             _logger.LogDebug("Retrieving controversial post comment listing for {Post}", id);
-            var comments = _context.CommentsTree
-                .FromSql("select * from public.comment_tree({0})", id)
-                .Include(x => x.User)
+
+
+            var comments = _context.Comments
                 .Include(x => x.Post)
+                .Include(x => x.User)
                 .Where(x => x.PostId.Equals(id))
-                .OrderBy(x => x.Path).ThenBy(x => x.ControversyScore)
+                .OrderByDescending(x => x.ControversyScore)
                 .ToList();
 
             PostDto postDto;
-            IList<CommentDto> commentDtos;
+            IList<CommentDto> commentDtos = null;
 
-            MapDtos(comments, out postDto, out commentDtos);
-            _userActivitiesService.ProcessComments(postDto, commentDtos);
+            if (comments.Any())
+            {
+                MapDtos(comments, out postDto, out commentDtos);
+                _userActivitiesService.ProcessPosts(new List<PostDto> { postDto });
+                _userActivitiesService.ProcessComments(postDto, commentDtos);
+            }
+            else
+            {
+                postDto = Get(id);
+            }
 
             return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupControversial);
         }
 
+        public PostDto Get(Int64 postId)
+        {
+            var post = _context.Posts
+                .Include(x => x.User)
+                .SingleOrDefault(x => x.Id.Equals(postId));
+
+            return Mapper.Map<PostDto>(post);
+        }
 
         public PostCommentListingVM New(Int64 id)
         {
             _logger.LogDebug("Retrieving new post comment listing for {Post}", id);
-            var comments = _context.CommentsTree
-                .FromSql("select * from public.comment_tree({0})", id)
-                .Include(x => x.User)
+
+            var comments = _context.Comments
                 .Include(x => x.Post)
+                .Include(x => x.User)
                 .Where(x => x.PostId.Equals(id))
-                .OrderBy(x => x.Path).ThenBy(x => x.Created)
+                .OrderByDescending(x => x.Created)
                 .ToList();
 
             PostDto postDto;
-            IList<CommentDto> commentDtos;
+            IList<CommentDto> commentDtos = null;
 
-            MapDtos(comments, out postDto, out commentDtos);
-            _userActivitiesService.ProcessComments(postDto, commentDtos);
+            if (comments.Any())
+            {
+                MapDtos(comments, out postDto, out commentDtos);
+                _userActivitiesService.ProcessPosts(new List<PostDto> { postDto });
+                _userActivitiesService.ProcessComments(postDto, commentDtos);
+            }
+            else
+            {
+                postDto = Get(id);
+            }
 
             return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupNew);
         }
@@ -152,26 +193,34 @@ namespace ForumSiteCore.Business.Services
             }
 
             PostSaveVM failedPost = new PostSaveVM { Status = "failure", Saved = false, Message = "PostSave creation failed" };
-            _logger.LogDebug("Post {@Post} failed to save", failedPost);
+            _logger.LogError("Post {@Post} failed to save", failedPost);
             return failedPost;
         }
 
         public PostCommentListingVM Top(Int64 id)
         {
             _logger.LogDebug("Retrieving top post comment listing for {Post}", id);
-            var comments = _context.CommentsTree
-                .FromSql("select * from public.comment_tree({0})", id)
-                .Include(x => x.User)
+
+            var comments = _context.Comments
                 .Include(x => x.Post)
+                .Include(x => x.User)
                 .Where(x => x.PostId.Equals(id))
-                .OrderBy(x => x.Path).ThenBy(x => x.Upvotes - x.Downvotes)
+                .OrderByDescending(x => x.Upvotes - x.Downvotes)
                 .ToList();
 
             PostDto postDto;
-            IList<CommentDto> commentDtos;
+            IList<CommentDto> commentDtos = null;
 
-            MapDtos(comments, out postDto, out commentDtos);
-            _userActivitiesService.ProcessComments(postDto, commentDtos);
+            if (comments.Any())
+            {
+                MapDtos(comments, out postDto, out commentDtos);
+                _userActivitiesService.ProcessPosts(new List<PostDto> { postDto });
+                _userActivitiesService.ProcessComments(postDto, commentDtos);
+            }
+            else
+            {
+                postDto = Get(id);
+            }
 
             return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupTop);
         }
@@ -333,3 +382,12 @@ namespace ForumSiteCore.Business.Services
         }
     }
 }
+
+//var commentgj = from p in _context.Posts
+//                join ct in _context.Comments on p.Id equals ct.PostId into gj
+//                where p.Id == id
+//                select new
+//                {
+//                    Post = p,
+//                    CommentTree = gj
+//                };

@@ -36,7 +36,7 @@ namespace ForumSiteCore.Web.Controllers
         {
             if (!_acceptedLookups.Contains(lookup))
                 return BadRequest();
-
+            
             PostCommentListingVM postCommentListingVM = null; ;
             switch (lookup)
             {

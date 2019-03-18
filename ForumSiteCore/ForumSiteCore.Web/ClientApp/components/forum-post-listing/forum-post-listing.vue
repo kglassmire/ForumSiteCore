@@ -3,7 +3,7 @@
     <div class="forum-grid-container" v-cloak>
         <div class="forum-header">
             <h2>
-                f/{{forumPostListing.forum.name}} placeholder
+                f/{{forumPostListing.forum.name}}
             </h2>
         </div>
         <div class="forum-content">

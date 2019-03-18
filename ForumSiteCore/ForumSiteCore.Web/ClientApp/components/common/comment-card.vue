@@ -1,96 +1,76 @@
-<template>
-    <li class="post-card media border rounded p-2 m-1">
+<template>    
+    <li v-if="comment.parentId == null || isRecursive === true" class="comment-card media border rounded p-2 m-1">        
         <div class="d-inline-flex justify-content-between flex-column mr-3">
             <div class="text-center upvote">
                 <i title="upvote" v-on:click="upvote" class="fas fa-arrow-up fa-lg" v-bind:class="upvoted"></i>
             </div>            
             <h4 class="text-center" v-bind:class="voteCountClassObject">
-                <strong>{{ post.upvotes - post.downvotes }}</strong>
+                <strong>{{ comment.upvotes - comment.downvotes }}</strong>
             </h4>
             <div class="text-center downvote">
                 <i title="downvote" v-on:click="downvote" class="fas fa-arrow-down fa-lg" v-bind:class="downvoted"></i>
             </div>
         </div>
-        <img class="align-self-start mr-3" alt="image">
+        <!--<img class="align-self-start mr-3" alt="image">-->
         <div class="media-body mr-4">
-            <h5>
-                <a v-bind:href="post.url">{{ post.name }}</a>
-                <button v-if="post.hasDescription" v-on:click="togglePostDescription" class="btn btn-light btn-sm" title="show description">
-                    <i class="fas fa-expand"></i>
-                </button>
-            </h5>
-            <p v-if="showPostDescription">
-                <span v-html="convertedMarkdown"></span>
-            </p>
+            <span v-html="convertedMarkdown"></span>
             <div class="d-flex flex-row mb-1 mt-1">
-                Created {{ createdText }} by {{ post.userName }}
+                Created {{ createdText }} by {{ comment.userName }}
             </div>
-
-            <div class="d-flex flex-row mb-1 mt-1">
-                <h6 class="mr-3"><i class="far fa-comment-alt"></i> {{ post.commentsCount }} comments</h6>
-                <a v-on:click="savePost"><h6><i v-bind:class="post.userSaved === false ? 'far fa-bookmark': 'fas fa-bookmark'"></i> {{post.userSaved ? "saved" : "save"}}</h6></a>
-            </div>
-        </div>
-    
-
+            <ul class="list-unstyled">
+                <comment-card v-for="comment in comment.children" v-bind:key="comment.id" v-bind:comment="comment" v-bind:isRecursive="true"></comment-card>
+            </ul>
+        </div>        
     </li>
 </template>
 <script>
     import postService from '../../services/postservice.js';
     export default {
-        props: ['post'],
+        props: {
+            comment: Object,
+            isRecursive: Boolean
+        },
+        name: 'comment-card',
         data() {
             return {
                 counter: 0,
                 converter: new showdown.Converter(),
-                showPostDescription: false
             };
         },
         computed: {
             totalScoreTitle() {
-                return `${this.post.upvotes - this.post.downvotes} (${this.post.upvotes}|${this.post.downvotes})`;
-            },
-            showForumName() {
-                return true;
+                return `${this.comment.upvotes - this.comment.downvotes} (${this.comment.upvotes}|${this.comment.downvotes})`;
             },
             convertedMarkdown() {
                 // `this` points to the vm instance
-                var self = this;
-                return self.converter.makeHtml(self.post.description);
+                
+                return this.converter.makeHtml(this.comment.description);
             },
             upvoted() {
-                return { 'upvoted': this.post.userVote === 1 }
+                return { 'upvoted': this.comment.userVote === 1 }
             },
             downvoted() {
-                return { 'downvoted': this.post.userVote === 2 }
+                return { 'downvoted': this.comment.userVote === -1 }
             },
             voteCountClassObject() {
                 return {
-                    'upvoted': this.post.userVote === 1,
-                    'downvoted': this.post.userVote === 2
+                    'upvoted': this.comment.userVote === 1,
+                    'downvoted': this.comment.userVote === -1
                 }
             },
             createdText() {
-                return agofromnow(new Date(this.post.created));
+                return agofromnow(new Date(this.comment.created));
             }
         },
         methods: {
             savePost() {
-                postService.save(this.post.id)
-                    .then(response => {
-                        console.log(response.data.message);
-                        this.post.userSaved = response.data.saved;
-                    })
-                    .catch(error => console.log(error));
+                console.log('saved');
             },
             upvote() {
                 console.log('upvoted');
             },
             downvote() {
                 console.log('downvoted');
-            },
-            togglePostDescription() {
-                return this.showPostDescription = !this.showPostDescription;
             }
         }
     }

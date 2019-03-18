@@ -35,8 +35,7 @@ namespace ForumSiteCore.DAL
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.HasPostgresExtension("citext");
             builder.Entity<Forum>().HasIndex(x => x.Name).IsUnique();
-            builder.Entity<Post>().HasIndex(x => new { x.ForumId, x.HotScore });
-            
+            builder.Entity<Post>().HasIndex(x => new { x.ForumId, x.HotScore });            
             foreach (var entity in builder.Model.GetEntityTypes())
             {
                 // Replace table names

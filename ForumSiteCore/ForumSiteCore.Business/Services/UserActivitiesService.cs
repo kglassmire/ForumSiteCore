@@ -131,6 +131,8 @@ namespace ForumSiteCore.Business.Services
         {
             if (!_userAccessor.User.Identity.IsAuthenticated)
                 return;
+            if (!comments.Any())
+                return;
 
             var userCommentsVoted = GetUserCommentsVoted(post.Id);
             var userCommentsSaved = GetUserCommentsSaved();

@@ -33,11 +33,14 @@ namespace ForumSiteCore.Business
                     .ForMember(dest => dest.Path, opt => opt.Ignore())
                     .ForMember(dest => dest.Level, opt => opt.Ignore());
 
+
+
                 cfg.CreateMap<CommentTree, CommentDto>()
                     .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
                     .ForMember(dest => dest.UserVote, opt => opt.Ignore())
                     .ForMember(dest => dest.UserCreated, opt => opt.Ignore())
-                    .ForMember(dest => dest.UserSaved, opt => opt.Ignore());
+                    .ForMember(dest => dest.UserSaved, opt => opt.Ignore())
+                    .ForMember(dest => dest.Children, opt => opt.Ignore());
 
             });
 

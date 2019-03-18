@@ -34,7 +34,7 @@ module.exports = (env = {}, argv = {}) => {
     plugins: [
       new VueLoaderPlugin()
     ]
-  }
+  };
 
   return config;
 };

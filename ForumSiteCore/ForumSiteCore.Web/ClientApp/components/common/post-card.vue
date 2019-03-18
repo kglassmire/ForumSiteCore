@@ -27,7 +27,7 @@
             </div>
 
             <div class="d-flex flex-row mb-1 mt-1">
-                <h6 class="mr-3"><i class="far fa-comment-alt"></i> {{ post.commentsCount }} comments</h6>
+                <a class="link-unstyled" v-bind:href="commentsUrl"><h6 class="mr-3"><i class="far fa-comment-alt"></i> {{ post.commentsCount }} comments</h6></a>
                 <a v-on:click="savePost"><h6><i v-bind:class="post.userSaved === false ? 'far fa-bookmark': 'fas fa-bookmark'"></i> {{post.userSaved ? "saved" : "save"}}</h6></a>
             </div>
         </div>
@@ -47,6 +47,9 @@
             };
         },
         computed: {
+            commentsUrl() {
+                return `/f/${this.post.forumName}/${this.post.id}/comments/`;
+            },
             totalScoreTitle() {
                 return `${this.post.upvotes - this.post.downvotes} (${this.post.upvotes}|${this.post.downvotes})`;
             },
@@ -54,9 +57,7 @@
                 return true;
             },
             convertedMarkdown() {
-                // `this` points to the vm instance
-                var self = this;
-                return self.converter.makeHtml(self.post.description);
+                return this.converter.makeHtml(this.post.description);
             },
             upvoted() {
                 return { 'upvoted': this.post.userVote === 1 }

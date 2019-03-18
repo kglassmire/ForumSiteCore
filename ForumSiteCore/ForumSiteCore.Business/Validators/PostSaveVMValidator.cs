@@ -15,9 +15,6 @@ namespace ForumSiteCore.Business.Validators
                 .GreaterThan(0)
                 .WithMessage("Post Id is required");
 
-            RuleFor(x => x.Saved)
-                .NotEmpty()
-                .WithMessage("Saved is required");
         }
     }
 }
