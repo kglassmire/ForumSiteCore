@@ -42,7 +42,7 @@ button:disabled {
     display: grid;
     grid-gap: 10px;
     grid-template-columns: 80% auto;
-    grid-template-rows: minmax(25px, 50px) auto;
+    grid-template-rows: max-content auto;
     grid-template-areas: "header menu" "content menu";
 }
 
