@@ -63,8 +63,10 @@
                             return;
                         }
                         if (event.key === 'Enter') {
-                            window.location.href = `/f/${this.searchResults[this.menuCursor]}/hot`;
-                            return;
+                            if (this.menuCursor !== null) {
+                                window.location.href = `/f/${this.searchResults[this.menuCursor]}/hot`;
+                                return;
+                            }
                         }
                         if (this.menuCursor === null) {
                             this.menuCursor = 0;
