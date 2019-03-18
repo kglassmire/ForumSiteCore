@@ -10,7 +10,7 @@ namespace ForumSiteCore.Business.ViewModels
     public class ForumPostListingVM : BaseVM
     {
         public ForumDto Forum { get; set; }
-        public IList<PostDto> Posts { get; set; }
+        public List<PostDto> Posts { get; set; }
         public String ForumListingType { get; set; }        
     }
 }

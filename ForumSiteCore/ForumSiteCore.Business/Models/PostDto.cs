@@ -25,13 +25,7 @@ namespace ForumSiteCore.Business.Models
         public VoteType UserVote { get; set; }
         public Boolean UserCreated { get; set; }
         public Boolean UserSaved { get; set; }
-        public string ForumName
-        {
-            get => forumName;
-            set => forumName = value;
-        }
-
-        private String forumName;
-
+        public String ForumName { get; set; }
+        public Boolean ShowForumName { get; set; }
     }
 }

@@ -127,7 +127,7 @@ namespace ForumSiteCore.Business.Services
         private string UserPostsSavedCacheKey => String.Format(UserPostsSavedCacheKeyTemplate, _userAccessor.UserId);
         private string UserPostsVotedCacheKey => String.Format(UserPostsVotedCacheKeyTemplate, _userAccessor.UserId);
 
-        public void ProcessComments(PostDto post, IList<CommentDto> comments)
+        public void ProcessComments(PostDto post, List<CommentDto> comments)
         {
             if (!_userAccessor.User.Identity.IsAuthenticated)
                 return;
@@ -176,7 +176,7 @@ namespace ForumSiteCore.Business.Services
             }
         }
 
-        public void ProcessForums(IList<ForumDto> forums)
+        public void ProcessForums(List<ForumDto> forums)
         {
             if (!_userAccessor.User.Identity.IsAuthenticated)
                 return;
@@ -193,7 +193,7 @@ namespace ForumSiteCore.Business.Services
             }
         }
 
-        public void ProcessPosts(IList<PostDto> posts)
+        public void ProcessPosts(List<PostDto> posts)
         {
             if (!_userAccessor.User.Identity.IsAuthenticated)
                 return;

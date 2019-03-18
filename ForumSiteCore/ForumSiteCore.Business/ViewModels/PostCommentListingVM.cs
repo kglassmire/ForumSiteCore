@@ -7,7 +7,7 @@ namespace ForumSiteCore.Business.ViewModels
 {
     public class PostCommentListingVM
     {
-        public PostCommentListingVM(PostDto post, IList<CommentDto> comments, String commentListingType)
+        public PostCommentListingVM(PostDto post, List<CommentDto> comments, String commentListingType)
         {
             Post = post;
             Comments = comments;
@@ -15,7 +15,7 @@ namespace ForumSiteCore.Business.ViewModels
         }
 
         public PostDto Post { get; set; }
-        public IList<CommentDto> Comments { get; set; }
+        public List<CommentDto> Comments { get; set; }
         public String CommentListingType { get; set; }
     }
 }

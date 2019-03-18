@@ -22,7 +22,10 @@ namespace ForumSiteCore.Business
                     .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
                     .ForMember(dest => dest.UserVote, opt => opt.Ignore())
                     .ForMember(dest => dest.UserCreated, opt => opt.Ignore())
-                    .ForMember(dest => dest.UserSaved, opt => opt.Ignore());
+                    .ForMember(dest => dest.UserSaved, opt => opt.Ignore())
+                    .ForMember(dest => dest.ForumName, opt => opt.MapFrom(s => s.Forum != null ? s.Forum.Name : String.Empty))
+                    .ForMember(dest => dest.ShowForumName, opt => opt.Ignore());
+
 
                 //.ForMember(dest => dest.ForumName, opt => opt.MapFrom(src => src.Forum.Name));                
                 cfg.CreateMap<Comment, CommentDto>()

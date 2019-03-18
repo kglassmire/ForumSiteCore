@@ -79,7 +79,7 @@ namespace ForumSiteCore.Business.Services
             //   .ToList();
 
             PostDto postDto;
-            IList<CommentDto> commentDtos = null;
+            List<CommentDto> commentDtos = null;
             if (comments.Any())
             {
                 MapDtos(comments, out postDto, out commentDtos);
@@ -107,7 +107,7 @@ namespace ForumSiteCore.Business.Services
                 .ToList();
 
             PostDto postDto;
-            IList<CommentDto> commentDtos = null;
+            List<CommentDto> commentDtos = null;
 
             if (comments.Any())
             {
@@ -144,7 +144,7 @@ namespace ForumSiteCore.Business.Services
                 .ToList();
 
             PostDto postDto;
-            IList<CommentDto> commentDtos = null;
+            List<CommentDto> commentDtos = null;
 
             if (comments.Any())
             {
@@ -209,7 +209,7 @@ namespace ForumSiteCore.Business.Services
                 .ToList();
 
             PostDto postDto;
-            IList<CommentDto> commentDtos = null;
+            List<CommentDto> commentDtos = null;
 
             if (comments.Any())
             {
@@ -315,14 +315,14 @@ namespace ForumSiteCore.Business.Services
         }
 
 
-        private void MapDtos(IList<CommentTree> comments, out PostDto postDto, out IList<CommentDto> commentDtos)
+        private void MapDtos(List<CommentTree> comments, out PostDto postDto, out List<CommentDto> commentDtos)
         {
             Post post = comments.FirstOrDefault().Post;
             postDto = Mapper.Map<PostDto>(post);
             commentDtos = Mapper.Map<List<CommentDto>>(comments);
         }
 
-        private void MapDtos(IList<Comment> comments, out PostDto postDto, out IList<CommentDto> commentDtos)
+        private void MapDtos(List<Comment> comments, out PostDto postDto, out List<CommentDto> commentDtos)
         {
             Post post = comments.FirstOrDefault().Post;
             postDto = Mapper.Map<PostDto>(post);

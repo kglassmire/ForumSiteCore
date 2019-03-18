@@ -2,15 +2,14 @@
 <template>
     <div class="post-grid-container" v-cloak>
         <div class="post-header">
-            <h2>
-                {{postCommentListing.post.name}}
-            </h2>
+            <h1>Header Placeholder</h1>
         </div>
         <div class="post-content">
-            <post-card v-bind:key="postCommentListing.post.id" v-bind:post="postCommentListing.post"></post-card>
-            <ul class="list-unstyled">
+            <post-card v-bind:key="postCommentListing.post.id" v-bind:post="postCommentListing.post" v-bind:showPostDescription="true"></post-card>
+            <ul v-if="postCommentListing.comments !== null" class="list-unstyled">
                 <comment-card v-for="comment in postCommentListing.comments" v-bind:key="comment.id" v-bind:comment="comment"></comment-card>
             </ul>
+            <h5 v-else>No comments here! Have anything to say?</h5>
         </div>
         <div class="post-menu">            
             

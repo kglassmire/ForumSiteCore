@@ -53,10 +53,10 @@ namespace ForumSiteCore.Business.Services
             _logger.LogDebug("Searching for forums containing: {0}", search);
 
             var results = (from f in _context.Forums
-                           where EF.Functions.Like(f.Name, String.Format("%{0}%", search))
+                           where EF.Functions.Like(f.Name, String.Format("{0}%", search))
                            orderby f.Name
                            select f).Take(25);
-            IList<String> returnedData;
+            List<String> returnedData;
             String message;
             String status;
 
@@ -272,38 +272,30 @@ namespace ForumSiteCore.Business.Services
             return id == -1;
         }
 
-        private void MapDtos(String forumName, List<Post> posts, out ForumDto forumDto, out IList<PostDto> postDtos)
+        private void MapDtos(String forumName, List<Post> posts, out ForumDto forumDto, out List<PostDto> postDtos)
         {
             forumDto = new ForumDto();
-            if (ForumIsAll(forumName))
+            postDtos = Mapper.Map<List<PostDto>>(posts);
+            if (ForumIsAll(forumName) || ForumIsHome(forumName))
             {
+                foreach (var postDto in postDtos)
+                {
+                    postDto.ShowForumName = true;
+                }
                 forumDto = new ForumDto
                 {
-                    Name = "all",
+                    Name = forumName,
                     Id = 0,
                     Created = new DateTimeOffset(new DateTime(2016, 12, 22)),
-                    Updated = new DateTimeOffset(new DateTime(2016, 12, 22)),
-                    Description = "All forums",
+                    Updated = new DateTimeOffset(new DateTime(2016, 12, 22)),                    
                     Inactive = false,
                     Saves = 0
                 };
-                // do all stuff
-                Log.Information("MapDtos => ForumIsAll");
-            }
-            else if (ForumIsHome(forumName))
-            {
-                // do home stuff
-                forumDto = new ForumDto
-                {
-                    Name = "home",
-                    Id = -1,
-                    Created = new DateTimeOffset(new DateTime(2016, 12, 22)),
-                    Updated = new DateTimeOffset(new DateTime(2016, 12, 22)),
-                    Description = "Your forums!",
-                    Inactive = false,
-                    Saves = 0
-                };
-                Log.Information("MapDtos => ForumIsHome");
+
+                if (ForumIsAll(forumName))
+                    forumDto.Description = "Posts from all forums!";
+                if (ForumIsHome(forumName))
+                    forumDto.Description = "Posts from all your subscribed forums!";
             }
             else
             {
@@ -320,13 +312,13 @@ namespace ForumSiteCore.Business.Services
                 }
 
             }
-            postDtos = Mapper.Map<IList<PostDto>>(posts);
+            
         }
 
         private ForumPostListingVM PrepareForumPostListing(string forumName, List<Post> posts, String postListingType)
         {
             ForumDto forumDto;
-            IList<PostDto> postDtos;
+            List<PostDto> postDtos;
 
             MapDtos(forumName, posts, out forumDto, out postDtos);
             _userActivitiesService.ProcessPosts(postDtos);

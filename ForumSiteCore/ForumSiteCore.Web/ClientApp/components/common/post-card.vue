@@ -23,7 +23,7 @@
                 <span v-html="convertedMarkdown"></span>
             </p>
             <div class="d-flex flex-row mb-1 mt-1">
-                Created {{ createdText }} by {{ post.userName }}
+                Created {{ createdText }} by {{ post.userName }}<span v-if="post.showForumName">&nbsp;to <a v-bind:href="/f/ + post.forumName">{{ "f/" + post.forumName }}</a></span>
             </div>
 
             <div class="d-flex flex-row mb-1 mt-1">
@@ -39,12 +39,14 @@
     import postService from '../../services/postservice.js';  
     import timeAgo from '../../services/timeAgo.js';
     export default {
-        props: ['post'],
+        props: {
+            post: Object,
+            showPostDescription: Boolean
+        },
         data() {
             return {
                 counter: 0,
-                converter: new showdown.Converter(),
-                showPostDescription: false
+                converter: new showdown.Converter(),                
             };
         },
         computed: {
