@@ -31,22 +31,142 @@ namespace ForumSiteCore.Business.Services
             _logger = logger;
         }
 
-        public ForumPostListingVM Controversial(DateTimeOffset howFarBack, String forumName, Int32 postLimit = 25)
+        private ExpressionStarter<Post> CreateForumWhereClause(String forumName)
+        {
+            var predicate = PredicateBuilder.New<Post>(true);
+
+            if (ForumIsAll(forumName))
+            {
+                // do all stuff
+                Log.Information("CreateForumWhereClause => ForumIsAll");
+            }
+            else if (ForumIsHome(forumName))
+            {
+                // do home stuff
+                // get user's forums
+                Int64[] ids = { 3, 10, 12 };
+                Log.Information("CreateForumWhereClause => ForumIsHome");
+                predicate = predicate.And(x => ids.Contains(x.ForumId));
+            }
+            else
+            {
+                predicate = predicate.And(x => x.Forum.Name.Equals(forumName));
+            }
+
+            return predicate;
+        }
+
+        public ForumPostListingVM Hot(String forumName, Decimal? ceiling, Decimal? floor, Int32 limit = 25)
+        {
+            _logger.LogDebug("Retrieving hot forum post listing for {Forum}", forumName);
+            var predicate = CreateForumWhereClause(forumName);
+            predicate = BuildPagingWhereClauseHot(predicate, ceiling, floor);
+
+            var posts = _context.Posts
+                .Include(x => x.User)
+                .Include(x => x.Forum)
+                .Where(predicate)
+                .OrderByDescending(x => x.HotScore)
+                .Take(limit)
+                .ToList();
+
+            return PrepareForumPostListing(forumName, posts, LookupConsts.LookupHot);
+        }
+
+        private ExpressionStarter<Post> BuildPagingWhereClauseHot(ExpressionStarter<Post> predicate, Decimal? ceiling = null, Decimal? floor = null)
+        {
+            if (ceiling.HasValue)
+                predicate = predicate.And(x => x.HotScore < ceiling);
+
+            if (floor.HasValue)
+                predicate = predicate.And(x => x.HotScore >= floor);
+
+            return predicate;
+        }
+
+        public ForumPostListingVM Top(String forumName, Int64? ceiling = null, Int64? floor = null, Int32 limit = 25)
+        {
+            _logger.LogDebug("Retrieving top forum post listing for {Forum}", forumName);
+            var predicate = CreateForumWhereClause(forumName);
+            predicate = BuildPagingWhereClauseTop(predicate, ceiling, floor);
+
+            var posts = _context.Posts
+                .Include(x => x.User)
+                .Include(x => x.Forum)
+                .Where(predicate)
+                .OrderByDescending(x => x.Upvotes - x.Downvotes)
+                .Take(limit)
+                .ToList();
+
+            return PrepareForumPostListing(forumName, posts, LookupConsts.LookupTop);
+        }
+
+        private ExpressionStarter<Post> BuildPagingWhereClauseTop(ExpressionStarter<Post> predicate, Int64? ceiling = null, Int64? floor = null)
+        {
+            if (ceiling.HasValue)
+                predicate = predicate.And(x => (x.Upvotes - x.Downvotes) < ceiling);
+
+            if (floor.HasValue)
+                predicate = predicate.And(x => (x.Upvotes - x.Downvotes) >= floor);
+
+            return predicate;
+        }
+
+        public ForumPostListingVM New(String forumName, DateTimeOffset? ceiling, DateTimeOffset? floor, Int32 limit = 25)
+        {
+            _logger.LogDebug("Retrieving new forum post listing for {Forum}", forumName);
+            var predicate = CreateForumWhereClause(forumName);
+            predicate = BuildPagingWhereClauseNew(predicate, ceiling, floor);
+
+            var posts = _context.Posts
+                .Include(x => x.User)
+                .Include(x => x.Forum)
+                .Where(predicate)
+                .OrderByDescending(x => x.Created)
+                .Take(limit)
+                .ToList();
+
+            return PrepareForumPostListing(forumName, posts, LookupConsts.LookupNew);
+        }
+
+        private ExpressionStarter<Post> BuildPagingWhereClauseNew(ExpressionStarter<Post> predicate, DateTimeOffset? ceiling = null, DateTimeOffset? floor = null)
+        {
+            if (ceiling.HasValue)
+                predicate = predicate.And(x => x.Created < ceiling);
+
+            if (floor.HasValue)
+                predicate = predicate.And(x => x.Created >= floor);
+
+            return predicate;
+        }
+
+        public ForumPostListingVM Controversial(String forumName, Decimal? ceiling, Decimal? floor, Int32 limit = 25)
         {
 
             _logger.LogDebug("Retrieving controversial forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
-            predicate = predicate.And(x => x.Created >= howFarBack);
+            predicate = BuildPagingWhereClauseControversial(predicate, ceiling, floor);
 
             var posts = _context.Posts
                 .Include(x => x.User)
                 .Include(x => x.Forum)
                 .Where(predicate)
                 .OrderByDescending(x => x.ControversyScore)
-                .Take(postLimit)
+                .Take(limit)
                 .ToList();
 
             return PrepareForumPostListing(forumName, posts, LookupConsts.LookupControversial);
+        }
+
+        private ExpressionStarter<Post> BuildPagingWhereClauseControversial(ExpressionStarter<Post> predicate, Decimal? ceiling = null, Decimal? floor = null)
+        {
+            if (ceiling.HasValue)
+                predicate = predicate.And(x => x.ControversyScore < ceiling);
+
+            if (floor.HasValue)
+                predicate = predicate.And(x => x.ControversyScore >= floor);
+
+            return predicate;
         }
 
         public ForumSearchVM ForumSearch(String search)
@@ -107,39 +227,6 @@ namespace ForumSiteCore.Business.Services
             return Mapper.Map<ForumDto>(forum);
         }
 
-        public ForumPostListingVM Hot(String forumName, Int32 postLimit = 25, Decimal? prevHotScore = null)
-        {
-            _logger.LogDebug("Retrieving hot forum post listing for {Forum}", forumName);
-            var predicate = CreateForumWhereClause(forumName);
-            predicate = BuildPagingWhereClauseHot(predicate, prevHotScore);
-
-            var posts = _context.Posts
-                .Include(x => x.User)
-                .Include(x => x.Forum)
-                .Where(predicate)
-                .OrderByDescending(x => x.HotScore)
-                .Take(postLimit)
-                .ToList();
-               
-            return PrepareForumPostListing(forumName, posts, LookupConsts.LookupHot);
-        }
-
-        public ForumPostListingVM New(String forumName, Int32 postLimit = 25)
-        {
-            _logger.LogDebug("Retrieving new forum post listing for {Forum}", forumName);
-            var predicate = CreateForumWhereClause(forumName);            
-
-            var posts = _context.Posts
-                .Include(x => x.User)
-                .Include(x => x.Forum)
-                .Where(predicate)
-                .OrderByDescending(x => x.Created)
-                .Take(postLimit)
-                .ToList();
-
-            return PrepareForumPostListing(forumName, posts, LookupConsts.LookupNew);
-        }
-
         public ForumSaveVM Save(Int64 forumId, Boolean saved)
         {           
             if (ForumIsHome(forumId) || ForumIsAll(forumId))
@@ -178,23 +265,6 @@ namespace ForumSiteCore.Business.Services
             return new ForumSaveVM { Status = "failure", Saved = false, Message = "ForumSave creation failed" };
         }
 
-        public ForumPostListingVM Top(String forumName, DateTimeOffset? before = null, DateTimeOffset? after = null, Int32 postLimit = 25)
-        {
-            _logger.LogDebug("Retrieving top forum post listing for {Forum}", forumName);
-            var predicate = CreateForumWhereClause(forumName);
-            predicate = BuildPagingWhereClauseTop(predicate, before, after);
-
-            var posts = _context.Posts
-                .Include(x => x.User)
-                .Include(x => x.Forum)
-                .Where(predicate)
-                .OrderByDescending(x => x.Upvotes - x.Downvotes)
-                .Take(postLimit)
-                .ToList();
-
-            return PrepareForumPostListing(forumName, posts, LookupConsts.LookupTop);
-        }
-
         private Boolean AddForumSave(Int64 forumId)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
@@ -223,50 +293,6 @@ namespace ForumSiteCore.Business.Services
             }
 
             return false;
-        }
-
-        private ExpressionStarter<Post> BuildPagingWhereClauseHot(ExpressionStarter<Post> predicate, decimal? prevHotScore)
-        {
-            if (prevHotScore.HasValue)
-                predicate = predicate.And(x => x.HotScore < prevHotScore);
-
-            return predicate;
-        }
-
-        private ExpressionStarter<Post> BuildPagingWhereClauseTop(ExpressionStarter<Post> predicate, DateTimeOffset? before = null, DateTimeOffset? after = null)
-        {
-            if (before.HasValue)
-                predicate = predicate.And(x => x.Created <= before);
-
-            if (after.HasValue)
-                predicate = predicate.And(x => x.Created < after);
-
-            return predicate;                
-        }
-
-        private ExpressionStarter<Post> CreateForumWhereClause(String forumName)
-        {
-            var predicate = PredicateBuilder.New<Post>(true);
-
-            if (ForumIsAll(forumName))
-            {
-                // do all stuff
-                Log.Information("CreateForumWhereClause => ForumIsAll");
-            }
-            else if (ForumIsHome(forumName))
-            {
-                // do home stuff
-                // get user's forums
-                Int64[] ids = { 3, 10, 12 };
-                Log.Information("CreateForumWhereClause => ForumIsHome");
-                predicate = predicate.And(x => ids.Contains(x.ForumId));
-            }
-            else
-            {
-                predicate = predicate.And(x => x.Forum.Name.Equals(forumName));
-            }
-
-            return predicate;
         }
 
         private Boolean ForumIsAll(String forumName)

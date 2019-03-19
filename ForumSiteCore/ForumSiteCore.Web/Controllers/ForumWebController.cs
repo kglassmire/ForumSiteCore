@@ -27,7 +27,7 @@ namespace ForumSiteCore.Web.Controllers
         }
 
         [Route("f/{name}/{lookup?}", Name = "forum")]
-        public IActionResult Index(string name, string lookup)
+        public IActionResult Index(String name, String lookup = null, String ceiling = null, String floor = null, String limit = null, String lookback = null)
         {
             IActionResult result = null;
 

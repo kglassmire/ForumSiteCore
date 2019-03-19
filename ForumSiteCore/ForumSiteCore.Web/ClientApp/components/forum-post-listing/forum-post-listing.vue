@@ -36,7 +36,7 @@
                 </div>
             </div>
         </div>
-        <div class="forum-content">
+        <div v-infinite-scroll="retrievePosts" infinite-scroll-disabled="busy" infinite-scroll-distance="10" class="forum-content">
             <ul class="list-unstyled">
                 <post-card v-for="post in forumPostListing.posts" v-bind:key="post.id" v-bind:post="post"></post-card>
             </ul>
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-
+    import infiniteScroll from 'vue-infinite-scroll';
     import PostCardComponent from '../common/post-card.vue';
     import forumService from '../../services/forumservice.js';
     export default {
@@ -62,8 +62,7 @@
                 forumPostListing: window.__INITIAL_STATE__,                
                 message: '',
                 converter: new showdown.Converter(),
-                bottom: false,
-                noMorePosts: false
+                noMorePosts: false,
             }
         },
         computed: {
@@ -89,17 +88,12 @@
                     })
                     .catch(error => console.log(error));
             },
-            scroll() {
-                window.onscroll = () => {
-                    let bottomOfWindow = (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 2;
-
-                    if (bottomOfWindow) {
-                        this.retrievePosts(this.forumPostListing.forum.name);
-                    }
-                };
-            },
-            retrievePosts(name) {                
-                forumService.getPosts(name, this.forumPostListing.forumListingType, this.forumPostListing.posts[this.forumPostListing.posts.length - 1].hotScore)
+            retrievePosts() {                                 
+                if (this.noMorePosts) {
+                    console.log('no requests being made -- no more posts');
+                    return;
+                }                    
+                forumService.getPosts(this.forumPostListing)
                     .then(response => {                 
                         if (response.data.posts.length === 0) {
                             this.noMorePosts = true;
@@ -118,7 +112,10 @@
             }
         },
         mounted() {
-            this.scroll();
+
+        },
+        directives: {
+            infiniteScroll
         },
         components: {
             'post-card': PostCardComponent

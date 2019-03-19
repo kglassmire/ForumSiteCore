@@ -20,7 +20,6 @@ namespace ForumSiteCore.Web.Controllers
     public class ForumApiController : ControllerBase
     {
         private readonly String[] _acceptedLookups = new[] { "hot", "top", "new", "controversial" };
-
         private readonly ForumService _forumService;
         private readonly UserActivitiesService _userActivitiesService;
 
@@ -30,67 +29,79 @@ namespace ForumSiteCore.Web.Controllers
             _userActivitiesService = userActivitiesService;
         }                      
         
-        [ResponseCache(VaryByQueryKeys = new[] { "name", "lookup", "after", "before", "count" }, Duration = 10, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(VaryByQueryKeys = new[] { "name", "lookup", "ceiling", "floor", "limit" }, Duration = 10, Location = ResponseCacheLocation.Any)]
         [HttpGet("{name}/{lookup}")]
         [ProducesResponseType(typeof(ForumPostListingVM), 200)]
-        public IActionResult Get(String name, String lookup, String after = null, String before = null, String count = null)
+        public IActionResult Get(String name, String lookup, String ceiling = null, String floor = null, String limit = null, String lookback = null)
         {            
             if (!_acceptedLookups.Contains(lookup.ToLower()))
                 return BadRequest();
-
-            if (!String.IsNullOrWhiteSpace(after) && !String.IsNullOrWhiteSpace(before))
-                throw new Exception("Query string params should not have 'after' and 'before' arguments");
-
-
 
             ForumPostListingVM forumPostListingVM = null; ;
             switch (lookup.ToLower())
             {
                 case LookupConsts.LookupHot:
-                    forumPostListingVM = PrepareHotForumGet(name, before, after, count);
-                    //forumPostListingVM = _forumService.Hot(name, 25, afterDecimal);
+                    forumPostListingVM = PrepareHotForumGet(name, ceiling, floor, limit);
                     break;
                 case LookupConsts.LookupNew:
-                    forumPostListingVM = _forumService.New(name, 25);
+                    forumPostListingVM = PrepareNewForumGet(name, ceiling, floor, limit);
                     break;
                 case LookupConsts.LookupTop:
-                    forumPostListingVM = PrepareTopForumGet(name, before, after, count);
+                    forumPostListingVM = PrepareTopForumGet(name, ceiling, floor, limit);
                     break;
                 case LookupConsts.LookupControversial:
-                    forumPostListingVM = _forumService.Controversial(new DateTimeOffset(new DateTime(2010, 1, 1)), name);
+                    forumPostListingVM = PrepareControversialForumGet(name, ceiling, floor, limit);
                     break;
             }
 
             return Ok(forumPostListingVM);
         }
 
-        private ForumPostListingVM PrepareHotForumGet(String name, String before = null, String after = null, String count = null)
+        private ForumPostListingVM PrepareHotForumGet(String name, String ceiling = null, String floor = null, String limit = null)
         {
-            Decimal? beforeDecimal = Decimal.TryParse(after, out Decimal beforeParsedValue) ? beforeParsedValue : (Decimal?)null;
-            Decimal? afterDecimal = Decimal.TryParse(after, out Decimal afterParsedValue) ? afterParsedValue : (Decimal?)null;
+            Decimal? ceilingDecimal = ceiling.ToDecimalOrNull();
+            Decimal? floorDecimal = floor.ToDecimalOrNull();
 
-            var forumPostListingVM = _forumService.Hot(name, 25, afterDecimal);
+            var forumPostListingVM = _forumService.Hot(name, ceilingDecimal, floorDecimal, 25);
             return forumPostListingVM;
         }
 
-        private ForumPostListingVM PrepareTopForumGet(String name, String before = null, String after = null, String count = null)
+        private ForumPostListingVM PrepareTopForumGet(String name, String ceiling = null, String floor = null, String limit = null)
         {
-            Int64? beforeTicks = Int64.TryParse(after, out Int64 beforeParsedValue) ? beforeParsedValue : (Int64?)null;
-            Int64? afterTicks = Int64.TryParse(after, out Int64 afterParsedValue) ? afterParsedValue : (Int64?)null;
-            DateTimeOffset? beforeDateTimeOffset = null;
-            DateTimeOffset? afterDateTimeOffset = null;
+            Int64? ceilingLong = ceiling.ToInt64OrNull();
+            Int64? floorLong = floor.ToInt64OrNull();
 
-            if (beforeTicks.HasValue)
+            var forumPostListingVM = _forumService.Top(name, ceilingLong, floorLong, 25);
+            return forumPostListingVM;
+        }
+
+        private ForumPostListingVM PrepareNewForumGet(String name, String ceiling = null, String floor = null, String limit = null)
+        {
+            Int64? ceilingTicks = ceiling.ToInt64OrNull();
+            Int64? floorTicks = floor.ToInt64OrNull();
+            DateTimeOffset? ceilingDateTimeOffset = null;
+            DateTimeOffset? floorDateTimeOffset = null;
+
+            if (ceilingTicks.HasValue)
             {
-                beforeDateTimeOffset = new DateTimeOffset?(new DateTimeOffset(new DateTime(beforeTicks.Value)));
+                ceilingDateTimeOffset = new DateTimeOffset?(new DateTimeOffset(new DateTime(ceilingTicks.Value)));
             }
 
-            if (afterTicks.HasValue)
+            if (floorTicks.HasValue)
             {
-                afterDateTimeOffset = new DateTimeOffset?(new DateTimeOffset(new DateTime(afterTicks.Value)));
+                floorDateTimeOffset = new DateTimeOffset?(new DateTimeOffset(new DateTime(floorTicks.Value)));
             }
 
-            var forumPostListingVM = _forumService.Top(name, beforeDateTimeOffset, afterDateTimeOffset);
+            var forumPostListingVM = _forumService.New(name, ceilingDateTimeOffset, floorDateTimeOffset, 25);
+            return forumPostListingVM;
+        }
+
+        private ForumPostListingVM PrepareControversialForumGet(String name, String ceiling = null, String floor = null, String limit = null)
+        {
+            Decimal? ceilingDecimal = ceiling.ToDecimalOrNull();
+            Decimal? floorDecimal = floor.ToDecimalOrNull();
+            
+            var forumPostListingVM = _forumService.Controversial(name, ceilingDecimal, floorDecimal);
             return forumPostListingVM;
         }
 

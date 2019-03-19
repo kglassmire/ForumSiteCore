@@ -27,6 +27,8 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "vue": "^2.5.17"
+    "vue": "^2.5.17",
+    "moment": "2.24.0",
+    "vue-infinite-scroll": "2.0.2"
   }
 }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import timeService from '../services/timeservice';
 export class ForumService {
 
   search(searchTerms) {
@@ -7,8 +7,36 @@ export class ForumService {
     return axios.get('/api/forums/search/' + searchTerms);
   }
 
-  getPosts(name, forumListingType, after) {
-    return axios.get('/api/forums/' + name + '/' + forumListingType + '?after=' + after);
+  getPosts(forumPostListing) {
+    let urlParams = new URLSearchParams(window.location.search);
+    let lookback = urlParams.get('lookback');
+    if (lookback === null) {
+      lookback = '1-hours';
+    }
+    let lastPost = forumPostListing.posts[forumPostListing.posts.length - 1];
+    let url = '/api/forums/' + forumPostListing.forum.name + '/' + forumPostListing.forumListingType;
+    let fullUrl = url;
+
+    // hot is default
+    if (forumPostListing.forumListingType === 'hot') {
+      fullUrl += '?ceiling=' + lastPost.hotScore; 
+    }
+
+    if (forumPostListing.forumListingType === 'top') {
+      fullUrl += '?ceiling=' + lastPost.totalScore;
+    }
+    
+    if (forumPostListing.forumListingType === 'new') {
+      let ceiling = timeService.getTicks(new Date(lastPost.created));
+      fullUrl += '?ceiling=' + ceiling;
+    }
+
+    if (forumPostListing.forumListingType === 'controversial') {
+      fullUrl += '?ceiling=' + lastPost.controversyScore;
+    }
+    
+    console.log(fullUrl);
+    return axios.get(fullUrl);
   }
 
   save(forum) {
