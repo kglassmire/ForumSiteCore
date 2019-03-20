@@ -6,6 +6,7 @@ module.exports = (env = {}, argv = {}) => {
   const isProd = argv.mode === 'production';
   const config = {
     mode: argv.mode || 'development', // we default to development when no 'mode' arg is passed
+    devtool: 'eval-source-map',
     entry: {
       main: './components/typeahead/app.js',
       forum: './components/forum-post-listing/app.js',

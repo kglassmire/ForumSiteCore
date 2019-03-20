@@ -261,3 +261,7 @@ __pycache__/
 *.pyc
 /ForumSiteCore/ForumSiteCore.Web/Logs
 /ForumSiteCore/ForumSiteCore.API/Logs
+
+
+#webpack dist
+/ForumSiteCore/ForumSiteCore.Web/wwwroot/dist
