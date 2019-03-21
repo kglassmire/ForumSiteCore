@@ -36,7 +36,7 @@
                 </div>
             </div>
         </div>
-        <div v-infinite-scroll="retrievePosts" infinite-scroll-disabled="busy" infinite-scroll-distance="10" class="forum-content">
+        <div v-infinite-scroll="retrievePosts" infinite-scroll-disabled="busy" infinite-scroll-throttle-delay="500" infinite-scroll-distance="10" class="forum-content">
             <ul class="list-unstyled">
                 <post-card v-for="post in forumPostListing.posts" v-bind:key="post.id" v-bind:post="post"></post-card>
             </ul>
