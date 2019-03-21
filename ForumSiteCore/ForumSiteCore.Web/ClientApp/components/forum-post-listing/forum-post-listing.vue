@@ -16,10 +16,10 @@
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Past Hour</a>
-                    <a class="dropdown-item" href="#">Past Day</a>
-                    <a class="dropdown-item" href="#">Past Year</a>
-                    <a class="dropdown-item" href="#">All Time</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('top', '1-hours')">Past Hour</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('top', '1-days')">Past Day</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('top', '1-years')">Past Year</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('top')">All Time</a>
                 </div>
             </div>
             <!-- Controversial -->
@@ -29,10 +29,10 @@
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Past Hour</a>
-                    <a class="dropdown-item" href="#">Past Day</a>
-                    <a class="dropdown-item" href="#">Past Year</a>
-                    <a class="dropdown-item" href="#">All Time</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('controversial', '1-hours')">Past Hour</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('controversial', '1-days')">Past Day</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('controversial', '1-years')">Past Year</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('controversial')">All Time</a>
                 </div>
             </div>
         </div>
@@ -56,6 +56,7 @@
     import infiniteScroll from 'vue-infinite-scroll';
     import PostCardComponent from '../common/post-card.vue';
     import forumService from '../../services/forumservice.js';
+    import timeService from '../../services/timeservice';
     export default {
         data() {
             return {
@@ -80,6 +81,15 @@
             }
         },
         methods: {
+            getUrlString(type, lookback) {
+
+                let url = `/f/${this.forumPostListing.forum.name}/${type}`;
+                if (lookback) {
+                    url += `?dtstart=${timeService.getLookbackDate(lookback).format()}`;
+                }
+
+                return url;
+            },
             saveForum() {
                 forumService.save(this.forumPostListing.forum)
                     .then(response => {

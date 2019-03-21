@@ -9,10 +9,8 @@ export class ForumService {
 
   getPosts(forumPostListing) {
     let urlParams = new URLSearchParams(window.location.search);
-    let lookback = urlParams.get('lookback');
-    if (lookback === null) {
-      lookback = '1-hours';
-    }
+    let begintime = urlParams.get('begintime');
+
     let lastPost = forumPostListing.posts[forumPostListing.posts.length - 1];
     let url = '/api/forums/' + forumPostListing.forum.name + '/' + forumPostListing.forumListingType;
     let fullUrl = url;
@@ -20,6 +18,8 @@ export class ForumService {
     // hot is default
     if (forumPostListing.forumListingType === 'hot') {
       fullUrl += '?ceiling=' + lastPost.hotScore; 
+      if (begintime)
+        fullUrl += '&begintime=' + begintime;
     }
 
     if (forumPostListing.forumListingType === 'top') {
@@ -27,7 +27,7 @@ export class ForumService {
     }
     
     if (forumPostListing.forumListingType === 'new') {
-      let ceiling = timeService.getTicks(new Date(lastPost.created));
+      let ceiling = lastPost.created;
       fullUrl += '?ceiling=' + ceiling;
     }
 

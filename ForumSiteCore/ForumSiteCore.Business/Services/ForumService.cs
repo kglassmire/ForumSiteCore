@@ -56,12 +56,12 @@ namespace ForumSiteCore.Business.Services
             return predicate;
         }
 
-        public ForumPostListingVM Hot(String forumName, Decimal? ceiling, Decimal? floor, Int32 limit = 25)
+        public ForumPostListingVM Hot(String forumName, Decimal? ceiling, Decimal? floor, Int32 limit = 25, DateTimeOffset? beginDate = null, DateTimeOffset? endDate = null)
         {
             _logger.LogDebug("Retrieving hot forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
             predicate = BuildPagingWhereClauseHot(predicate, ceiling, floor);
-
+            predicate = BuildDateWhereClause(predicate, beginDate, endDate);
             var posts = _context.Posts
                 .Include(x => x.User)
                 .Include(x => x.Forum)
@@ -71,6 +71,17 @@ namespace ForumSiteCore.Business.Services
                 .ToList();
 
             return PrepareForumPostListing(forumName, posts, LookupConsts.LookupHot);
+        }
+
+        private ExpressionStarter<Post> BuildDateWhereClause(ExpressionStarter<Post> predicate, DateTimeOffset? beginDate, DateTimeOffset? endDate)
+        {
+            if (beginDate.HasValue)
+                predicate = predicate.And(x => x.Created >= beginDate);
+
+            if (endDate.HasValue)
+                predicate = predicate.And(x => x.Created < endDate);
+
+            return predicate;
         }
 
         private ExpressionStarter<Post> BuildPagingWhereClauseHot(ExpressionStarter<Post> predicate, Decimal? ceiling = null, Decimal? floor = null)
@@ -84,11 +95,12 @@ namespace ForumSiteCore.Business.Services
             return predicate;
         }
 
-        public ForumPostListingVM Top(String forumName, Int64? ceiling = null, Int64? floor = null, Int32 limit = 25)
+        public ForumPostListingVM Top(String forumName, Int64? ceiling = null, Int64? floor = null, Int32 limit = 25, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
             _logger.LogDebug("Retrieving top forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
             predicate = BuildPagingWhereClauseTop(predicate, ceiling, floor);
+            predicate = BuildDateWhereClause(predicate, dtstart, dtend);
 
             var posts = _context.Posts
                 .Include(x => x.User)
@@ -112,11 +124,12 @@ namespace ForumSiteCore.Business.Services
             return predicate;
         }
 
-        public ForumPostListingVM New(String forumName, DateTimeOffset? ceiling, DateTimeOffset? floor, Int32 limit = 25)
+        public ForumPostListingVM New(String forumName, DateTimeOffset? ceiling, DateTimeOffset? floor, Int32 limit = 25, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
             _logger.LogDebug("Retrieving new forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
             predicate = BuildPagingWhereClauseNew(predicate, ceiling, floor);
+            predicate = BuildDateWhereClause(predicate, dtstart, dtend);
 
             var posts = _context.Posts
                 .Include(x => x.User)
@@ -140,13 +153,13 @@ namespace ForumSiteCore.Business.Services
             return predicate;
         }
 
-        public ForumPostListingVM Controversial(String forumName, Decimal? ceiling, Decimal? floor, Int32 limit = 25)
+        public ForumPostListingVM Controversial(String forumName, Decimal? ceiling, Decimal? floor, Int32 limit = 25, DateTimeOffset? begindate = null, DateTimeOffset? enddate = null)
         {
 
             _logger.LogDebug("Retrieving controversial forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
             predicate = BuildPagingWhereClauseControversial(predicate, ceiling, floor);
-
+            predicate = BuildDateWhereClause(predicate, begindate, enddate);
             var posts = _context.Posts
                 .Include(x => x.User)
                 .Include(x => x.Forum)

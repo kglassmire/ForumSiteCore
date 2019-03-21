@@ -27,7 +27,7 @@ namespace ForumSiteCore.Web.Controllers
         }
 
         [Route("f/{name}/{lookup?}", Name = "forum")]
-        public IActionResult Index(String name, String lookup = null, String ceiling = null, String floor = null, String limit = null, String lookback = null)
+        public IActionResult Index(String name, String lookup = null, String ceiling = null, String floor = null, String limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
             IActionResult result = null;
 
@@ -36,7 +36,7 @@ namespace ForumSiteCore.Web.Controllers
 
             try
             {
-                result = _forumApiController.Get(name, lookup);
+                result = _forumApiController.Get(name, lookup, dtstart: dtstart);
                 var objectResult = (ObjectResult)result;
 
                 if (objectResult.Value is ForumPostListingVM)

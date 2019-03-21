@@ -23,6 +23,13 @@ namespace ForumSiteCore.Utility
             return returnVal;
         }
 
+        public static DateTimeOffset? ToDateTimeOffsetOrNull(this string input)
+        {
+            DateTimeOffset? returnVal = DateTimeOffset.TryParse(input, out DateTimeOffset parsedValue) ? parsedValue : (DateTimeOffset?)null;
+
+            return returnVal;
+        }
+
         public static Decimal? ToDecimalOrNull(this string input)
         {
             Decimal? returnVal = Decimal.TryParse(input, out Decimal parsedValue) ? parsedValue : (Decimal?)null;
