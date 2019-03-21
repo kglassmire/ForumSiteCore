@@ -1,6 +1,6 @@
 
 <template>
-    <div class="post-grid-container" v-cloak>
+    <div class="post-grid-container">
         <div class="post-header">
             <h1>Header Placeholder</h1>
         </div>

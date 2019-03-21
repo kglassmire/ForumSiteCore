@@ -1,6 +1,6 @@
 
 <template>
-    <div class="forum-grid-container" v-cloak>
+    <div class="forum-grid-container">
         <div class="forum-header">
             <h2>
                 f/{{forumPostListing.forum.name}}
@@ -37,6 +37,9 @@
             </div>
         </div>
         <div v-infinite-scroll="retrievePosts" infinite-scroll-disabled="busy" infinite-scroll-throttle-delay="500" infinite-scroll-distance="10" class="forum-content">
+            <div v-if="forumPostListing.posts.length === 0" class="alert alert-warning" role="alert">
+                No posts based on your criteria.
+            </div>
             <ul class="list-unstyled">
                 <post-card v-for="post in forumPostListing.posts" v-bind:key="post.id" v-bind:post="post"></post-card>
             </ul>
