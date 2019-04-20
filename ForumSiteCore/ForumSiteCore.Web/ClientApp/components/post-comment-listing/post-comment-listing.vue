@@ -2,10 +2,18 @@
 <template>
     <div class="post-grid-container">
         <div class="post-header">
-            <h1>Header Placeholder</h1>
-        </div>
-        <div class="post-content">
             <post-card v-bind:key="postCommentListing.post.id" v-bind:post="postCommentListing.post" v-bind:showPostDescription="true"></post-card>
+            <!-- Hot -->
+            <a type="button" v-bind:href="getUrlString('best')" class="btn btn-secondary">Best</a>
+            <!-- New -->
+            <a type="button" v-bind:href="getUrlString('new')" class="btn btn-secondary">New</a>
+            <!-- Top -->
+            <a type="button" v-bind:href="getUrlString('top')" class="btn btn-secondary">Top</a>
+            <!-- Controversial -->
+            <a type="button" v-bind:href="getUrlString('controversial')" class="btn btn-secondary">Controversial</a>
+
+        </div>
+        <div class="post-content">            
             <ul v-if="postCommentListing.comments !== null" class="list-unstyled">
                 <comment-card v-for="comment in postCommentListing.comments" v-bind:key="comment.id" v-bind:comment="comment"></comment-card>
             </ul>
@@ -41,6 +49,10 @@
             }
         },
         methods: {     
+            getUrlString(type) {
+                let url = `/f/${this.postCommentListing.post.forumName}/${this.postCommentListing.post.id}/comments/${type}`;
+                return url;
+            }
         },
         components: {
             'comment-card': CommentCardComponent,

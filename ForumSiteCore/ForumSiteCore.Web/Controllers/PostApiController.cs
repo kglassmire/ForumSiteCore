@@ -64,8 +64,6 @@ namespace ForumSiteCore.Web.Controllers
             {
                 return BadRequest(ModelState.Errors());
             }
-                
-            
 
             return Ok();
         }

@@ -2,6 +2,16 @@ import axios from 'axios';
 import timeService from '../services/timeservice';
 export class ForumService {
 
+  getUrlString(type, lookback) {
+
+    let url = `/f/${this.forumPostListing.forum.name}/${type}`;
+    if (lookback) {
+      url += `?dtstart=${timeService.getLookbackDate(lookback).format()}`;
+    }
+
+    return url;
+  }
+
   search(searchTerms) {
     console.log('searching for: ' + searchTerms);
     return axios.get('/api/forums/search/' + searchTerms);

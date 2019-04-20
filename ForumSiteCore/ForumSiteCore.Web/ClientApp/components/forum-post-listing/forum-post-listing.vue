@@ -6,12 +6,12 @@
                 f/{{forumPostListing.forum.name}}
             </h2>
             <!-- Hot -->
-            <a type="button" v-bind:href="'/f/' + forumPostListing.forum.name + '/hot/'" class="btn btn-secondary">Hot</a>
+            <a type="button" v-bind:href="getUrlString('hot')" class="btn btn-secondary">Hot</a>
             <!-- New -->
-            <a type="button" v-bind:href="'/f/' + forumPostListing.forum.name + '/new/'" class="btn btn-secondary">New</a>
+            <a type="button" v-bind:href="getUrlString('new')" class="btn btn-secondary">New</a>
             <!-- Top -->
             <div class="btn-group">
-                <a type="button" v-bind:href="'/f/' + forumPostListing.forum.name + '/top/'" class="btn btn-secondary">Top</a>
+                <a type="button" v-bind:href="getUrlString('top')" class="btn btn-secondary">Top</a>
                 <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
@@ -24,7 +24,7 @@
             </div>
             <!-- Controversial -->
             <div class="btn-group">
-                <a type="button" v-bind:href="'/f/' + forumPostListing.forum.name + '/controversial/'" class="btn btn-secondary">Controversial</a>
+                <a type="button" v-bind:href="getUrlString('controversial')" class="btn btn-secondary">Controversial</a>
                 <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
