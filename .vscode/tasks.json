@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ForumSiteCore/ForumSiteCore.Web/ForumSiteCore.Web.csproj",
+                "${workspaceFolder}/src/ForumSiteCore.Web/ForumSiteCore.Web.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/ForumSiteCore/ForumSiteCore.Web/ForumSiteCore.Web.csproj",
+                "${workspaceFolder}/src/ForumSiteCore.Web/ForumSiteCore.Web.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,11 +32,25 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/ForumSiteCore/ForumSiteCore.Web/ForumSiteCore.Web.csproj",
+                "${workspaceFolder}/src/ForumSiteCore.Web/ForumSiteCore.Web.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "docker build debug",
+            "command": "docker",
+            "type": "shell",
+            "args": [
+                "build",
+                "--rm",
+                "--build-arg", 
+                "BUILD_CONFIG=Debug",
+                "-t",
+                "forumsitecore-web",
+                "."
+            ]
         }
     ]
 }
