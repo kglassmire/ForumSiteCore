@@ -9,7 +9,6 @@ using ForumSiteCore.DAL.Models;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,11 +22,18 @@ namespace ForumSiteCore.Business.Services
         private readonly IUserAccessor<Int64> _userAccessor;
         private readonly UserActivitiesService _userActivitiesService;
         private readonly ILogger<ForumService> _logger;
-        public ForumService(ApplicationDbContext context, IUserAccessor<Int64> userAccessor, UserActivitiesService userActivitiesService, ILogger<ForumService> logger)
+        private readonly IMapper _mapper;
+        
+        public ForumService(ApplicationDbContext context, 
+            IUserAccessor<Int64> userAccessor, 
+            UserActivitiesService userActivitiesService,
+            IMapper mapper,
+            ILogger<ForumService> logger)
         {
             _context = context;
             _userAccessor = userAccessor;
             _userActivitiesService = userActivitiesService;
+            _mapper = mapper;
             _logger = logger;
         }
 
@@ -38,14 +44,14 @@ namespace ForumSiteCore.Business.Services
             if (ForumIsAll(forumName))
             {
                 // do all stuff
-                Log.Information("CreateForumWhereClause => ForumIsAll");
+                _logger.LogInformation("CreateForumWhereClause => ForumIsAll");
             }
             else if (ForumIsHome(forumName))
             {
                 // do home stuff
                 // get user's forums
                 Int64[] ids = { 3, 10, 12 };
-                Log.Information("CreateForumWhereClause => ForumIsHome");
+                _logger.LogInformation("CreateForumWhereClause => ForumIsHome");
                 predicate = predicate.And(x => ids.Contains(x.ForumId));
             }
             else
@@ -223,7 +229,7 @@ namespace ForumSiteCore.Business.Services
                 .Include(x => x.User)
                 .SingleOrDefault(x => x.Id.Equals(forumId));
 
-            return Mapper.Map<ForumDto>(forum);
+            return _mapper.Map<ForumDto>(forum);
         }
 
         public ForumDto GetByName(String forumName)
@@ -237,7 +243,7 @@ namespace ForumSiteCore.Business.Services
             if (forum == null)
                 throw new ForumNotFoundException(String.Format("Forum named {0} not found", forumName));
 
-            return Mapper.Map<ForumDto>(forum);
+            return _mapper.Map<ForumDto>(forum);
         }
 
         public ForumSaveVM Save(Int64 forumId, Boolean saved)
@@ -300,7 +306,7 @@ namespace ForumSiteCore.Business.Services
                 }
                 catch (Exception e)
                 {
-                    Log.Error(e, "Failed to add ForumSave");
+                    _logger.LogError(e, "Failed to add ForumSave");
                     transaction.Rollback();
                 }
             }
@@ -331,7 +337,7 @@ namespace ForumSiteCore.Business.Services
         private void MapDtos(String forumName, List<Post> posts, out ForumDto forumDto, out List<PostDto> postDtos)
         {
             forumDto = new ForumDto();
-            postDtos = Mapper.Map<List<PostDto>>(posts);
+            postDtos = _mapper.Map<List<PostDto>>(posts);
             if (ForumIsAll(forumName) || ForumIsHome(forumName))
             {
                 foreach (var postDto in postDtos)
@@ -359,12 +365,12 @@ namespace ForumSiteCore.Business.Services
                 if (posts.Count > 0)
                 {
                     var forum = posts.FirstOrDefault().Forum;
-                    forumDto = Mapper.Map<ForumDto>(forum);
+                    forumDto = _mapper.Map<ForumDto>(forum);
                 }
                 else
                 {
                     var forum = GetByName(forumName);
-                    forumDto = Mapper.Map<ForumDto>(forum);
+                    forumDto = _mapper.Map<ForumDto>(forum);
                 }
 
             }
@@ -409,7 +415,7 @@ namespace ForumSiteCore.Business.Services
                 }
                 catch (Exception e)
                 {
-                    Log.Error(e, "Failed to toggle ForumSave inactive state");
+                    _logger.LogError(e, "Failed to toggle ForumSave inactive state");
                     transaction.Rollback();
                 }
             }

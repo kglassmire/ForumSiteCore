@@ -1,6 +1,6 @@
 ﻿using ForumSiteCore.DAL;
 using ForumSiteCore.DAL.Models;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +12,15 @@ namespace ForumSiteCore.Business.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly UserActivitiesService _userActivitiesService;
+        private readonly ILogger<CommentService> _logger;
 
-        public CommentService(ApplicationDbContext context, UserActivitiesService userActivitiesService)
+        public CommentService(ApplicationDbContext context, 
+            UserActivitiesService userActivitiesService,
+            ILogger<CommentService> logger)
         {
             _context = context;
             _userActivitiesService = userActivitiesService;
+            _logger = logger;
         }
 
         public Comment Add(Comment comment)
@@ -37,7 +41,7 @@ namespace ForumSiteCore.Business.Services
                 catch (Exception e)
                 {
                     result = false;
-                    Log.Error(e, "Error while adding comment.");
+                    _logger.LogError(e, "Error while adding comment.");
                     transaction.Rollback();
                 }
             }
@@ -78,7 +82,7 @@ namespace ForumSiteCore.Business.Services
                 catch (Exception e)
                 {
                     result = false;
-                    Log.Error(e, "Error while saving comment");
+                    _logger.LogError(e, "Error while saving comment");
                     transaction.Rollback();
                 }
 

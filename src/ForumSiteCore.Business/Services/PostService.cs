@@ -22,12 +22,19 @@ namespace ForumSiteCore.Business.Services
         private readonly ApplicationDbContext _context;
         private readonly UserActivitiesService _userActivitiesService;
         private readonly IUserAccessor<Int64> _userAccessor;
+        private readonly IMapper _mapper;
         private readonly ILogger<PostService> _logger;
-        public PostService(ApplicationDbContext context, UserActivitiesService userActivitiesService, IUserAccessor<Int64> userAccessor, ILogger<PostService> logger)
+
+        public PostService(ApplicationDbContext context, 
+            UserActivitiesService userActivitiesService, 
+            IUserAccessor<Int64> userAccessor,
+            IMapper mapper,
+            ILogger<PostService> logger)
         {
             _context = context;
             _userActivitiesService = userActivitiesService;
             _userAccessor = userAccessor;
+            _mapper = mapper;
             _logger = logger;
         }        
 
@@ -129,7 +136,7 @@ namespace ForumSiteCore.Business.Services
                 .Include(x => x.User)
                 .SingleOrDefault(x => x.Id.Equals(postId));
 
-            return Mapper.Map<PostDto>(post);
+            return _mapper.Map<PostDto>(post);
         }
 
         public PostCommentListingVM New(Int64 id)
@@ -318,15 +325,15 @@ namespace ForumSiteCore.Business.Services
         private void MapDtos(List<CommentTree> comments, out PostDto postDto, out List<CommentDto> commentDtos)
         {
             Post post = comments.FirstOrDefault().Post;
-            postDto = Mapper.Map<PostDto>(post);
-            commentDtos = Mapper.Map<List<CommentDto>>(comments);
+            postDto = _mapper.Map<PostDto>(post);
+            commentDtos = _mapper.Map<List<CommentDto>>(comments);
         }
 
         private void MapDtos(List<Comment> comments, out PostDto postDto, out List<CommentDto> commentDtos)
         {
             Post post = comments.FirstOrDefault().Post;
-            postDto = Mapper.Map<PostDto>(post);
-            commentDtos = Mapper.Map<List<CommentDto>>(comments);
+            postDto = _mapper.Map<PostDto>(post);
+            commentDtos = _mapper.Map<List<CommentDto>>(comments);
         }
 
         private Boolean UpdatePostSave(Int64 postId, Boolean save)

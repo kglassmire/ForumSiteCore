@@ -2,9 +2,9 @@
 <template>
     <div class="forum-grid-container">
         <div class="forum-header">
-            <h2>
+            <h3>
                 f/{{forumPostListing.forum.name}}
-            </h2>
+            </h3>
             <!-- Hot -->
             <a type="button" v-bind:href="getUrlString('hot')" class="btn btn-secondary">Hot</a>
             <!-- New -->

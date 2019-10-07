@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ForumSiteCore.DAL.Models;
 using ForumSiteCore.Utility;
-using Serilog;
+using Microsoft.Extensions.Logging;
+
 namespace ForumSiteCore.DAL
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, long>
@@ -19,12 +20,11 @@ namespace ForumSiteCore.DAL
         public DbSet<Comment> Comments { get; set; }
         public DbSet<CommentVote> CommentVotes { get; set; }
         public DbSet<CommentSave> CommentSaves { get; set; }
-        public DbQuery<CommentTree> CommentsTree { get; set; }
+        public DbSet<CommentTree> CommentsTree { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            Log.Information("Initializing ApplicationDbContext.");
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -39,27 +39,27 @@ namespace ForumSiteCore.DAL
             foreach (var entity in builder.Model.GetEntityTypes())
             {
                 // Replace table names
-                entity.Relational().TableName = entity.Relational().TableName.ToSnakeCase();
+                entity.SetTableName(entity.GetTableName().ToSnakeCase());
 
                 // Replace column names            
                 foreach (var property in entity.GetProperties())
                 {
-                    property.Relational().ColumnName = property.Name.ToSnakeCase();
+                    property.SetColumnName(property.Name.ToSnakeCase());
                 }
 
                 foreach (var key in entity.GetKeys())
                 {
-                    key.Relational().Name = key.Relational().Name.ToSnakeCase();
+                    key.SetName(key.GetName().ToSnakeCase());
                 }
 
                 foreach (var key in entity.GetForeignKeys())
                 {
-                    key.Relational().Name = key.Relational().Name.ToSnakeCase();
+                    key.SetConstraintName(key.GetConstraintName().ToSnakeCase());
                 }
 
                 foreach (var index in entity.GetIndexes())
                 {
-                    index.Relational().Name = index.Relational().Name.ToSnakeCase();
+                    index.SetName(index.GetName().ToSnakeCase());
                 }
             }            
         }

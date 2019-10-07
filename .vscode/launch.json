@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/ForumSiteCore/ForumSiteCore.Web/bin/Debug/netcoreapp2.2/ForumSiteCore.Web.dll",
+            "program": "${workspaceFolder}/src/ForumSiteCore.Web/bin/Debug/netcoreapp3.0/ForumSiteCore.Web.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/ForumSiteCore/ForumSiteCore.Web",
+            "cwd": "${workspaceFolder}/src/ForumSiteCore.Web",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {

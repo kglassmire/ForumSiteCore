@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using ForumSiteCore.DAL;
 using ForumSiteCore.DAL.Models;
 using ForumSiteCore.Web.Areas.Identity.Services;
@@ -21,10 +22,11 @@ using ForumSiteCore.Web.Controllers;
 using CacheManager.Core;
 using ForumSiteCore.Business;
 using NSwag.AspNetCore;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using System.IO;
 using FluentValidation.AspNetCore;
 using ForumSiteCore.Business.Validators;
+using Microsoft.AspNetCore.SpaServices.Webpack;
+using AutoMapper;
 
 namespace ForumSiteCore.Web
 {
@@ -33,7 +35,6 @@ namespace ForumSiteCore.Web
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            AutoMapperConfiguration.RegisterMappings();
         }
 
         public IConfiguration Configuration { get; }
@@ -41,6 +42,8 @@ namespace ForumSiteCore.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -54,7 +57,6 @@ namespace ForumSiteCore.Web
             services.AddScoped(typeof(UserActivitiesService));
             services.AddScoped(typeof(ForumApiController));
             services.AddScoped(typeof(PostApiController));
-            services.AddScoped<IEmailSender, EmailSender>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUserAccessor<Int64>, UserAccessor>();
 
@@ -70,11 +72,13 @@ namespace ForumSiteCore.Web
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()                
                 .AddDefaultTokenProviders();
-            
+
+            services.AddAutoMapper(typeof(AutoMapperConfigProfile));
+
             services.AddResponseCaching();
 
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginVMValidator>());
 
             services.AddRouting(options => options.LowercaseUrls = true);
@@ -85,38 +89,40 @@ namespace ForumSiteCore.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
+                app.UseOpenApi();
+                app.UseSwaggerUi3();
+                app.UseDeveloperExceptionPage();
+
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
                     ProjectPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp"),
                     HotModuleReplacement = true
                 });
-                app.UseSwagger();
-                app.UseSwaggerUi3();
-                app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseRouting();
             app.UseCookiePolicy();
-            app.UseAuthentication();            
+            app.UseAuthorization();
             app.UseResponseCaching();
-            //app.UseWebMarkupMin();
             app.UseStatusCodePagesWithReExecute("/Error/", "?statusCode={0}");
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=ForumWeb}/{action=Index}/{id?}"
+                    pattern: "{controller=ForumWeb}/{action=Index}/{id?}"
                 );
             });            
         }
