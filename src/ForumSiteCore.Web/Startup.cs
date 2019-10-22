@@ -59,6 +59,7 @@ namespace ForumSiteCore.Web
             services.AddScoped(typeof(PostApiController));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUserAccessor<Int64>, UserAccessor>();
+            services.AddScoped<IEmailSender, EmailSender>();
 
             services.AddCacheManagerConfiguration(cfg => cfg
                 .WithMicrosoftMemoryCacheHandle()
@@ -115,11 +116,13 @@ namespace ForumSiteCore.Web
 
             app.UseRouting();
             app.UseCookiePolicy();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseResponseCaching();
             app.UseStatusCodePagesWithReExecute("/Error/", "?statusCode={0}");
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=ForumWeb}/{action=Index}/{id?}"
