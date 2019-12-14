@@ -9,13 +9,13 @@
                     <i class="fas fa-search"></i>
                 </div>
             </div>
-            <input type="text" class="form-control mr-sm-2 dropdown" placeholder="Search" @bind-value="searchTerms" @bind-value:event="oninput" @onblur="Clear" @onkeyup="Search" aria-label="Search">
-            @if (hasResults)
+            <input type="text" class="form-control mr-sm-2 dropdown" placeholder="Search" @ref="_searchInput" @bind-value="SearchText" @bind-value:event="oninput" aria-label="Search">
+            @if (IsShowingSuggestions)
             {
                 <div class="dropdown-menu bd-search-results" role="menu">
-                    @foreach (var item in searchResults.Results)
+                    @foreach (var item in Suggestions.Results)
                     {
-                        <NavLink class="dropdown-item" href="@{$"/f/{item}/hot"}" @onkeyup="GoToLink">@item</NavLink>
+                        <NavLink class="dropdown-item" href="@{$"/f/{item}/hot"}">@item</NavLink>
                     }
                 </div>
             }
@@ -24,28 +24,5 @@
 </div>
 
 @code {
-    private string searchTerms = string.Empty;
-    private ForumSearchVM searchResults;
-    private bool hasResults;
-    private bool hasFocus;
-
-    private async void Search()
-    {        
-        searchResults = await Http.GetJsonAsync<ForumSearchVM>($"api/forums/search/{searchTerms}");
-        hasResults = searchResults?.Results.Count > 0;
-    }
-
-    private void GoToLink()
-    {
-
-    }
-
-    private void Clear()
-    {
-        if (searchTerms.Length == 0) 
-        {
-            searchResults = null;
-        }
-    }
 
 }

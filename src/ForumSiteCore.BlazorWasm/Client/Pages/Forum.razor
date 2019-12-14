@@ -57,12 +57,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        
+
     }
 
     private async Task LoadForumPostListing()
     {
-        forum = await Http.GetJsonAsync<ForumPostListingVM>($"api/forums/{Name}/{Type}");
+        try
+        {
+            forum = await Http.GetJsonAsync<ForumPostListingVM>($"api/forums/{Name}/{Type}");
+        }
+        catch (Exception e)
+        {
+
+        }
+
     }
 
 }
