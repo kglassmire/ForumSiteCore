@@ -1,0 +1,68 @@
+﻿@page "/"
+@page "/f/{name}/{type}"
+@inject HttpClient Http
+<h3>Forum</h3>
+<h4>@pageText</h4>
+
+@if (forum == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Forum Name</th>
+                <th>Post Id</th>
+                <th>Post Title</th>
+                <th>Comment Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in forum.Posts)
+            {
+                <tr>
+                    <td>@forum.Forum.Name</td>
+                    <td>@post.Id</td>
+                    <td>@post.Name</td>
+                    <td>@post.CommentsCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private string pageText;
+    private ForumPostListingVM forum;
+
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public string Type { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (String.IsNullOrWhiteSpace(Name) || String.IsNullOrWhiteSpace(Type))
+        {
+            Name = "all";
+            Type = "hot";
+        }
+
+        await LoadForumPostListing();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+
+    private async Task LoadForumPostListing()
+    {
+        forum = await Http.GetJsonAsync<ForumPostListingVM>($"api/forums/{Name}/{Type}");
+    }
+
+}

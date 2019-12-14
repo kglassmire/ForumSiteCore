@@ -1,0 +1,73 @@
+﻿@page "/fetchdata"
+@using ForumSiteCore.BlazorWasm.Shared
+@inject HttpClient Http
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (forecasts == null && forum == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Forum Name</th>
+                <th>Post Id</th>
+                <th>Post Title</th>
+                <th>Comment Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in forum.Posts)
+            {
+                <tr>
+                    <td>@forum.Forum.Name</td>
+                    <td>@post.Id</td>
+                    <td>@post.Name</td>
+                    <td>@post.CommentsCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private WeatherForecast[] forecasts;
+    private ForumPostListingVM forum;
+    protected override async Task OnInitializedAsync()
+    {
+        var task1 = Http.GetJsonAsync<ForumPostListingVM>("api/forums/all/hot");
+        var task2 = Http.GetJsonAsync<WeatherForecast[]>("WeatherForecast");
+
+        await Task.WhenAll(task1, task2);
+        forum = task1.Result;
+        forecasts = task2.Result;
+    }
+    
+}

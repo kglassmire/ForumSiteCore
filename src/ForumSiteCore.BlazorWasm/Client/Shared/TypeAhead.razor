@@ -1,0 +1,51 @@
+﻿@inject HttpClient Http
+
+<div class="form-row align-items-center">
+    <div class="col-auto">
+        <label class="sr-only" for="inlineFormInput">Search</label>
+        <div class="input-group mr-sm-2">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            <input type="text" class="form-control mr-sm-2 dropdown" placeholder="Search" @bind-value="searchTerms" @bind-value:event="oninput" @onblur="Clear" @onkeyup="Search" aria-label="Search">
+            @if (hasResults)
+            {
+                <div class="dropdown-menu bd-search-results" role="menu">
+                    @foreach (var item in searchResults.Results)
+                    {
+                        <NavLink class="dropdown-item" href="@{$"/f/{item}/hot"}" @onkeyup="GoToLink">@item</NavLink>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string searchTerms = string.Empty;
+    private ForumSearchVM searchResults;
+    private bool hasResults;
+    private bool hasFocus;
+
+    private async void Search()
+    {        
+        searchResults = await Http.GetJsonAsync<ForumSearchVM>($"api/forums/search/{searchTerms}");
+        hasResults = searchResults?.Results.Count > 0;
+    }
+
+    private void GoToLink()
+    {
+
+    }
+
+    private void Clear()
+    {
+        if (searchTerms.Length == 0) 
+        {
+            searchResults = null;
+        }
+    }
+
+}

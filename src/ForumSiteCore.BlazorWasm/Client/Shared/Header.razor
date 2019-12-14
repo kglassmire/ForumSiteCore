@@ -1,0 +1,44 @@
+﻿<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+        <NavLink class="navbar-brand" href="/f/all/hot">ForumSiteCore</NavLink>                
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <NavLink class="nav-link" href="/f/all/hot">Home<span class="sr-only">(current)</span></NavLink>                    
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/f/all/hot">All</NavLink>                    
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/counter">Counter</NavLink>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        dropdown
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">action</a>
+                        <a class="dropdown-item" href="#">another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">something else here</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">disabled</a>
+                </li>
+                <partial name="_LoginPartial" />
+            </ul>
+            <TypeAhead />
+        </div>
+    </nav>
+    @*<partial name="_CookieConsentPartial" />*@
+</header>
+
+@code {
+
+}
