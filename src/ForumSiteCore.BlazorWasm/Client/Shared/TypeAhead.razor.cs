@@ -35,10 +35,11 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
             {
                 _searchText = value;
 
-                if (value.Length == 0)
+                if (value.Length < MinimumLength)
                 {
                     _debounceTimer.Stop();
                     SelectedIndex = -1;
+                    IsShowingSuggestions = false;
                 }
                 else if (value.Length >= MinimumLength)
                 {
@@ -50,20 +51,71 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
 
         protected override void OnInitialized()
         {
-            Console.WriteLine("Called OnInitialized");
             _debounceTimer = new Timer();
             _debounceTimer.Interval = Debounce;
             _debounceTimer.AutoReset = false;
             _debounceTimer.Elapsed += Search;
         }
 
+        private void Initialize()
+        {
+            SearchText = string.Empty;
+            Suggestions = new ForumSearchVM();            
+            IsShowingSuggestions = false;
+            SelectedIndex = -1;
+        }
+
+        private async Task HandleKeyUpOnShowDropDown(KeyboardEventArgs args)
+        {
+            if (args.Key == "ArrowDown")
+            {
+                MoveSelectedItem(1);
+            }
+            else if (args.Key == "ArrowUp")
+            {
+                MoveSelectedItem(-1);
+            }    
+            else if (args.Key == "Escape")
+            {
+                Initialize();
+            }                
+            else if (args.Key == "Enter")
+            {
+                NavManager.NavigateTo($"/f/{Suggestions.Results[SelectedIndex]}/hot");
+                Initialize();
+            }
+        }
+
+        private void MoveSelectedItem(int num)
+        {
+            var index = SelectedIndex + num;
+
+            if (index >= Suggestions.Results.Count)
+                index = 0;
+
+            if (index < 0)
+                index = Suggestions.Results.Count - 1;
+
+            SelectedIndex = index;
+        }
+
+        private string GetSelectedClassIfItemSelected(int index)
+        {
+            var cssClass = "dropdown-item";
+            if (index == SelectedIndex)
+            {
+                cssClass += " active";
+            }
+               
+            return cssClass;
+        }
+
         private async void Search(object sender, ElapsedEventArgs e)
         {
-            IsSearching = true;
-            Console.WriteLine("invoking search...");
+            IsSearching = true;            
             await InvokeAsync(StateHasChanged);
             Suggestions = (await Http.GetJsonAsync<ForumSearchVM>($"api/forums/search/{_searchText}"));
-            Console.WriteLine($"there are {Suggestions.Results.Count} suggestions..");
+                        
             IsSearching = false;
             IsShowingSuggestions = true;
             await InvokeAsync(StateHasChanged);

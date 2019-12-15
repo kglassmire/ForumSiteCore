@@ -11,11 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForumSiteCore.Utility", "Fo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForumSiteCore.Web", "ForumSiteCore.Web\ForumSiteCore.Web.csproj", "{BED2D54A-4E7D-424C-9F84-5CB7937539F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForumSiteCore.BlazorWasm.Server", "ForumSiteCore.BlazorWasm\Server\ForumSiteCore.BlazorWasm.Server.csproj", "{2274A1CE-C8C2-436A-838C-E01CE0E5E572}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForumSiteCore.BlazorWasm.Server", "ForumSiteCore.BlazorWasm\Server\ForumSiteCore.BlazorWasm.Server.csproj", "{2274A1CE-C8C2-436A-838C-E01CE0E5E572}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForumSiteCore.BlazorWasm.Client", "ForumSiteCore.BlazorWasm\Client\ForumSiteCore.BlazorWasm.Client.csproj", "{56E2F664-59FF-4D95-A8B0-63BAB8A7E82D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForumSiteCore.BlazorWasm.Client", "ForumSiteCore.BlazorWasm\Client\ForumSiteCore.BlazorWasm.Client.csproj", "{56E2F664-59FF-4D95-A8B0-63BAB8A7E82D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForumSiteCore.BlazorWasm.Shared", "ForumSiteCore.BlazorWasm\Shared\ForumSiteCore.BlazorWasm.Shared.csproj", "{89C4DD9F-7495-4AB5-9322-11E42F9EA9DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForumSiteCore.BlazorWasm.Shared", "ForumSiteCore.BlazorWasm\Shared\ForumSiteCore.BlazorWasm.Shared.csproj", "{89C4DD9F-7495-4AB5-9322-11E42F9EA9DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

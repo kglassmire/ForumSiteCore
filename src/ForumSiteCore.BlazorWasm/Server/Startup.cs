@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Linq;
+using System.Net.Http;
 
 namespace ForumSiteCore.BlazorWasm.Server
 {
@@ -38,6 +39,7 @@ namespace ForumSiteCore.BlazorWasm.Server
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("ForumSiteCore.DAL")));
+
 
             services.AddScoped(typeof(ForumService));
             services.AddScoped(typeof(PostService));
@@ -78,6 +80,20 @@ namespace ForumSiteCore.BlazorWasm.Server
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
+                //  to allow for server-side prerendering of index page (hosting blazor "app" element):
+                //  by default it is MapFallbackToClientSideBlazor
+                //  changed this to MapFallbackToPage on server app
+                //  and an http client needs to be added with base uri like 
+                //             
+                //  services.AddScoped(s =>
+                //  {
+                //      return new HttpClient
+                //      {
+                //          BaseAddress = new Uri("https://localhost:44390")
+                //      };
+                //  });
+                //  https://github.com/danroth27/BlazorWebAssemblyWithPrerendering/blob/master/BlazorWebAssemblyWithPrerendering.Server/Startup.cs
+                // THIS IS THE LINE --> endpoints.MapFallbackToPage("/_Host");
             });
         }
     }

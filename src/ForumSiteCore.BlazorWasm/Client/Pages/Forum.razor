@@ -61,16 +61,8 @@ else
     }
 
     private async Task LoadForumPostListing()
-    {
-        try
-        {
-            forum = await Http.GetJsonAsync<ForumPostListingVM>($"api/forums/{Name}/{Type}");
-        }
-        catch (Exception e)
-        {
-
-        }
-
+    {   
+        forum = await Http.GetJsonAsync<ForumPostListingVM>($"api/forums/{Name}/{Type}");
     }
 
 }

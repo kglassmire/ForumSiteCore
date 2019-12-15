@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
+using System.Linq;
 
 namespace ForumSiteCore.BlazorWasm.Server
 {
@@ -16,8 +18,9 @@ namespace ForumSiteCore.BlazorWasm.Server
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .CreateLogger();
-            
-            BuildWebHost(args).Run();
+
+            var host = BuildWebHost(args);
+            host.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
