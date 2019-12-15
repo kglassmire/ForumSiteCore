@@ -1,68 +1,81 @@
 ﻿@page "/"
 @page "/f/{name}/{type}"
 @inject HttpClient Http
-<h3>Forum</h3>
-<h4>@pageText</h4>
-
-@if (forum == null)
+@inject NavigationManager NavManager
+@if (forumPostListing == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Forum Name</th>
-                <th>Post Id</th>
-                <th>Post Title</th>
-                <th>Comment Count</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var post in forum.Posts)
+    <div class="forum-grid-container">
+        <div class="forum-header">
+            <h3>
+                @ForumUrlName
+            </h3>
+            <!-- Hot -->
+            <button type="button" @onclick="@(() => GoToSort("hot"))" class="btn btn-secondary">Hot</button>
+            <!-- New -->
+            <button type="button" @onclick="@(() => GoToSort("new"))" class="btn btn-secondary">New</button>
+            <!-- Top -->
+            <div class="btn-group">
+                <a type="button" v-bind:href="getUrlString('top')" class="btn btn-secondary">Top</a>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" v-bind:href="getUrlString('top', '1-hours')">Past Hour</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('top', '1-days')">Past Day</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('top', '1-years')">Past Year</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('top')">All Time</a>
+                </div>
+            </div>
+            <!-- Controversial -->
+            <div class="btn-group">
+                <a type="button" v-bind:href="getUrlString('controversial')" class="btn btn-secondary">Controversial</a>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" v-bind:href="getUrlString('controversial', '1-hours')">Past Hour</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('controversial', '1-days')">Past Day</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('controversial', '1-years')">Past Year</a>
+                    <a class="dropdown-item" v-bind:href="getUrlString('controversial')">All Time</a>
+                </div>
+            </div>
+        </div>
+        <div v-infinite-scroll="retrievePosts" infinite-scroll-disabled="busy" infinite-scroll-throttle-delay="500" infinite-scroll-distance="10" class="forum-content">
+            @if (!forumPostListing.Posts.Any())
             {
-                <tr>
-                    <td>@forum.Forum.Name</td>
-                    <td>@post.Id</td>
-                    <td>@post.Name</td>
-                    <td>@post.CommentsCount</td>
-                </tr>
+                <div v-if="forumPostListing.posts.length === 0" class="alert alert-warning" role="alert">
+                    No posts based on your criteria.
+                </div>
             }
-        </tbody>
-    </table>
+
+            <ul class="list-unstyled">
+                @foreach (var post in forumPostListing.Posts)
+                {
+                    <PostCard @key="post.Id" Post="post"></PostCard>
+                }
+
+            </ul>
+            @if (NoMorePosts)
+            {
+                <div class="alert alert-primary" role="alert">
+                    No more posts!
+                </div>
+            }
+        </div>
+        <div class="forum-menu">
+            <div><h2>@ForumUrlName</h2></div>
+            @if (ForumCanBeSubscribed)
+            {
+                <button @onclick="Save" class="@ForumSubscribedButtonClass">@ForumSubscribedButtonText</button>
+            }
+            <div>@forumPostListing.Forum.Description</div>
+        </div>
+    </div>
 }
-
 @code {
-
-    private string pageText;
-    private ForumPostListingVM forum;
-
-    [Parameter]
-    public string Name { get; set; }
-
-    [Parameter]
-    public string Type { get; set; }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        if (String.IsNullOrWhiteSpace(Name) || String.IsNullOrWhiteSpace(Type))
-        {
-            Name = "all";
-            Type = "hot";
-        }
-
-        await LoadForumPostListing();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-
-    }
-
-    private async Task LoadForumPostListing()
-    {   
-        forum = await Http.GetJsonAsync<ForumPostListingVM>($"api/forums/{Name}/{Type}");
-    }
 
 }

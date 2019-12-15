@@ -18,13 +18,12 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
         private bool IsSearching { get; set; } = false;
         private bool IsShowingSuggestions { get; set; } = false;
         private ElementReference _searchInput;
-        
-        [Parameter]
-        public int MinimumLength { get; set; } = 1;
-        [Parameter]
-        public int Debounce { get; set; } = 300;
-        [Parameter]
-        public int MaximumSuggestions { get; set; } = 10;
+
+        [Parameter] public int MinimumLength { get; set; } = 1;
+
+        [Parameter] public int Debounce { get; set; } = 300;
+
+        [Parameter] public int MaximumSuggestions { get; set; } = 10;
         private int SelectedIndex { get; set; }
 
         private string SearchText
