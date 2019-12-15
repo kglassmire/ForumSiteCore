@@ -16,7 +16,7 @@
                     @for (var i = 0; i < Suggestions.Results.Count; i++)
                     {
                         var item = Suggestions.Results[i];
-                        <a @key="item" class="@GetSelectedClassIfItemSelected(i)" href="@($"/f/{item}/hot")">@item</a>
+                        <a @key="item" class="@GetSelectedClassIfItemSelected(i)" @onclick="@(() => HandleItemOnClick(item))">@item</a>
                     }
                 </div>
             }

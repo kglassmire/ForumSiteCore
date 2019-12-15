@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using Microsoft.JSInterop;
 using ForumSiteCore.Business.ViewModels;
 
 namespace ForumSiteCore.BlazorWasm.Client.Shared
@@ -84,6 +83,12 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
                 NavManager.NavigateTo($"/f/{Suggestions.Results[SelectedIndex]}/hot");
                 Initialize();
             }
+        }
+
+        private void HandleItemOnClick(string item)
+        {
+            NavManager.NavigateTo($"/f/{item}/hot");
+            Initialize();
         }
 
         private void MoveSelectedItem(int num)
