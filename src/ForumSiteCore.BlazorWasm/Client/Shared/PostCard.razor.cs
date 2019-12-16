@@ -12,11 +12,11 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
         [Parameter] public PostDto Post { get; set; }
 
         private bool _showPostDescription = false;
-        public bool ShowPostDescription => _showPostDescription;
+        private bool ShowPostDescription => _showPostDescription;
 
-        public string CreatedText => $"Created {Post.Created.ToString("O")} by {Post.UserName}";
+        private string CreatedText => $"Created {Post.Created.ToString("O")} by {Post.UserName}";
 
-        public string CommentsUrl => $"/f/{Post.ForumName}/{Post.Id}/comments";
+        private string CommentsUrl => $"/f/{Post.ForumName}/{Post.Id}/comments";
 
         private string PostSavedText
         {
@@ -76,7 +76,8 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
 
         private void Vote(bool voteDirection)
         {
-
+            var outputText = voteDirection ? $"Upvote on {Post.Id}!!!" : $"Downvote on {Post.Id}!!!";
+            Console.WriteLine(outputText);
         }
 
         private void Save()
