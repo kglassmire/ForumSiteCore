@@ -1,10 +1,10 @@
 ﻿@page "/"
 @page "/f/{name}"
-@page "/f/{name}/{type}"
-@page "/f/{name}/{type}/{lookback}"
+@page "/f/{name}/{sort}"
+@page "/f/{name}/{sort}/{lookback}"
 @inject HttpClient Http
 @inject NavigationManager NavManager
-@if (forumPostListing == null)
+@if (_forumPostListing == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -47,7 +47,7 @@ else
             </div>
         </div>
         <div v-infinite-scroll="retrievePosts" infinite-scroll-disabled="busy" infinite-scroll-throttle-delay="500" infinite-scroll-distance="10" class="forum-content">
-            @if (!forumPostListing.Posts.Any())
+            @if (!_forumPostListing.Posts.Any())
             {
                 <div v-if="forumPostListing.posts.length === 0" class="alert alert-warning" role="alert">
                     No posts based on your criteria.
@@ -55,7 +55,7 @@ else
             }
 
             <ul class="list-unstyled">
-                @foreach (var post in forumPostListing.Posts)
+                @foreach (var post in _forumPostListing.Posts)
                 {
                     <PostCard @key="post.Id" Post="post"></PostCard>
                 }
@@ -75,7 +75,7 @@ else
                 <button @onclick="Save" class="@ForumSubscribedButtonClass">@ForumSubscribedButtonText</button>
             }
             <div>
-                <MarkdownRenderer Markdown="@forumPostListing.Forum.Description"/>
+                <MarkdownRenderer Markdown="@_forumPostListing.Forum.Description"/>
             </div>
         </div>
     </div>

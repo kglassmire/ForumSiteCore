@@ -7,6 +7,11 @@ namespace ForumSiteCore.Business.ViewModels
 {
     public class PostCommentListingVM
     {
+        public PostCommentListingVM()
+        {
+
+        }
+
         public PostCommentListingVM(PostDto post, List<CommentDto> comments, String commentListingType)
         {
             Post = post;

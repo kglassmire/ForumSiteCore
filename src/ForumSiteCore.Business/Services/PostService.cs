@@ -134,6 +134,7 @@ namespace ForumSiteCore.Business.Services
         {
             var post = _context.Posts
                 .Include(x => x.User)
+                .Include(x => x.Forum)
                 .SingleOrDefault(x => x.Id.Equals(postId));
 
             return _mapper.Map<PostDto>(post);

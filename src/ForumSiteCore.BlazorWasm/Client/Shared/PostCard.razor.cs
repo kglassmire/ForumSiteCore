@@ -11,8 +11,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
     {
         [Parameter] public PostDto Post { get; set; }
 
-        private bool _showPostDescription = false;
-        private bool ShowPostDescription => _showPostDescription;
+        [Parameter] public bool ShowPostDescription { get; set; } = false;
 
         private string CreatedText => $"Created {Post.Created.ToString("O")} by {Post.UserName}";
 
@@ -87,7 +86,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
 
         private void TogglePostDescription()
         {
-            _showPostDescription = !_showPostDescription;
+            ShowPostDescription = !ShowPostDescription;
         }
     }
 }
