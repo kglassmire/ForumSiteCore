@@ -25,12 +25,14 @@ namespace ForumSiteCore.BlazorWasm.Client.Pages
         protected override async Task OnParametersSetAsync()
         {
             Console.WriteLine("OnParametersSetAsync was called...");
-            if (String.IsNullOrWhiteSpace(Name) || String.IsNullOrWhiteSpace(Type))
+            if (String.IsNullOrWhiteSpace(Name))
             {
-                Name = "all";
+                Name = "all";                
+            }
+            if (String.IsNullOrWhiteSpace(Type))
+            {
                 Type = "hot";
             }
-
             await LoadForumPostListing();
         }
 

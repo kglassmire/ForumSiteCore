@@ -10,6 +10,7 @@
             <i title="downvote" @onclick="Down" class="icofont-arrow-down icofont-2x @VoteArrowColorCssClass" ></i>
         </div>
     </div>
+    
     <img class="align-self-start mr-3" alt="image">
     <div class="media-body mr-4">
         <h5>
@@ -25,7 +26,7 @@
         @if (ShowPostDescription)
         {
             <p>
-                <span>@Post.Description</span>
+                <span><MarkdownRenderer Markdown="@Post.Description" /></span>
             </p>
         }
         <div class="d-flex flex-row mb-1 mt-1" title="@Post.Created">

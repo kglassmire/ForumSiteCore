@@ -1,4 +1,5 @@
 ﻿@page "/"
+@page "/f/{name}"
 @page "/f/{name}/{type}"
 @page "/f/{name}/{type}/{lookback}"
 @inject HttpClient Http
@@ -73,7 +74,9 @@ else
             {
                 <button @onclick="Save" class="@ForumSubscribedButtonClass">@ForumSubscribedButtonText</button>
             }
-            <div>@forumPostListing.Forum.Description</div>
+            <div>
+                <MarkdownRenderer Markdown="@forumPostListing.Forum.Description"/>
+            </div>
         </div>
     </div>
 }
