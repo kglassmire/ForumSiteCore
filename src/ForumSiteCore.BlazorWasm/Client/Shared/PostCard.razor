@@ -30,7 +30,7 @@
             </p>
         }
         <div class="d-flex flex-row mb-1 mt-1" title="@Post.Created">
-            @CreatedText
+            Created @DateTimeOffset.Now.AddSeconds(-20).ToString() <Timeago Date="@DateTimeOffset.Now.AddSeconds(-20)"/> by @Post.UserName
             @if (Post.ShowForumName)
             {
                 <span>&nbsp;to <a href="@($"/f/{Post.ForumName}")">@($"f/{Post.ForumName}")</a></span>

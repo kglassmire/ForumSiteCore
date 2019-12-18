@@ -13,8 +13,6 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
 
         [Parameter] public bool ShowPostDescription { get; set; } = false;
 
-        private string CreatedText => $"Created {Post.Created.ToString("O")} by {Post.UserName}";
-
         private string CommentsUrl => $"/f/{Post.ForumName}/{Post.Id}/comments";
 
         private string PostSavedText
