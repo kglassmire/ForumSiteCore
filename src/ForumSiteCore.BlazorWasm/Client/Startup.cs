@@ -1,3 +1,4 @@
+using ForumSiteCore.BlazorWasm.Client.Services;
 using Ganss.XSS;
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ namespace ForumSiteCore.BlazorWasm.Client
                 htmlSanitizer.AllowedAttributes.Add("class");
                 return htmlSanitizer;
             });
+            services.AddSingleton<TimeagoService>();
         }
 
         public void Configure(IComponentsApplicationBuilder app)

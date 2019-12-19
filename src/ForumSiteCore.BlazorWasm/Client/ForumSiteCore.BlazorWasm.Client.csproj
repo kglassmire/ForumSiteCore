@@ -17,5 +17,8 @@
     <ProjectReference Include="..\..\ForumSiteCore.Business\ForumSiteCore.Business.csproj" />
     <ProjectReference Include="..\Shared\ForumSiteCore.BlazorWasm.Shared.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
 
 </Project>

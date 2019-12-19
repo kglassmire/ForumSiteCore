@@ -1,4 +1,5 @@
-﻿using ForumSiteCore.Business.Models;
+﻿using ForumSiteCore.BlazorWasm.Client.Services;
+using ForumSiteCore.Business.Models;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
 {
     public partial class PostCard : ComponentBase
     {
+        [Inject] private TimeagoService TimeagoService { get; set; }
         [Parameter] public PostDto Post { get; set; }
 
         [Parameter] public bool ShowPostDescription { get; set; } = false;
