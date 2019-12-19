@@ -38,16 +38,26 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
 
         private async void ReceivedBroadcast(object sender, EventArgs eventArgs)
         {
-            Console.WriteLine("Received notification");
-            CssClass = "";
-            Console.WriteLine("reset css");
-            await InvokeAsync(StateHasChanged);
-            await Task.Delay(500);
-            RelativeTime = TimeagoService.CalculateTimeago(Date);
-            CssClass = "timeago";
-            await InvokeAsync(StateHasChanged);
+            Console.WriteLine("Received broadcast");             
+            await InvokeChangeIfNecessary();
         }
 
+        private async Task InvokeChangeIfNecessary()
+        {
+            var currentRelativeTime = RelativeTime;
+            var newRelativeTime = TimeagoService.CalculateTimeago(Date);
+            if (!currentRelativeTime.Equals(newRelativeTime))
+            {
+                Console.WriteLine("Change detected, invoking change...");
+                CssClass = "";
+                Console.WriteLine("reset css");
+                await InvokeAsync(StateHasChanged);
+                await Task.Delay(500);
+                CssClass = "timeago";
+                RelativeTime = newRelativeTime;
+                await InvokeAsync(StateHasChanged);
+            }
+        }
     }
 }
 

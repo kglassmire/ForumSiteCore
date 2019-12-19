@@ -1,8 +1,4 @@
 ﻿.timeago {
-    -webkit-animation: time-ago-fadein 2s; /* Safari, Chrome and Opera > 12.1 */
-    -moz-animation: time-ago-fadein 2s; /* Firefox < 16 */
-    -ms-animation: time-ago-fadein 2s; /* Internet Explorer */
-    -o-animation: time-ago-fadein 2s; /* Opera < 12.1 */
     animation: time-ago-fadein 2s;
 }
 
