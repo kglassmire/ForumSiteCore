@@ -1,0 +1,65 @@
+﻿@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h1>Login</h1>
+
+    @if (ShowErrors)
+    {
+
+        @foreach (var item in Errors)
+        {
+            <div class="alert alert-danger" role="alert">
+                @foreach (var innerItem in item.Value)
+                {
+                    <p>innerItem</p>
+                }
+            </div>
+        }
+    }
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Please enter your details</h5>
+            <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <InputText Id="email" Class="form-control" @bind-Value="loginModel.UserName" />
+                    <ValidationMessage For="@(() => loginModel.UserName)" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <InputText Id="password" type="password" Class="form-control" @bind-Value="loginModel.Password" />
+                    <ValidationMessage For="@(() => loginModel.Password)" />
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </EditForm>
+        </div>
+    </div>
+
+    @code {
+
+        private LoginVM loginModel = new LoginVM();
+        private bool ShowErrors;
+        private Dictionary<string, string[]> Errors;
+
+        private async Task HandleLogin()
+        {
+            ShowErrors = false;
+
+            var result = await AuthService.Login(loginModel);
+
+            if (result.Success)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                Errors = result.Errors;
+                ShowErrors = true;
+            }
+        }
+
+    }

@@ -4,6 +4,8 @@ using ForumSiteCore.Business;
 using ForumSiteCore.Business.Interfaces;
 using ForumSiteCore.Business.Services;
 using ForumSiteCore.DAL;
+using ForumSiteCore.DAL.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,9 +14,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 
 namespace ForumSiteCore.BlazorWasm.Server
 {
@@ -40,6 +44,23 @@ namespace ForumSiteCore.BlazorWasm.Server
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("ForumSiteCore.DAL")));
 
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["JwtIssuer"],
+                        ValidAudience = Configuration["JwtAudience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSecurityKey"]))
+                    };
+                });
 
             services.AddScoped(typeof(ForumService));
             services.AddScoped(typeof(PostService));
@@ -47,6 +68,7 @@ namespace ForumSiteCore.BlazorWasm.Server
             services.AddScoped(typeof(UserActivitiesService));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUserAccessor<Int64>, UserAccessor>();
+            services.AddScoped<IEmailService, EmailService>();
             services.AddAutoMapper(typeof(AutoMapperConfigProfile));
 
             services.AddResponseCaching();
@@ -75,6 +97,9 @@ namespace ForumSiteCore.BlazorWasm.Server
 
             app.UseRouting();
             app.UseResponseCaching();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
