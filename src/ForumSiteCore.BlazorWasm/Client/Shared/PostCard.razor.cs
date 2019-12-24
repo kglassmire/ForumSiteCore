@@ -29,22 +29,34 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
         {
             get
             {
-                if (Post.TotalScore < 0)
+                if (Post.UserVote == Business.Enums.VoteType.Up)
                 {
-                    return string.Empty;
+                    return "upvoted";
                 }
-                else if (Post.TotalScore > 0)
+                else if (Post.UserVote == Business.Enums.VoteType.Down)
                 {
-                    return string.Empty;
+                    return "downvoted";
                 }
-                else
-                {
-                    return string.Empty;
-                }
+
+                return string.Empty;
             }
         }
 
-        private string VoteArrowColorCssClass
+        private string UpvotedCssClass
+        {
+            get
+            {
+                if (Post.UserVote == Business.Enums.VoteType.Up)
+                {
+                    return "upvoted";
+                }
+
+                return string.Empty;
+            }
+
+        }
+
+        private string DownvotedCssClass
         {
             get
             {
@@ -52,15 +64,10 @@ namespace ForumSiteCore.BlazorWasm.Client.Shared
                 {
                     return "downvoted";
                 }
-                else if (Post.UserVote == Business.Enums.VoteType.Up)
-                {
-                    return "upvoted";
-                }
-                else
-                {
-                    return string.Empty;
-                }
+
+                return string.Empty;
             }
+
         }
 
         private void Up()

@@ -3,13 +3,13 @@
     <li class="comment-card media border rounded p-2 m-1">
         <div class="d-inline-flex justify-content-between flex-column mr-3">
             <div class="text-center upvote">
-                <i title="upvote" @onclick="Up" class="icofont-arrow-up icofont-2x @VoteArrowColorCssClass"></i>
+                <i title="upvote" @onclick="Up" class="icofont-arrow-up icofont-2x @UpvotedCssClass"></i>
             </div>
-            <h4 class="text-center" v-bind:class="voteCountClassObject">
+            <h4 class="text-center @VoteCountColorCssClass">
                 <strong>@Comment.TotalScore</strong>
             </h4>
             <div class="text-center downvote">
-                <i title="downvote" @onclick="Down" class="icofont-arrow-down icofont-2x @VoteArrowColorCssClass"></i>
+                <i title="downvote" @onclick="Down" class="icofont-arrow-down icofont-2x @DownvotedCssClass"></i>
             </div>
         </div>
         <!--<img class="align-self-start mr-3" alt="image">-->
