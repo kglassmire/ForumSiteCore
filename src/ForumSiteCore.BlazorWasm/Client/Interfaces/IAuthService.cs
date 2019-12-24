@@ -13,5 +13,4 @@ namespace ForumSiteCore.BlazorWasm.Client.Interfaces
         Task Logout();
         Task<RegisterResponse> Register(RegisterVM registerModel);
     }
-    
 }

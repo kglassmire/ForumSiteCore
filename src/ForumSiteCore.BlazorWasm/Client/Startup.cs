@@ -21,7 +21,7 @@ namespace ForumSiteCore.BlazorWasm.Client
             services.AddSingleton<TimeagoService>();
             services.AddBlazoredLocalStorage();
             services.AddAuthorizationCore();
-            services.AddScoped<ApiAuthenticationStateProvider>();
+            services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
             services.AddScoped<IAuthService, AuthService>();
         }
 

@@ -18,11 +18,11 @@ namespace ForumSiteCore.BlazorWasm.Client.Services
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
-        private readonly ApiAuthenticationStateProvider _authenticationStateProvider;
+        private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly ILocalStorageService _localStorage;
 
         public AuthService(HttpClient httpClient,
-                           ApiAuthenticationStateProvider authenticationStateProvider,
+                           AuthenticationStateProvider authenticationStateProvider,
                            ILocalStorageService localStorage)
         {
             _httpClient = httpClient;
