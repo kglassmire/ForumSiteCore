@@ -1,0 +1,86 @@
+﻿@page "/u/{username}"
+@page "/u/{username}/{currentview}"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+<ul class="nav nav-pills">
+    <li class="nav-item">
+        <NavLink class="nav-link" href="@($"/u/{UserName}/posts-created")">Posts Created</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="@($"/u/{UserName}/posts-saved")">Posts Saved</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="@($"/u/{UserName}/posts-commented")">Posts Commented</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="/f/all/hot">Comments Created</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="/f/all/hot">Comments Saved</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="/f/all/hot">Comments Commented</NavLink>
+    </li>
+</ul>
+
+@code {
+    [Parameter] public string UserName { get; set; }
+    [Parameter] public string CurrentView { get; set; }
+
+    private const string PostsCreated = "posts-created";
+    private const string PostsSaved = "posts-saved";
+    private const string PostsCommented = "posts-commented";
+    private const string PostsVoted = "posts-voted";
+    private const string CommentsCreated = "comments-created";
+    private const string CommentsSaved = "comments-saved";
+    private const string CommentsCommented = "comments-commented";
+    private const string CommentsVoted = "commented-voted";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (String.IsNullOrEmpty(CurrentView))
+        {
+            NavManager.NavigateTo($"/u/{UserName}/posts-created");
+            return;
+        }
+
+        await LoadUserContent();
+    }
+
+    private async Task LoadUserContent()
+    {
+        var apiUrl = $"/api/forums/";
+        apiUrl += $"{UserName}/{CurrentView}";
+
+
+        switch (CurrentView.ToLower())
+        {
+            case PostsCreated:
+                return;
+            case PostsSaved:
+                return;
+            case PostsCommented:
+                return;
+            case PostsVoted:
+                return;
+            case CommentsCreated:
+                return;
+            case CommentsSaved:
+                return;
+            case CommentsCommented:
+                return;
+            case CommentsVoted:
+                return;
+        }
+
+
+        //_forumPostListing = await Http.GetJsonAsync<ForumPostListingVM>(apiUrl);
+    }
+
+
+}

@@ -11,13 +11,13 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
 {
     [Route("api/forums")]    
     [ApiController]
-    public class ForumController : ControllerBase
+    public class ForumController : Controller
     {
         private readonly String[] _acceptedLookups = new[] { "hot", "top", "new", "controversial" };
         private readonly ForumService _forumService;
-        private readonly UserActivitiesService _userActivitiesService;
+        private readonly CurrentUserActivitiesService _userActivitiesService;
 
-        public ForumController(ForumService forumService, UserActivitiesService userActivitiesService)
+        public ForumController(ForumService forumService, CurrentUserActivitiesService userActivitiesService)
         {
             _forumService = forumService;
             _userActivitiesService = userActivitiesService;

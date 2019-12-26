@@ -20,13 +20,13 @@ namespace ForumSiteCore.Business.Services
     public class PostService
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserActivitiesService _userActivitiesService;
+        private readonly CurrentUserActivitiesService _userActivitiesService;
         private readonly IUserAccessor<Int64> _userAccessor;
         private readonly IMapper _mapper;
         private readonly ILogger<PostService> _logger;
 
         public PostService(ApplicationDbContext context, 
-            UserActivitiesService userActivitiesService, 
+            CurrentUserActivitiesService userActivitiesService, 
             IUserAccessor<Int64> userAccessor,
             IMapper mapper,
             ILogger<PostService> logger)

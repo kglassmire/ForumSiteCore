@@ -21,9 +21,9 @@ namespace ForumSiteCore.Web.Controllers
     {
         private readonly String[] _acceptedLookups = new[] { "hot", "top", "new", "controversial" };
         private readonly ForumService _forumService;
-        private readonly UserActivitiesService _userActivitiesService;
+        private readonly CurrentUserActivitiesService _userActivitiesService;
 
-        public ForumApiController(ForumService forumService, UserActivitiesService userActivitiesService)
+        public ForumApiController(ForumService forumService, CurrentUserActivitiesService userActivitiesService)
         {
             _forumService = forumService;
             _userActivitiesService = userActivitiesService;

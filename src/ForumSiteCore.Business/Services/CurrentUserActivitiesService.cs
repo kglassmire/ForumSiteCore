@@ -10,9 +10,12 @@ using System.Linq;
 
 namespace ForumSiteCore.Business.Services
 {
-    public class UserActivitiesService
+    /// <summary>
+    /// This service is specific to ensure that page to page operations for the current user are cached.
+    /// </summary>
+    public class CurrentUserActivitiesService
     {
-        private readonly ILogger<UserActivitiesService> _logger;
+        private readonly ILogger<CurrentUserActivitiesService> _logger;
         private const string UserCommentsCreatedCacheKeyTemplate = "user-{0}-comments-created";
         private const string UserCommentsSavedCacheKeyTemplate = "user-{0}-comments-saved";
         private const string UserCommentsVotedCacheKeyTemplate = "user-{0}-comments-voted";
@@ -20,11 +23,11 @@ namespace ForumSiteCore.Business.Services
         private const string UserPostsCreatedCacheKeyTemplate = "user-{0}-posts-created";
         private const string UserPostsSavedCacheKeyTemplate = "user-{0}-posts-saved";
         private const string UserPostsVotedCacheKeyTemplate = "user-{0}-posts-voted";
-        private ICacheManager<object> _cache;
-        private ApplicationDbContext _context;
-        private IUserAccessor<Int64> _userAccessor;
+        private readonly ICacheManager<object> _cache;
+        private readonly ApplicationDbContext _context;
+        private readonly IUserAccessor<Int64> _userAccessor;
 
-        public UserActivitiesService(ApplicationDbContext context, ICacheManager<object> cache, IUserAccessor<Int64> userAccessor, ILogger<UserActivitiesService> logger)
+        public CurrentUserActivitiesService(ApplicationDbContext context, ICacheManager<object> cache, IUserAccessor<Int64> userAccessor, ILogger<CurrentUserActivitiesService> logger)
         {
             _context = context;
             _cache = cache;

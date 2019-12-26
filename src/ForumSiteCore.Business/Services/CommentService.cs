@@ -11,11 +11,11 @@ namespace ForumSiteCore.Business.Services
     public class CommentService
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserActivitiesService _userActivitiesService;
+        private readonly CurrentUserActivitiesService _userActivitiesService;
         private readonly ILogger<CommentService> _logger;
 
         public CommentService(ApplicationDbContext context, 
-            UserActivitiesService userActivitiesService,
+            CurrentUserActivitiesService userActivitiesService,
             ILogger<CommentService> logger)
         {
             _context = context;

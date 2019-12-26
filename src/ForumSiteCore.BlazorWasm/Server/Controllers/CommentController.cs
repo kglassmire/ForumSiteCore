@@ -4,7 +4,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
 {
     [Route("api/comments")]
     [ApiController]
-    public class CommentController : ControllerBase
+    public class CommentController : Controller
     {
         //private readonly CommentService _commentService;
 

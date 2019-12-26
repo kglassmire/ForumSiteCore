@@ -14,7 +14,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
 {
     [Route("api/posts")]
     [ApiController]
-    public class PostController : ControllerBase
+    public class PostController : Controller
     {
         private readonly String[] _acceptedLookups = new []{ "best", "top", "new", "controversial" };
 

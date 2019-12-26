@@ -20,13 +20,13 @@ namespace ForumSiteCore.Business.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IUserAccessor<Int64> _userAccessor;
-        private readonly UserActivitiesService _userActivitiesService;
+        private readonly CurrentUserActivitiesService _userActivitiesService;
         private readonly ILogger<ForumService> _logger;
         private readonly IMapper _mapper;
         
         public ForumService(ApplicationDbContext context, 
             IUserAccessor<Int64> userAccessor, 
-            UserActivitiesService userActivitiesService,
+            CurrentUserActivitiesService userActivitiesService,
             IMapper mapper,
             ILogger<ForumService> logger)
         {
