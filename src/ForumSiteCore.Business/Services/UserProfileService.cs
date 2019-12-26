@@ -29,7 +29,9 @@ namespace ForumSiteCore.Business.Services
         {
             var posts = _context.Posts
                 .Include(x => x.User)
-                .Where(x => x.User.UserName.Equals(username, StringComparison.OrdinalIgnoreCase)).ToList();
+                .Where(x => x.User.UserName.ToLower().Equals(username.ToLower()))
+                .OrderByDescending(x => x.Created)
+                .ToList();
 
             return _mapper.Map<List<PostDto>>(posts);
         }

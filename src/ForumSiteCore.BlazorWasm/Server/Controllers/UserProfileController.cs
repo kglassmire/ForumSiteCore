@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ForumSiteCore.Business.Responses;
 using ForumSiteCore.Business.Services;
 using ForumSiteCore.Business.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -24,9 +25,10 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
             _userProfileService = userProfileService;
         }
 
+        [HttpGet("{username}/posts-created")]
         public async Task<IActionResult> UserCreatedPosts(string username)
         {
-            UserProfileVM vm = new UserProfileVM();
+            UserProfileResponse vm = new UserProfileResponse();
             vm.Posts = _userProfileService.UserCreatedPosts(username);
 
             return Ok(vm);

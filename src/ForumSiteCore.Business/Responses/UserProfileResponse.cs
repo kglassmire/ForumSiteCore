@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ForumSiteCore.Business.ViewModels
+namespace ForumSiteCore.Business.Responses
 {
-    public class UserProfileVM : BaseVM
+    public class UserProfileResponse : BaseResponse
     {
         public List<PostDto> Posts { get; set; }
         public List<CommentDto> Comments { get; set; }
