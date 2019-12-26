@@ -3,6 +3,7 @@ using ForumSiteCore.Business.Consts;
 using ForumSiteCore.Business.Exceptions;
 using ForumSiteCore.Business.Interfaces;
 using ForumSiteCore.Business.Models;
+using ForumSiteCore.Business.Responses;
 using ForumSiteCore.Business.ViewModels;
 using ForumSiteCore.DAL;
 using ForumSiteCore.DAL.Models;
@@ -62,7 +63,7 @@ namespace ForumSiteCore.Business.Services
             return predicate;
         }
 
-        public ForumPostListingVM Hot(String forumName, Decimal? ceiling, Decimal? floor, Int32 limit = 25, DateTimeOffset? beginDate = null, DateTimeOffset? endDate = null)
+        public ForumPostListingResponse Hot(String forumName, Decimal? ceiling, Decimal? floor, Int32 limit = 25, DateTimeOffset? beginDate = null, DateTimeOffset? endDate = null)
         {
             _logger.LogDebug("Retrieving hot forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
@@ -101,7 +102,7 @@ namespace ForumSiteCore.Business.Services
             return predicate;
         }
 
-        public ForumPostListingVM Top(String forumName, Int64? ceiling = null, Int64? floor = null, Int32 limit = 25, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        public ForumPostListingResponse Top(String forumName, Int64? ceiling = null, Int64? floor = null, Int32 limit = 25, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
             _logger.LogDebug("Retrieving top forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
@@ -130,7 +131,7 @@ namespace ForumSiteCore.Business.Services
             return predicate;
         }
 
-        public ForumPostListingVM New(String forumName, DateTimeOffset? ceiling, DateTimeOffset? floor, Int32 limit = 25, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        public ForumPostListingResponse New(String forumName, DateTimeOffset? ceiling, DateTimeOffset? floor, Int32 limit = 25, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
             _logger.LogDebug("Retrieving new forum post listing for {Forum}", forumName);
             var predicate = CreateForumWhereClause(forumName);
@@ -159,7 +160,7 @@ namespace ForumSiteCore.Business.Services
             return predicate;
         }
 
-        public ForumPostListingVM Controversial(String forumName, Decimal? ceiling, Decimal? floor, Int32 limit = 25, DateTimeOffset? begindate = null, DateTimeOffset? enddate = null)
+        public ForumPostListingResponse Controversial(String forumName, Decimal? ceiling, Decimal? floor, Int32 limit = 25, DateTimeOffset? begindate = null, DateTimeOffset? enddate = null)
         {
 
             _logger.LogDebug("Retrieving controversial forum post listing for {Forum}", forumName);
@@ -377,7 +378,7 @@ namespace ForumSiteCore.Business.Services
             
         }
 
-        private ForumPostListingVM PrepareForumPostListing(string forumName, List<Post> posts, String postListingType)
+        private ForumPostListingResponse PrepareForumPostListing(string forumName, List<Post> posts, String postListingType)
         {
             ForumDto forumDto;
             List<PostDto> postDtos;
@@ -386,7 +387,7 @@ namespace ForumSiteCore.Business.Services
             _userActivitiesService.ProcessPosts(postDtos);
             _userActivitiesService.ProcessForums(new List<ForumDto>{ forumDto });
 
-            var forumPostListing = new ForumPostListingVM
+            var forumPostListing = new ForumPostListingResponse
             {
                 Forum = forumDto,
                 Posts = postDtos,

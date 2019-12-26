@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace ForumSiteCore.Business.ViewModels
+namespace ForumSiteCore.Business.Responses
 {    
-    public class ForumPostListingVM : BaseVM
+    public class ForumPostListingResponse : BaseResponse
     {
         public ForumDto Forum { get; set; }
         public List<PostDto> Posts { get; set; }

@@ -1,4 +1,5 @@
-﻿using ForumSiteCore.Business.ViewModels;
+﻿using ForumSiteCore.Business.Responses;
+using ForumSiteCore.Business.ViewModels;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Pages
 {
     public partial class Forum : ComponentBase
     {
-        private ForumPostListingVM _forumPostListing;
+        private ForumPostListingResponse _forumPostListing;
 
         [Parameter] public string Name { get; set; }
         [Parameter] public string Sort { get; set; }
@@ -50,7 +51,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Pages
                 var parsedLookback = GetLookbackDatetimeOffset(Lookback);
                 apiUrl += $"?dtstart={parsedLookback}";
             }
-            _forumPostListing = await Http.GetJsonAsync<ForumPostListingVM>(apiUrl);
+            _forumPostListing = await Http.GetJsonAsync<ForumPostListingResponse>(apiUrl);
         }
 
         private void GoToSort(string sort, string lookback = null)

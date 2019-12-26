@@ -14,6 +14,7 @@ using ForumSiteCore.Business.Consts;
 using ForumSiteCore.Business.Enums;
 using ForumSiteCore.Business.Interfaces;
 using Microsoft.Extensions.Logging;
+using ForumSiteCore.Business.Responses;
 
 namespace ForumSiteCore.Business.Services
 {
@@ -66,7 +67,7 @@ namespace ForumSiteCore.Business.Services
             return post;
         }
 
-        public PostCommentListingVM Best(Int64 id)
+        public PostCommentListingResponse Best(Int64 id)
         {
             _logger.LogDebug("Retrieving best post comment listing for {Post}", id);
 
@@ -98,10 +99,10 @@ namespace ForumSiteCore.Business.Services
                 postDto = Get(id);
             }
 
-            return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupBest);
+            return new PostCommentListingResponse(postDto, commentDtos, LookupConsts.LookupBest);
         }
 
-        public PostCommentListingVM Controversial(Int64 id)
+        public PostCommentListingResponse Controversial(Int64 id)
         {
             _logger.LogDebug("Retrieving controversial post comment listing for {Post}", id);
 
@@ -127,7 +128,7 @@ namespace ForumSiteCore.Business.Services
                 postDto = Get(id);
             }
 
-            return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupControversial);
+            return new PostCommentListingResponse(postDto, commentDtos, LookupConsts.LookupControversial);
         }
 
         public PostDto Get(Int64 postId)
@@ -140,7 +141,7 @@ namespace ForumSiteCore.Business.Services
             return _mapper.Map<PostDto>(post);
         }
 
-        public PostCommentListingVM New(Int64 id)
+        public PostCommentListingResponse New(Int64 id)
         {
             _logger.LogDebug("Retrieving new post comment listing for {Post}", id);
 
@@ -165,7 +166,7 @@ namespace ForumSiteCore.Business.Services
                 postDto = Get(id);
             }
 
-            return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupNew);
+            return new PostCommentListingResponse(postDto, commentDtos, LookupConsts.LookupNew);
         }
 
         public PostSaveVM Save(Int64 postId, bool saved)
@@ -205,7 +206,7 @@ namespace ForumSiteCore.Business.Services
             return failedPost;
         }
 
-        public PostCommentListingVM Top(Int64 id)
+        public PostCommentListingResponse Top(Int64 id)
         {
             _logger.LogDebug("Retrieving top post comment listing for {Post}", id);
 
@@ -230,7 +231,7 @@ namespace ForumSiteCore.Business.Services
                 postDto = Get(id);
             }
 
-            return new PostCommentListingVM(postDto, commentDtos, LookupConsts.LookupTop);
+            return new PostCommentListingResponse(postDto, commentDtos, LookupConsts.LookupTop);
         }
 
         public PostVoteVM Vote(Int64 postId, Boolean? direction)

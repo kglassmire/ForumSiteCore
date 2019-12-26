@@ -2,6 +2,7 @@
 using ForumSiteCore.Business.Consts;
 using ForumSiteCore.Business.Enums;
 using ForumSiteCore.Business.Interfaces;
+using ForumSiteCore.Business.Responses;
 using ForumSiteCore.Business.Services;
 using ForumSiteCore.Business.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -34,7 +35,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
             if (!_acceptedLookups.Contains(lookup))
                 return BadRequest();
             
-            PostCommentListingVM postCommentListingVM = null; ;
+            PostCommentListingResponse postCommentListingVM = null; ;
             switch (lookup)
             {
                 case LookupConsts.LookupBest:

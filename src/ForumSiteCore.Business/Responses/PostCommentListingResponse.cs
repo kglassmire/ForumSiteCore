@@ -3,16 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ForumSiteCore.Business.ViewModels
+namespace ForumSiteCore.Business.Responses
 {
-    public class PostCommentListingVM
+    public class PostCommentListingResponse : BaseResponse
     {
-        public PostCommentListingVM()
+        public PostCommentListingResponse()
         {
 
         }
 
-        public PostCommentListingVM(PostDto post, List<CommentDto> comments, String commentListingType)
+        public PostCommentListingResponse(PostDto post, List<CommentDto> comments, String commentListingType)
         {
             Post = post;
             Comments = comments;

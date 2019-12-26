@@ -1,4 +1,4 @@
-﻿using ForumSiteCore.Business.ViewModels;
+﻿using ForumSiteCore.Business.Responses;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Pages
 {
     public partial class Post : ComponentBase
     {
-        private PostCommentListingVM _postCommentListing;
+        private PostCommentListingResponse _postCommentListing;
         
         [Parameter] public long PostId { get; set; }
 
@@ -44,7 +44,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Pages
         {
             var apiUrl = $"/api/posts/";
             apiUrl += $"{PostId}/comments/{Sort}";
-            _postCommentListing = await Http.GetJsonAsync<PostCommentListingVM>(apiUrl);
+            _postCommentListing = await Http.GetJsonAsync<PostCommentListingResponse>(apiUrl);
         }
 
         private void GoToSort(string sort)

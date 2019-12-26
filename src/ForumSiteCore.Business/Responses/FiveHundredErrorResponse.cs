@@ -4,10 +4,8 @@ using System.Text;
 
 namespace ForumSiteCore.Business.Responses
 {
-    public class FiveHundredErrorResponse
+    public class FiveHundredErrorResponse : BaseResponse
     {
         public Exception Data { get; set; }
-        public String Message { get; set; }
-        public String Status { get; set; }
     }
 }

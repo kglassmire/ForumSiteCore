@@ -1,4 +1,5 @@
 ﻿using ForumSiteCore.Business.Consts;
+using ForumSiteCore.Business.Responses;
 using ForumSiteCore.Business.Services;
 using ForumSiteCore.Business.ViewModels;
 using ForumSiteCore.Utility;
@@ -25,13 +26,13 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
         
         [ResponseCache(VaryByQueryKeys = new[] { "name", "lookup", "ceiling", "floor", "limit", "dtstart", "dtend" }, Duration = 10, Location = ResponseCacheLocation.Any)]
         [HttpGet("{name}/{lookup}")]
-        [ProducesResponseType(typeof(ForumPostListingVM), 200)]
+        [ProducesResponseType(typeof(ForumPostListingResponse), 200)]
         public IActionResult Get(String name, String lookup, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {            
             if (!_acceptedLookups.Contains(lookup.ToLower()))
                 return BadRequest();
 
-            ForumPostListingVM forumPostListingVM = null; ;
+            ForumPostListingResponse forumPostListingVM = null; ;
             switch (lookup.ToLower())
             {
                 case LookupConsts.LookupHot:
@@ -51,7 +52,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
             return Ok(forumPostListingVM);
         }
 
-        private ForumPostListingVM PrepareHotForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        private ForumPostListingResponse PrepareHotForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
             Decimal? ceilingDecimal = ceiling.ToDecimalOrNull();
             Decimal? floorDecimal = floor.ToDecimalOrNull();
@@ -60,7 +61,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
             return forumPostListingVM;
         }
 
-        private ForumPostListingVM PrepareTopForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        private ForumPostListingResponse PrepareTopForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
             Int64? ceilingLong = ceiling.ToInt64OrNull();
             Int64? floorLong = floor.ToInt64OrNull();
@@ -69,7 +70,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
             return forumPostListingVM;
         }
 
-        private ForumPostListingVM PrepareNewForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        private ForumPostListingResponse PrepareNewForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
             DateTimeOffset? ceilingDateTimeOffset = ceiling.ToDateTimeOffsetOrNull();
             DateTimeOffset? floorDateTimeOffset = floor.ToDateTimeOffsetOrNull();
@@ -78,7 +79,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
             return forumPostListingVM;
         }
 
-        private ForumPostListingVM PrepareControversialForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        private ForumPostListingResponse PrepareControversialForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
             Decimal? ceilingDecimal = ceiling.ToDecimalOrNull();
             Decimal? floorDecimal = floor.ToDecimalOrNull();
