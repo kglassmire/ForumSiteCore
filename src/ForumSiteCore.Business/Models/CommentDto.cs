@@ -7,27 +7,27 @@ namespace ForumSiteCore.Business.Models
 {
     public class CommentDto
     {
-        public Int64 Id { get; set; }
-        public Int64? ParentId { get; set; }
-        public Int64 PostId { get; set; }
-        public String Description { get; set; }
+        public long Id { get; set; }
+        public long? ParentId { get; set; }
+        public long PostId { get; set; }
+        public string Description { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
         public List<CommentDto> Children { get; set; }
-        public Int64 TotalScore => Upvotes - Downvotes;
-        public Int64 Upvotes { get; set; }
-        public Int64 Downvotes { get; set; }
-        public Int32 Level { get; set; }
-        public Int64[] Path { get; set; }
+        public long TotalScore => Upvotes - Downvotes;
+        public long Upvotes { get; set; }
+        public long Downvotes { get; set; }
+        public int Level { get; set; }
+        public long[] Path { get; set; }
 
-        public Int64 CommentsCount { get; set; }
-        public Int64 SavesCount { get; set; }
-        public Decimal BestScore { get; set; }
-        public Decimal ControversyScore { get; set; }
-        public String UserName { get; set; }
+        public long CommentsCount { get; set; }
+        public long SavesCount { get; set; }
+        public decimal BestScore { get; set; }
+        public decimal ControversyScore { get; set; }
+        public string UserName { get; set; }
         public VoteType UserVote { get; set; }
-        public Boolean UserCreated { get; set; }
-        public Boolean UserSaved { get; set; }
+        public bool UserCreated { get; set; }
+        public bool UserSaved { get; set; }
 
 
     }

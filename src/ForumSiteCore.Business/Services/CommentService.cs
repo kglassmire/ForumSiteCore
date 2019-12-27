@@ -49,7 +49,7 @@ namespace ForumSiteCore.Business.Services
             return comment;
         }
 
-        public Boolean Save(Int64 commentId, Int64 userId, Boolean saving)
+        public bool Save(long commentId, long userId, bool saving)
         {
             var commentSave = _context.CommentSaves.SingleOrDefault(x => x.CommentId.Equals(commentId) && x.UserId.Equals(userId));
 
@@ -90,7 +90,7 @@ namespace ForumSiteCore.Business.Services
             }
         }
 
-        public Boolean Vote(Int64 postId, Int64 userId, Boolean direction)
+        public bool Vote(long postId, long userId, bool direction)
         {
             return false;
         }

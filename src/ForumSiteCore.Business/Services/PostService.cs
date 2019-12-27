@@ -22,13 +22,13 @@ namespace ForumSiteCore.Business.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly CurrentUserActivitiesService _userActivitiesService;
-        private readonly IUserAccessor<Int64> _userAccessor;
+        private readonly IUserAccessor<long> _userAccessor;
         private readonly IMapper _mapper;
         private readonly ILogger<PostService> _logger;
 
         public PostService(ApplicationDbContext context, 
             CurrentUserActivitiesService userActivitiesService, 
-            IUserAccessor<Int64> userAccessor,
+            IUserAccessor<long> userAccessor,
             IMapper mapper,
             ILogger<PostService> logger)
         {
@@ -67,7 +67,7 @@ namespace ForumSiteCore.Business.Services
             return post;
         }
 
-        public PostCommentListingResponse Best(Int64 id)
+        public PostCommentListingResponse Best(long id)
         {
             _logger.LogDebug("Retrieving best post comment listing for {Post}", id);
 
@@ -102,7 +102,7 @@ namespace ForumSiteCore.Business.Services
             return new PostCommentListingResponse(postDto, commentDtos, LookupConsts.LookupBest);
         }
 
-        public PostCommentListingResponse Controversial(Int64 id)
+        public PostCommentListingResponse Controversial(long id)
         {
             _logger.LogDebug("Retrieving controversial post comment listing for {Post}", id);
 
@@ -131,7 +131,7 @@ namespace ForumSiteCore.Business.Services
             return new PostCommentListingResponse(postDto, commentDtos, LookupConsts.LookupControversial);
         }
 
-        public PostDto Get(Int64 postId)
+        public PostDto Get(long postId)
         {
             var post = _context.Posts
                 .Include(x => x.User)
@@ -141,7 +141,7 @@ namespace ForumSiteCore.Business.Services
             return _mapper.Map<PostDto>(post);
         }
 
-        public PostCommentListingResponse New(Int64 id)
+        public PostCommentListingResponse New(long id)
         {
             _logger.LogDebug("Retrieving new post comment listing for {Post}", id);
 
@@ -169,7 +169,7 @@ namespace ForumSiteCore.Business.Services
             return new PostCommentListingResponse(postDto, commentDtos, LookupConsts.LookupNew);
         }
 
-        public PostSaveVM Save(Int64 postId, bool saved)
+        public PostSaveVM Save(long postId, bool saved)
         {
             _logger.LogDebug("Saving post {Post} with value {Saved}", postId, saved);
             // see if the user already saved this at one point
@@ -182,7 +182,7 @@ namespace ForumSiteCore.Business.Services
                     postSaveCache[postId] = saved;
                     _userActivitiesService.SetUserPostsSaved(postSaveCache);
 
-                    PostSaveVM savedPost = new PostSaveVM { Status = "success", Saved = saved, Message = String.Format("PostSave was updated and set to {0}", saved) };
+                    PostSaveVM savedPost = new PostSaveVM { Status = "success", Saved = saved, Message = string.Format("PostSave was updated and set to {0}", saved) };
                     _logger.LogDebug("Post {@Post} saved", savedPost);
                     return savedPost;
                 }
@@ -206,7 +206,7 @@ namespace ForumSiteCore.Business.Services
             return failedPost;
         }
 
-        public PostCommentListingResponse Top(Int64 id)
+        public PostCommentListingResponse Top(long id)
         {
             _logger.LogDebug("Retrieving top post comment listing for {Post}", id);
 
@@ -234,7 +234,7 @@ namespace ForumSiteCore.Business.Services
             return new PostCommentListingResponse(postDto, commentDtos, LookupConsts.LookupTop);
         }
 
-        public PostVoteVM Vote(Int64 postId, Boolean? direction)
+        public PostVoteVM Vote(long postId, bool? direction)
         {
             if (_userActivitiesService.GetUserPostsVoted().ContainsKey(postId)) // post vote already exists
             {                 
@@ -263,7 +263,7 @@ namespace ForumSiteCore.Business.Services
             throw new Exception("error voting post");
         }
 
-        private Boolean AddPostSave(Int64 postId)
+        private bool AddPostSave(long postId)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {
@@ -293,7 +293,7 @@ namespace ForumSiteCore.Business.Services
             return false;
         }
 
-        private Boolean AddPostVote(Int64 postId, Boolean? direction)
+        private bool AddPostVote(long postId, bool? direction)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {
@@ -338,7 +338,7 @@ namespace ForumSiteCore.Business.Services
             commentDtos = _mapper.Map<List<CommentDto>>(comments);
         }
 
-        private Boolean UpdatePostSave(Int64 postId, Boolean save)
+        private bool UpdatePostSave(long postId, bool save)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {
@@ -364,7 +364,7 @@ namespace ForumSiteCore.Business.Services
             return false;
         }
 
-        private Boolean UpdatePostVoteDirection(Int64 postId, Boolean? direction)
+        private bool UpdatePostVoteDirection(long postId, bool? direction)
         {
             using (var transaction = _context.Database.BeginSimpleAmbientTransaction())
             {

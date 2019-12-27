@@ -7,12 +7,12 @@ namespace ForumSiteCore.DAL.Models
 {
     public class ForumSave
     {
-        public Int64 Id { get; set; }
-        public Int64 UserId { get; set; }
-        public Int64 ForumId { get; set; }
+        public long Id { get; set; }
+        public long UserId { get; set; }
+        public long ForumId { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
-        public Boolean Saved { get; set; }
+        public bool Saved { get; set; }
 
         public Forum Forum { get; set; }
         public ApplicationUser User { get; set; }

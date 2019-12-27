@@ -8,7 +8,7 @@ namespace ForumSiteCore.DAL
     public class SimpleAmbientTransaction : IDisposable
     {
         public IDbContextTransaction Transaction { get; set; }
-        public Boolean TopLevel { get; set; }
+        public bool TopLevel { get; set; }
         public SimpleAmbientTransaction(Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade database)
         {
             TopLevel = database.CurrentTransaction == null;

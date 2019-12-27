@@ -12,7 +12,7 @@ namespace ForumSiteCore.Business.Responses
 
         }
 
-        public PostCommentListingResponse(PostDto post, List<CommentDto> comments, String commentListingType)
+        public PostCommentListingResponse(PostDto post, List<CommentDto> comments, string commentListingType)
         {
             Post = post;
             Comments = comments;
@@ -21,6 +21,6 @@ namespace ForumSiteCore.Business.Responses
 
         public PostDto Post { get; set; }
         public List<CommentDto> Comments { get; set; }
-        public String CommentListingType { get; set; }
+        public string CommentListingType { get; set; }
     }
 }

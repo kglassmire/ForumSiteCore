@@ -26,11 +26,11 @@ namespace ForumSiteCore.BlazorWasm.Client.Pages
         protected override async Task OnParametersSetAsync()
         {
             Console.WriteLine("OnParametersSetAsync was called...");
-            if (String.IsNullOrWhiteSpace(Name))
+            if (string.IsNullOrWhiteSpace(Name))
             {
                 Name = "all";                
             }
-            if (String.IsNullOrWhiteSpace(Sort))
+            if (string.IsNullOrWhiteSpace(Sort))
             {
                 Sort = "hot";
             }
@@ -69,7 +69,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Pages
         private string GetLookbackDatetimeOffset(string lookback)
         {
             var arrLookback = lookback.Split('-', 3);
-            var amountParsed = Int32.Parse(arrLookback[1]);
+            var amountParsed = int.Parse(arrLookback[1]);
             var unit = arrLookback[2];
             DateTime lookbackDateTime = DateTime.Now;
 

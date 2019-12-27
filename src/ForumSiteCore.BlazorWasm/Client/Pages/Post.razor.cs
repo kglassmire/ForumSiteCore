@@ -21,7 +21,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Pages
         {
             Console.WriteLine("OnParametersSetAsync was called...");
 
-            if (String.IsNullOrWhiteSpace(ForumName))
+            if (string.IsNullOrWhiteSpace(ForumName))
             {
                 throw new InvalidOperationException($"{nameof(ForumName)} was not provided");
             }
@@ -31,7 +31,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Pages
                 throw new InvalidOperationException($"{nameof(PostId)} was not provided");
             }
 
-            if (String.IsNullOrWhiteSpace(Sort))
+            if (string.IsNullOrWhiteSpace(Sort))
             {
                 Sort = "best";
             }

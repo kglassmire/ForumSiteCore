@@ -7,7 +7,7 @@ namespace ForumSiteCore.Business.ViewModels
 {
     public class PostSaveVM : BaseVM
     {
-        public Int64 PostId { get; set; }
+        public long PostId { get; set; }
         public bool Saved { get; set; }
     }
 }

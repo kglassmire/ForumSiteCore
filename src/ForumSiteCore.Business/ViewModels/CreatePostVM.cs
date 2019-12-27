@@ -7,9 +7,9 @@ namespace ForumSiteCore.Business.ViewModels
 {
     public class CreatePostVM
     {
-        public String Title { get; set; }
-        public String Description { get; set; }
-        public String Url { get; set; }
-        public String ForumName { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Url { get; set; }
+        public string ForumName { get; set; }
     }
 }

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ForumSiteCore.Business.Services
 {
-    public class UserAccessor : IUserAccessor<Int64>
+    public class UserAccessor : IUserAccessor<long>
     {
         IHttpContextAccessor _httpContextAccessor;
         public UserAccessor(IHttpContextAccessor httpContextAccessor)
@@ -18,7 +18,7 @@ namespace ForumSiteCore.Business.Services
 
         public ClaimsPrincipal User { get => _httpContextAccessor.HttpContext.User; }
 
-        public Int64 UserId
+        public long UserId
         {
             get
             {
@@ -29,6 +29,6 @@ namespace ForumSiteCore.Business.Services
             }
 
         }
-        public String UserName { get => User?.Identity.Name; }
+        public string UserName { get => User?.Identity.Name; }
     }
 }

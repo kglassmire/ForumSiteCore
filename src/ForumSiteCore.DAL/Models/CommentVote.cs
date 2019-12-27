@@ -7,13 +7,13 @@ namespace ForumSiteCore.DAL.Models
 {
     public class CommentVote
     {
-        public Int64 Id { get; set; }
-        public Int64 CommentId { get; set; }
-        public Int64 UserId { get; set; }
-        public Boolean? Direction { get; set; }
+        public long Id { get; set; }
+        public long CommentId { get; set; }
+        public long UserId { get; set; }
+        public bool? Direction { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
-        public Int64 PostId { get; set; }
+        public long PostId { get; set; }
 
         public Comment Comment { get; set; }
         public ApplicationUser User { get; set; }  

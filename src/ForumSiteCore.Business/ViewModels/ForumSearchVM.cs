@@ -6,6 +6,6 @@ namespace ForumSiteCore.Business.ViewModels
 {
     public class ForumSearchVM : BaseVM
     {
-        public List<String> Results { get; set; }
+        public List<string> Results { get; set; }
     }
 }

@@ -6,10 +6,10 @@ namespace ForumSiteCore.Business.Consts
 {
     public static class LookupConsts
     {
-        public const String LookupHot = "hot";
-        public const String LookupTop = "top";
-        public const String LookupControversial = "controversial";
-        public const String LookupNew = "new";
-        public const String LookupBest = "best";
+        public const string LookupHot = "hot";
+        public const string LookupTop = "top";
+        public const string LookupControversial = "controversial";
+        public const string LookupNew = "new";
+        public const string LookupBest = "best";
     }
 }

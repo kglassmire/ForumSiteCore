@@ -25,9 +25,9 @@ namespace ForumSiteCore.Business.Services
         private const string UserPostsVotedCacheKeyTemplate = "user-{0}-posts-voted";
         private readonly ICacheManager<object> _cache;
         private readonly ApplicationDbContext _context;
-        private readonly IUserAccessor<Int64> _userAccessor;
+        private readonly IUserAccessor<long> _userAccessor;
 
-        public CurrentUserActivitiesService(ApplicationDbContext context, ICacheManager<object> cache, IUserAccessor<Int64> userAccessor, ILogger<CurrentUserActivitiesService> logger)
+        public CurrentUserActivitiesService(ApplicationDbContext context, ICacheManager<object> cache, IUserAccessor<long> userAccessor, ILogger<CurrentUserActivitiesService> logger)
         {
             _context = context;
             _cache = cache;
@@ -37,7 +37,7 @@ namespace ForumSiteCore.Business.Services
 
         public HashSet<long> GetUserCommentsCreated()
         {
-            return (HashSet<Int64>)_cache.GetOrAdd(UserCommentsCreatedCacheKey, valueFactory => UserCommentsCreatedInternal(_userAccessor.UserId));
+            return (HashSet<long>)_cache.GetOrAdd(UserCommentsCreatedCacheKey, valueFactory => UserCommentsCreatedInternal(_userAccessor.UserId));
         }
 
         public void SetUserCommentsCreated(HashSet<long> value)
@@ -47,7 +47,7 @@ namespace ForumSiteCore.Business.Services
 
         public Dictionary<long, bool> GetUserCommentsSaved()
         {
-            return (Dictionary<Int64, Boolean>)_cache.GetOrAdd(String.Format(UserCommentsSavedCacheKeyTemplate, _userAccessor.UserId), valueFactory => UserCommentsSavedInternal(_userAccessor.UserId));
+            return (Dictionary<long, bool>)_cache.GetOrAdd(string.Format(UserCommentsSavedCacheKeyTemplate, _userAccessor.UserId), valueFactory => UserCommentsSavedInternal(_userAccessor.UserId));
         }
 
         public void SetUserCommentsSaved(Dictionary<long, bool> value)
@@ -55,36 +55,36 @@ namespace ForumSiteCore.Business.Services
             _cache.AddOrUpdate(UserCommentsSavedCacheKey, value, v => value);
         }
 
-        public Dictionary<long, Boolean?> GetUserCommentsVoted(Int64? postId)
+        public Dictionary<long, bool?> GetUserCommentsVoted(long? postId)
         {
-            Dictionary<Int64, Boolean?> castedCacheItem = null;
+            Dictionary<long, bool?> castedCacheItem = null;
             var cacheItems = _cache.Get(UserCommentsVotedCacheKey);
             if (cacheItems == null)
             {
-                castedCacheItem = new Dictionary<long, Boolean?>();
+                castedCacheItem = new Dictionary<long, bool?>();
             }
             else
             {
-                castedCacheItem = (Dictionary<long, Boolean?>)cacheItems;
+                castedCacheItem = (Dictionary<long, bool?>)cacheItems;
             }
                 
 
             var newItems = UserCommentsVotedInternal(_userAccessor.UserId, postId);
-            var latestCacheItems = Utility.CollectionExtensions.MergeDictionaries<Int64, Boolean?>(new List<Dictionary<Int64, Boolean?>>{ castedCacheItem, newItems});
+            var latestCacheItems = Utility.CollectionExtensions.MergeDictionaries<Int64, Boolean?>(new List<Dictionary<long, bool?>>{ castedCacheItem, newItems});
             _cache.AddOrUpdate(UserCommentsVotedCacheKey, latestCacheItems, x => latestCacheItems);
 
             return latestCacheItems;
             //return (Dictionary<Int64, UserActivitiesVoteItem>)_cache.GetOrAdd(UserCommentsVotedCacheKey, valueFactory => UserCommentsVotedInternal(_userAccessor.UserId));
         }
 
-        public void SetUserCommentsVoted(Dictionary<long, Boolean?> value)
+        public void SetUserCommentsVoted(Dictionary<long, bool?> value)
         {
             _cache.AddOrUpdate(UserCommentsVotedCacheKey, value, v => value);
         }
 
         public Dictionary<long, bool> GetUserForumsSaved()
         {
-            return (Dictionary<Int64, Boolean>)_cache.GetOrAdd(UserForumsSavedCacheKey, valueFactory => UserForumsSavedInternal(_userAccessor.UserId));
+            return (Dictionary<long, bool>)_cache.GetOrAdd(UserForumsSavedCacheKey, valueFactory => UserForumsSavedInternal(_userAccessor.UserId));
         }
 
         public void SetUserForumsSaved(Dictionary<long, bool> value)
@@ -94,7 +94,7 @@ namespace ForumSiteCore.Business.Services
 
         public HashSet<long> GetUserPostsCreated()
         {
-            return (HashSet<Int64>)_cache.GetOrAdd(UserPostsCreatedCacheKey, valueFactory => UserPostsCreatedInternal(_userAccessor.UserId));
+            return (HashSet<long>)_cache.GetOrAdd(UserPostsCreatedCacheKey, valueFactory => UserPostsCreatedInternal(_userAccessor.UserId));
         }
 
         public void SetUserPostsCreated(HashSet<long> value)
@@ -104,7 +104,7 @@ namespace ForumSiteCore.Business.Services
 
         public Dictionary<long, bool> GetUserPostsSaved()
         {
-            return (Dictionary<Int64, Boolean>)_cache.GetOrAdd(UserPostsSavedCacheKey, valueFactory => UserPostsSavedInternal(_userAccessor.UserId));
+            return (Dictionary<long, bool>)_cache.GetOrAdd(UserPostsSavedCacheKey, valueFactory => UserPostsSavedInternal(_userAccessor.UserId));
         }
 
         public void SetUserPostsSaved(Dictionary<long, bool> value)
@@ -114,7 +114,7 @@ namespace ForumSiteCore.Business.Services
 
         public Dictionary<long, bool?> GetUserPostsVoted()
         {
-            return (Dictionary<Int64, Boolean?>)_cache.GetOrAdd(UserPostsVotedCacheKey, valueFactory => UserPostsVotedInternal(_userAccessor.UserId));
+            return (Dictionary<long, bool?>)_cache.GetOrAdd(UserPostsVotedCacheKey, valueFactory => UserPostsVotedInternal(_userAccessor.UserId));
         }
 
         public void SetUserPostsVoted(Dictionary<long, bool?> value)
@@ -122,13 +122,13 @@ namespace ForumSiteCore.Business.Services
             _cache.AddOrUpdate(UserPostsVotedCacheKey, value, v => value);
         }
 
-        private string UserCommentsCreatedCacheKey => String.Format(UserCommentsCreatedCacheKeyTemplate, _userAccessor.UserId);
-        private string UserCommentsSavedCacheKey => String.Format(UserCommentsSavedCacheKeyTemplate, _userAccessor.UserId);
-        private string UserCommentsVotedCacheKey => String.Format(UserCommentsVotedCacheKeyTemplate, _userAccessor.UserId);
-        private string UserForumsSavedCacheKey => String.Format(UserForumsSavedCacheKeyTemplate, _userAccessor.UserId);
-        private string UserPostsCreatedCacheKey => String.Format(UserPostsCreatedCacheKeyTemplate, _userAccessor.UserId);
-        private string UserPostsSavedCacheKey => String.Format(UserPostsSavedCacheKeyTemplate, _userAccessor.UserId);
-        private string UserPostsVotedCacheKey => String.Format(UserPostsVotedCacheKeyTemplate, _userAccessor.UserId);
+        private string UserCommentsCreatedCacheKey => string.Format(UserCommentsCreatedCacheKeyTemplate, _userAccessor.UserId);
+        private string UserCommentsSavedCacheKey => string.Format(UserCommentsSavedCacheKeyTemplate, _userAccessor.UserId);
+        private string UserCommentsVotedCacheKey => string.Format(UserCommentsVotedCacheKeyTemplate, _userAccessor.UserId);
+        private string UserForumsSavedCacheKey => string.Format(UserForumsSavedCacheKeyTemplate, _userAccessor.UserId);
+        private string UserPostsCreatedCacheKey => string.Format(UserPostsCreatedCacheKeyTemplate, _userAccessor.UserId);
+        private string UserPostsSavedCacheKey => string.Format(UserPostsSavedCacheKeyTemplate, _userAccessor.UserId);
+        private string UserPostsVotedCacheKey => string.Format(UserPostsVotedCacheKeyTemplate, _userAccessor.UserId);
 
         public void ProcessComments(PostDto post, List<CommentDto> comments)
         {
@@ -242,7 +242,7 @@ namespace ForumSiteCore.Business.Services
             }
         }
 
-        private HashSet<Int64> UserCommentsCreatedInternal(Int64 userId)
+        private HashSet<long> UserCommentsCreatedInternal(long userId)
         {
             return _context.Comments
                 .Where(x => x.UserId.Equals(userId))
@@ -250,7 +250,7 @@ namespace ForumSiteCore.Business.Services
                 .ToHashSet();
         }
 
-        private Dictionary<Int64, Boolean> UserCommentsSavedInternal(Int64 userId)
+        private Dictionary<long, bool> UserCommentsSavedInternal(long userId)
         {
             return _context.CommentSaves
                 .Where(x => x.UserId.Equals(userId))
@@ -258,21 +258,21 @@ namespace ForumSiteCore.Business.Services
                 .ToDictionary(kvp => kvp.CommentId, kvp => kvp.Saved);
         }
 
-        private Dictionary<Int64, Boolean?> UserCommentsVotedInternal(Int64 userId, Int64? postId = null)
+        private Dictionary<long, bool?> UserCommentsVotedInternal(long userId, long? postId = null)
         {
             if (postId.HasValue)
                 return _context.CommentVotes
                     .Where(x => x.UserId.Equals(userId) && x.PostId.Equals(postId))
-                    .Select(x => new KeyValuePair<Int64, Boolean?>(x.CommentId, x.Direction))
+                    .Select(x => new KeyValuePair<long, bool?>(x.CommentId, x.Direction))
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             return _context.CommentVotes
                 .Where(x => x.UserId.Equals(userId))
-                .Select(x => new KeyValuePair<Int64, Boolean?>(x.CommentId, x.Direction))
+                .Select(x => new KeyValuePair<long, bool?>(x.CommentId, x.Direction))
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
-        private Dictionary<Int64, Boolean> UserForumsSavedInternal(Int64 userId)
+        private Dictionary<long, bool> UserForumsSavedInternal(long userId)
         {
             return _context.ForumSaves
                 .Where(x => x.UserId.Equals(userId))
@@ -280,7 +280,7 @@ namespace ForumSiteCore.Business.Services
                 .ToDictionary(kvp => kvp.ForumId, kvp => kvp.Saved);
         }
 
-        private HashSet<Int64> UserPostsCreatedInternal(Int64 userId)
+        private HashSet<long> UserPostsCreatedInternal(long userId)
         {
             return _context.Posts
                 .Where(x => x.UserId.Equals(userId))
@@ -288,7 +288,7 @@ namespace ForumSiteCore.Business.Services
                 .ToHashSet();
         }
 
-        private Dictionary<Int64, Boolean> UserPostsSavedInternal(Int64 userId)
+        private Dictionary<long, bool> UserPostsSavedInternal(long userId)
         {
             return _context.PostSaves
                 .Where(x => x.UserId.Equals(userId))
@@ -296,11 +296,11 @@ namespace ForumSiteCore.Business.Services
                 .ToDictionary(kvp => kvp.PostId, kvp => kvp.Saved);
         }
 
-        private Dictionary<Int64, Boolean?> UserPostsVotedInternal(Int64 userId)
+        private Dictionary<long, bool?> UserPostsVotedInternal(long userId)
         {
             return _context.PostVotes
                 .Where(x => x.UserId.Equals(userId))
-                .Select(x => new KeyValuePair<Int64, Boolean?>(x.PostId, x.Direction))
+                .Select(x => new KeyValuePair<long, bool?>(x.PostId, x.Direction))
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
     }

@@ -68,7 +68,7 @@ namespace ForumSiteCore.BlazorWasm.Server
             services.AddScoped(typeof(CurrentUserActivitiesService));
             services.AddScoped(typeof(UserProfileService));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IUserAccessor<Int64>, UserAccessor>();
+            services.AddScoped<IUserAccessor<long>, UserAccessor>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddAutoMapper(typeof(AutoMapperConfigProfile));
 

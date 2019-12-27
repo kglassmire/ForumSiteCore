@@ -7,20 +7,20 @@ namespace ForumSiteCore.DAL.Models
 {
     public class Post
     {
-        public Int64 Id { get; set; }
-        public String Name { get; set; }
-        public String Description { get; set; }
-        public String Url { get; set; }
-        public Int64 ForumId { get; set; }
-        public Int64 UserId { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Url { get; set; }
+        public long ForumId { get; set; }
+        public long UserId { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
-        public Int64 Upvotes { get; set; }
-        public Int64 Downvotes { get; set; }
-        public Decimal HotScore { get; set; }
-        public Decimal ControversyScore { get; set; }
-        public Int64 CommentsCount { get; set; }
-        public Int64 SavesCount { get; set; }
+        public long Upvotes { get; set; }
+        public long Downvotes { get; set; }
+        public decimal HotScore { get; set; }
+        public decimal ControversyScore { get; set; }
+        public long CommentsCount { get; set; }
+        public long SavesCount { get; set; }
 
         public Forum Forum { get; set; }
         public ApplicationUser User { get; set; }

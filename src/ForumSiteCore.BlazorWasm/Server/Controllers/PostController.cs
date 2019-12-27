@@ -17,12 +17,12 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
     [ApiController]
     public class PostController : Controller
     {
-        private readonly String[] _acceptedLookups = new []{ "best", "top", "new", "controversial" };
+        private readonly string[] _acceptedLookups = new []{ "best", "top", "new", "controversial" };
 
         private readonly PostService _postService;
         private readonly ILogger<PostController> _logger;
 
-        public PostController(PostService postService, IUserAccessor<Int64> userAccessor, ILogger<PostController> logger)
+        public PostController(PostService postService, IUserAccessor<long> userAccessor, ILogger<PostController> logger)
         {
             _postService = postService;
             _logger = logger;
@@ -30,7 +30,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
 
         [HttpGet("{id}/comments/{lookup}")]
         [ResponseCache(VaryByQueryKeys = new[] { "lookup", "id" }, Duration = 10, Location = ResponseCacheLocation.Any)]
-        public IActionResult Get(String lookup, Int64 id)
+        public IActionResult Get(string lookup, long id)
         {
             if (!_acceptedLookups.Contains(lookup))
                 return BadRequest();

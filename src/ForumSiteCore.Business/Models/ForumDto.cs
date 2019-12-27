@@ -6,14 +6,14 @@ namespace ForumSiteCore.Business.Models
 {
     public class ForumDto
     {
-        public Int64 Id { get; set; }
+        public long Id { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
-        public Boolean Inactive { get; set; }
-        public String Name { get; set; }
-        public String Description { get; set; }
-        public Int64 Saves { get; set; }
+        public bool Inactive { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public long Saves { get; set; }
 
-        public Boolean UserSaved { get; set; }
+        public bool UserSaved { get; set; }
     }
 }

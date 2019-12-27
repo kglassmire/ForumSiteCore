@@ -11,6 +11,6 @@ namespace ForumSiteCore.Business.Responses
     {
         public ForumDto Forum { get; set; }
         public List<PostDto> Posts { get; set; }
-        public String ForumListingType { get; set; }        
+        public string ForumListingType { get; set; }        
     }
 }

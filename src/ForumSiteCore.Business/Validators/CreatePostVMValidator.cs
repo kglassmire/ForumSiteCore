@@ -16,10 +16,10 @@ namespace ForumSiteCore.Business.Validators
                 .MaximumLength(500);
             RuleFor(m => m.Url)
                 .Empty()
-                .When(x => !String.IsNullOrEmpty(x.Description));
+                .When(x => !string.IsNullOrEmpty(x.Description));
             RuleFor(m => m.Description)
                 .Empty()
-                .When(m => !String.IsNullOrEmpty(m.Url));
+                .When(m => !string.IsNullOrEmpty(m.Url));
         }
     }
 }

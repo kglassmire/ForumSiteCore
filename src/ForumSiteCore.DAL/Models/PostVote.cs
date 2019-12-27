@@ -7,10 +7,10 @@ namespace ForumSiteCore.DAL.Models
 {
     public class PostVote
     {
-        public Int64 Id { get; set; }
-        public Int64 PostId { get; set; }
-        public Int64 UserId { get; set; }
-        public Boolean? Direction { get; set; }
+        public long Id { get; set; }
+        public long PostId { get; set; }
+        public long UserId { get; set; }
+        public bool? Direction { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
 

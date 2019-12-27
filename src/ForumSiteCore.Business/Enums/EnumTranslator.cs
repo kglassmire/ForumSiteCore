@@ -7,7 +7,7 @@ namespace ForumSiteCore.Business.Enums
 {
     public static class EnumTranslator
     {
-        public static VoteType DirectionToVoteType(Boolean? direction)
+        public static VoteType DirectionToVoteType(bool? direction)
         {
             switch(direction)
             {
@@ -22,7 +22,7 @@ namespace ForumSiteCore.Business.Enums
             }
         }
 
-        public static Boolean? VoteTypeToDirection(VoteType voteType)
+        public static bool? VoteTypeToDirection(VoteType voteType)
         {
             switch (voteType)
             {

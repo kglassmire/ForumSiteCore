@@ -6,7 +6,7 @@ namespace ForumSiteCore.Business.Models
 {
     public class UserDto
     {
-        public Int64 Id { get; set; }
-        public String UserName { get; set; }
+        public long Id { get; set; }
+        public string UserName { get; set; }
     }
 }

@@ -9,6 +9,6 @@ namespace ForumSiteCore.Business.Interfaces
     {
         ClaimsPrincipal User { get; }
         T UserId { get; }
-        String UserName { get; }
+        string UserName { get; }
     }
 }

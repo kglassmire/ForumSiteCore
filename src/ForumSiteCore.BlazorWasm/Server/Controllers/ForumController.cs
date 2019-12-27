@@ -14,7 +14,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
     [ApiController]
     public class ForumController : Controller
     {
-        private readonly String[] _acceptedLookups = new[] { "hot", "top", "new", "controversial" };
+        private readonly string[] _acceptedLookups = new[] { "hot", "top", "new", "controversial" };
         private readonly ForumService _forumService;
         private readonly CurrentUserActivitiesService _userActivitiesService;
 
@@ -27,7 +27,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
         [ResponseCache(VaryByQueryKeys = new[] { "name", "lookup", "ceiling", "floor", "limit", "dtstart", "dtend" }, Duration = 10, Location = ResponseCacheLocation.Any)]
         [HttpGet("{name}/{lookup}")]
         [ProducesResponseType(typeof(ForumPostListingResponse), 200)]
-        public IActionResult Get(String name, String lookup, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        public IActionResult Get(string name, string lookup, string ceiling = null, string floor = null, int? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {            
             if (!_acceptedLookups.Contains(lookup.ToLower()))
                 return BadRequest();
@@ -52,25 +52,25 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
             return Ok(forumPostListingVM);
         }
 
-        private ForumPostListingResponse PrepareHotForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        private ForumPostListingResponse PrepareHotForumGet(string name, string ceiling = null, string floor = null, int? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
-            Decimal? ceilingDecimal = ceiling.ToDecimalOrNull();
-            Decimal? floorDecimal = floor.ToDecimalOrNull();
+            decimal? ceilingDecimal = ceiling.ToDecimalOrNull();
+            decimal? floorDecimal = floor.ToDecimalOrNull();
 
             var forumPostListingVM = _forumService.Hot(name, ceilingDecimal, floorDecimal, 25, dtstart, dtend);
             return forumPostListingVM;
         }
 
-        private ForumPostListingResponse PrepareTopForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        private ForumPostListingResponse PrepareTopForumGet(string name, string ceiling = null, string floor = null, int? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
-            Int64? ceilingLong = ceiling.ToInt64OrNull();
-            Int64? floorLong = floor.ToInt64OrNull();
+            long? ceilingLong = ceiling.ToInt64OrNull();
+            long? floorLong = floor.ToInt64OrNull();
 
             var forumPostListingVM = _forumService.Top(name, ceilingLong, floorLong, 25, dtstart, dtend);
             return forumPostListingVM;
         }
 
-        private ForumPostListingResponse PrepareNewForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        private ForumPostListingResponse PrepareNewForumGet(string name, string ceiling = null, string floor = null, int? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
             DateTimeOffset? ceilingDateTimeOffset = ceiling.ToDateTimeOffsetOrNull();
             DateTimeOffset? floorDateTimeOffset = floor.ToDateTimeOffsetOrNull();
@@ -79,10 +79,10 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
             return forumPostListingVM;
         }
 
-        private ForumPostListingResponse PrepareControversialForumGet(String name, String ceiling = null, String floor = null, Int32? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
+        private ForumPostListingResponse PrepareControversialForumGet(string name, string ceiling = null, string floor = null, int? limit = null, DateTimeOffset? dtstart = null, DateTimeOffset? dtend = null)
         {
-            Decimal? ceilingDecimal = ceiling.ToDecimalOrNull();
-            Decimal? floorDecimal = floor.ToDecimalOrNull();
+            decimal? ceilingDecimal = ceiling.ToDecimalOrNull();
+            decimal? floorDecimal = floor.ToDecimalOrNull();
             
             var forumPostListingVM = _forumService.Controversial(name, ceilingDecimal, floorDecimal, 25, dtstart, dtend);
             return forumPostListingVM;
@@ -102,7 +102,7 @@ namespace ForumSiteCore.BlazorWasm.Server.Controllers
         [HttpGet("search/{search}")]
         [ResponseCache(VaryByQueryKeys = new[] { "*" }, Duration = 60, Location = ResponseCacheLocation.Any)]
         [ProducesResponseType(typeof(ForumSearchVM), 200)]        
-        public IActionResult ForumSearch(String search)
+        public IActionResult ForumSearch(string search)
         {
             var searchResults = _forumService.ForumSearch(search);
 

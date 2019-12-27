@@ -16,9 +16,9 @@ namespace ForumSiteCore.Utility
             return startUnderscores + Regex.Replace(input, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
         }
 
-        public static Int64? ToInt64OrNull(this string input)
+        public static long? ToInt64OrNull(this string input)
         {
-            Int64? returnVal = Int64.TryParse(input, out Int64 parsedValue) ? parsedValue : (Int64?)null;
+            long? returnVal = long.TryParse(input, out long parsedValue) ? parsedValue : (long?)null;
 
             return returnVal;
         }
@@ -30,9 +30,9 @@ namespace ForumSiteCore.Utility
             return returnVal;
         }
 
-        public static Decimal? ToDecimalOrNull(this string input)
+        public static decimal? ToDecimalOrNull(this string input)
         {
-            Decimal? returnVal = Decimal.TryParse(input, out Decimal parsedValue) ? parsedValue : (Decimal?)null;
+            decimal? returnVal = decimal.TryParse(input, out decimal parsedValue) ? parsedValue : (decimal?)null;
 
             return returnVal;
         }

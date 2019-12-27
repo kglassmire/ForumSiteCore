@@ -30,7 +30,7 @@ namespace ForumSiteCore.BlazorWasm.Client.Pages
 
         protected override async Task OnParametersSetAsync()
         {
-            if (String.IsNullOrEmpty(CurrentView))
+            if (string.IsNullOrEmpty(CurrentView))
             {
                 NavManager.NavigateTo($"/u/{UserName}/posts-created");
                 return;

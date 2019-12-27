@@ -21,7 +21,7 @@ namespace ForumSiteCore.Business
                 .ForMember(dest => dest.UserVote, opt => opt.Ignore())
                 .ForMember(dest => dest.UserCreated, opt => opt.Ignore())
                 .ForMember(dest => dest.UserSaved, opt => opt.Ignore())
-                .ForMember(dest => dest.ForumName, opt => opt.MapFrom(s => s.Forum != null ? s.Forum.Name : String.Empty))
+                .ForMember(dest => dest.ForumName, opt => opt.MapFrom(s => s.Forum != null ? s.Forum.Name : string.Empty))
                 .ForMember(dest => dest.ShowForumName, opt => opt.Ignore());
 
 

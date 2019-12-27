@@ -8,19 +8,19 @@ namespace ForumSiteCore.DAL.Models
 {
     public class Comment
     {
-        public Int64 Id { get; set; }
-        public Int64? ParentId { get; set; }
-        public Int64 UserId { get; set; }
-        public Int64 PostId { get; set; }
-        public String Description { get; set; }
+        public long Id { get; set; }
+        public long? ParentId { get; set; }
+        public long UserId { get; set; }
+        public long PostId { get; set; }
+        public string Description { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Updated { get; set; }
-        public Int64 Upvotes { get; set; }
-        public Int64 Downvotes { get; set; }
-        public Int64 CommentsCount { get; set; }
-        public Int64 SavesCount { get; set; }
-        public Decimal BestScore { get; set; }
-        public Decimal ControversyScore { get; set; }                
+        public long Upvotes { get; set; }
+        public long Downvotes { get; set; }
+        public long CommentsCount { get; set; }
+        public long SavesCount { get; set; }
+        public decimal BestScore { get; set; }
+        public decimal ControversyScore { get; set; }                
 
         public List<CommentSave> CommentSaves { get; set; }
         public List<CommentVote> CommentVotes { get; set; }
