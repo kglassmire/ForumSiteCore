@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
 # build image app folder
 WORKDIR /app 
 
@@ -7,10 +7,10 @@ COPY . ./
 
 ARG BUILD_CONFIG=Release
 RUN echo "Publishing in $BUILD_CONFIG mode"
-RUN dotnet publish ./src/ForumSiteCore.Web/ForumSiteCore.Web.csproj -c $BUILD_CONFIG -o out --source https://api.nuget.org/v3/index.json
+RUN dotnet publish ./src/ForumSiteCore.BlazorWasm/Server/ForumSiteCore.BlazorWasm.Server.csproj -c $BUILD_CONFIG -o out
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-alpine
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine
 ARG BUILD_CONFIG=Release
 RUN if [ "$BUILD_CONFIG" = "Debug" ]; \
     then apk update && \
@@ -27,4 +27,4 @@ RUN chmod +x /wait
 
 COPY --from=build /app/out .
 
-CMD /wait && dotnet ForumSiteCore.Web.dll
+CMD /wait && dotnet ForumSiteCore.BlazorWasm.Server.dll
