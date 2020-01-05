@@ -9,7 +9,7 @@ RUN cat nbgv.json
 ARG BUILD_CONFIG=Release
 RUN echo "Publishing in $BUILD_CONFIG mode"
 RUN dotnet publish ./src/ForumSiteCore.BlazorWasm/Server/ForumSiteCore.BlazorWasm.Server.csproj -c $BUILD_CONFIG -o out
-
+RUN printenv
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine
 ARG BUILD_CONFIG=Release

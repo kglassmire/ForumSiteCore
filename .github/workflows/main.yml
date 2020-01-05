@@ -3,6 +3,10 @@ name: CI
 on: [push]
 
 jobs:
+  env: 
+    DOCKER_HUB_REPOSITORY: forumsitecore
+    DOCKER_HUB_ORGANIZATION: kglassmire
+
   build:
 
     runs-on: ubuntu-latest
@@ -10,8 +14,10 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: aarnott/nbgv@master
+    - name: print environment variables
+      run: printenv
     - name: docker build
-      run: docker build . -t forumsitecore
+      run: docker build . -t $DOCKER_HUB_ORGANIZATION/$DOCKER_HUB_REPOSITORY
     - name: Run a multi-line script
       run: |
         echo Add other actions to build,
