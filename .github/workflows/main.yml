@@ -3,12 +3,10 @@ name: CI
 on: [push]
 
 jobs:
-  env: 
-    DOCKER_HUB_REPOSITORY: forumsitecore
-    DOCKER_HUB_ORGANIZATION: kglassmire
-
   build:
-
+    env: 
+      DOCKER_HUB_REPOSITORY: forumsitecore
+      DOCKER_HUB_ORGANIZATION: kglassmire
     runs-on: ubuntu-latest
 
     steps:
