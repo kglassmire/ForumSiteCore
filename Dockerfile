@@ -5,6 +5,7 @@ WORKDIR /app
 # Copy everything else and publish (publish will build and restore as necessary)
 COPY . ./
 
+RUN cat nbgv.json
 ARG BUILD_CONFIG=Release
 RUN echo "Publishing in $BUILD_CONFIG mode"
 RUN dotnet publish ./src/ForumSiteCore.BlazorWasm/Server/ForumSiteCore.BlazorWasm.Server.csproj -c $BUILD_CONFIG -o out
