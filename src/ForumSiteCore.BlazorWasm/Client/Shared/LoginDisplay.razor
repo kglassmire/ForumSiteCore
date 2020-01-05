@@ -1,0 +1,18 @@
+﻿<AuthorizeView>
+    <Authorized>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="@($"/u/{context.User.Identity.Name}")">@context.User.Identity.Name<span class="sr-only">(current)</span></NavLink>
+        </li>
+        <li>
+            <NavLink class="nav-link" href="LogOut">Logout</NavLink>
+        </li>
+    </Authorized>
+    <NotAuthorized>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Register">Register</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="Login">Login</NavLink>
+        </li>
+    </NotAuthorized>
+</AuthorizeView>

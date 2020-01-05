@@ -1,0 +1,50 @@
+﻿@inject HttpClient Http
+@inject NavigationManager NavManager
+
+@page "/f/{forumname}/{postId:long}/comments"
+@page "/f/{forumname}/{postId:long}/comments/{sort}"
+
+@if (_postCommentListing == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="post-grid-container">
+        <div class="post-header">
+            <PostCard @key="_postCommentListing.Post.Id" Post="_postCommentListing.Post" ShowPostDescription="true" />
+            <!-- Hot -->
+            <button type="button" @onclick="@(() => GoToSort("best"))" class="btn btn-secondary">Best</button>
+            <!-- New -->
+            <button type="button" @onclick="@(() => GoToSort("new"))" class="btn btn-secondary">New</button>
+            <!-- Top -->
+            <button type="button" @onclick="@(() => GoToSort("top"))" class="btn btn-secondary">Top</button>
+            <!-- Controversial -->
+            <button type="button" @onclick="@(() => GoToSort("controversial"))" class="btn btn-secondary">Controversial</button>
+
+        </div>
+        <div class="post-content">
+            @if (_postCommentListing.Comments != null)
+            {
+                <ul class="list-unstyled">
+                    @foreach (var comment in _postCommentListing.Comments)
+                    {
+                        <CommentCard @key="comment.Id" Comment="comment" />
+                    }
+                </ul>
+            }
+            else
+            {
+                <h5>No comments here! Have anything to say?</h5>
+            }
+
+        </div>
+        <div class="post-menu">
+
+        </div>
+    </div>
+}
+
+@code {
+
+}

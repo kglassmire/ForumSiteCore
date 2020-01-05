@@ -1,0 +1,49 @@
+﻿<li class="post-card media border rounded p-2 m-1">
+    <div class="d-inline-flex justify-content-between flex-column mr-3">
+        <div class="text-center upvote">
+            <i title="upvote" @onclick="Up" class="icofont-arrow-up icofont-2x @UpvotedCssClass"></i>
+        </div>
+        <h4 class="text-center @VoteCountColorCssClass">
+            <strong>@Post.TotalScore</strong>
+        </h4>
+        <div class="text-center downvote">
+            <i title="downvote" @onclick="Down" class="icofont-arrow-down icofont-2x @DownvotedCssClass" ></i>
+        </div>
+    </div>
+    
+    <img class="align-self-start mr-3" alt="image">
+    <div class="media-body mr-4">
+        <h5>
+            <a href="@Post.Url">@Post.Name</a>
+            @if (Post.HasDescription)
+            {
+                <button @onclick="TogglePostDescription" class="btn btn-light btn-sm" title="show description">
+                    <i class="icofont-rounded-expand icofont-2x"></i>
+                </button>
+            }
+
+        </h5>
+        @if (ShowPostDescription)
+        {
+            <p>
+                <span><MarkdownRenderer Markdown="@Post.Description" /></span>
+            </p>
+        }
+        <div class="d-flex flex-row mb-1 mt-1" title="@Post.Created">
+            <span style="display:none;">Created @Post.Created</span>Created <Timeago Date="@DateTimeOffset.Now.AddSeconds(-20)"/> by @Post.UserName
+            @if (Post.ShowForumName)
+            {
+                <span>&nbsp;to <a href="@($"/f/{Post.ForumName}")">@($"f/{Post.ForumName}")</a></span>
+            }
+        </div>
+
+        <div class="d-flex flex-row mb-1 mt-1">
+            <a class="link-unstyled" href="@CommentsUrl"><h6 class="mr-3"><i class="far fa-comment-alt"></i>@Post.CommentsCount comments</h6></a>
+            <a @onclick="Save"><h6>@PostSavedText</h6></a>
+        </div>
+    </div>
+</li>
+
+@code {
+
+}

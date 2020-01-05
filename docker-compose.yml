@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+    postgres:
+      image: postgres:alpine
+      container_name: postgres
+      restart: unless-stopped
+      environment:
+        POSTGRES_PASSWORD: docker
+      volumes:
+        - $HOME/docker-volumes/postgres:/var/lib/postgresql/data 
+      ports:
+        - "5432:5432"
+
+    forumsitecore-web:
+      image: forumsitecore-web
+      container_name: forumsitecore-web
+      restart: unless-stopped
+      ports:
+        - "80:80"
+      depends_on:
+        - postgres
+      environment: 
+        WAIT_HOSTS: postgres:5432

@@ -1,0 +1,39 @@
+﻿@page "/u/{username}"
+@page "/u/{username}/{currentview}"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+<ul class="nav nav-pills">
+    <li class="nav-item">
+        <NavLink class="nav-link" href="@($"/u/{UserName}/posts-created")">Posts Created</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="@($"/u/{UserName}/posts-saved")">Posts Saved</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="@($"/u/{UserName}/posts-commented")">Posts Commented</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="/f/all/hot">Comments Created</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="/f/all/hot">Comments Saved</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="/f/all/hot">Comments Commented</NavLink>
+    </li>
+</ul>
+@if (_userProfileResponse == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    foreach (var post in _userProfileResponse.Posts)
+    {
+        <PostCard Post="post" ShowPostDescription="true" />
+    }
+}
+
+@code {
+
+}

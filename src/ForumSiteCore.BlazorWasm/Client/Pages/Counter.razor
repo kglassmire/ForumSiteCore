@@ -1,0 +1,26 @@
+﻿@page "/counter"
+<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        
+        var coolClass = new CoolClass { FirstName = "Melvin", LastName = "Gordon", MiddleName = "Jacque" };
+        var output = System.Text.Json.JsonSerializer.Serialize<CoolClass>(coolClass);
+        Console.WriteLine($"Hello from counter {output}");
+        currentCount++;
+    }
+
+    private class CoolClass
+    {
+        public string FirstName { get; set; }
+        public string MiddleName { get; set; }
+        public string LastName { get; set; }
+    }
+}

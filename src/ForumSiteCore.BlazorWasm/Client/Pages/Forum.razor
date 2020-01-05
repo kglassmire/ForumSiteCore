@@ -1,0 +1,85 @@
+﻿@page "/"
+@page "/f/{name}"
+@page "/f/{name}/{sort}"
+@page "/f/{name}/{sort}/{lookback}"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+@if (_forumPostListing == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="forum-grid-container">
+        <div class="forum-header">
+            <h3>
+                @ForumUrlName
+            </h3>
+            <!-- Hot -->
+            <button type="button" @onclick="@(() => GoToSort("hot"))" class="btn btn-secondary">Hot</button>
+            <!-- New -->
+            <button type="button" @onclick="@(() => GoToSort("new"))" class="btn btn-secondary">New</button>
+            <!-- Top -->
+            <div class="btn-group">
+                <button type="button" @onclick="@(() => GoToSort("top"))" class="btn btn-secondary">Top</button>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" @onclick="@(() => GoToSort("top", "lookback-1-hours"))">Past Hour</a>
+                    <a class="dropdown-item" @onclick="@(() => GoToSort("top", "lookback-1-days"))">Past Day</a>
+                    <a class="dropdown-item" @onclick="@(() => GoToSort("top", "lookback-1-years"))">Past Year</a>
+                    <a class="dropdown-item" @onclick="@(() => GoToSort("top"))">All Time</a>
+                </div>
+            </div>
+            <!-- Controversial -->
+            <div class="btn-group">
+                <button type="button" @onclick="@(() => GoToSort("controversial"))" class="btn btn-secondary">Controversial</button>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" @onclick="@(() => GoToSort("controversial", "lookback-1-hours"))">Past Hour</a>
+                    <a class="dropdown-item" @onclick="@(() => GoToSort("controversial", "lookback-1-days"))">Past Day</a>
+                    <a class="dropdown-item" @onclick="@(() => GoToSort("controversial", "lookback-1-years"))">Past Year</a>
+                    <a class="dropdown-item" @onclick="@(() => GoToSort("controversial"))">All Time</a>
+                </div>
+            </div>
+        </div>
+        <div v-infinite-scroll="retrievePosts" infinite-scroll-disabled="busy" infinite-scroll-throttle-delay="500" infinite-scroll-distance="10" class="forum-content">
+            @if (!_forumPostListing.Posts.Any())
+            {
+                <div v-if="forumPostListing.posts.length === 0" class="alert alert-warning" role="alert">
+                    No posts based on your criteria.
+                </div>
+            }
+
+            <ul class="list-unstyled">
+                @foreach (var post in _forumPostListing.Posts)
+                {
+                    <PostCard @key="post.Id" Post="post"></PostCard>
+                }
+
+            </ul>
+            @if (NoMorePosts)
+            {
+                <div class="alert alert-primary" role="alert">
+                    No more posts!
+                </div>
+            }
+        </div>
+        <div class="forum-menu">
+            <div><h2>@ForumUrlName</h2></div>
+            @if (ForumCanBeSubscribed)
+            {
+                <button @onclick="Save" class="@ForumSubscribedButtonClass">@ForumSubscribedButtonText</button>
+            }
+            <div>
+                <MarkdownRenderer Markdown="@_forumPostListing.Forum.Description"/>
+            </div>
+        </div>
+    </div>
+}
+@code {
+
+}

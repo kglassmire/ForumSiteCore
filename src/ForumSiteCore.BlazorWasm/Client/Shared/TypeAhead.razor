@@ -1,0 +1,29 @@
+﻿@inject HttpClient Http
+@inject NavigationManager NavManager
+<div class="form-row align-items-center">
+    <div class="col-auto">
+        <label class="sr-only" for="inlineFormInput">Search</label>
+        <div class="input-group mr-sm-2">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                    <i class="icofont-ui-search"></i>
+                </div>
+            </div>
+            <input type="text" class="form-control mr-sm-2 dropdown" autocomplete="off" placeholder="Search forums" @ref="_searchInput" @bind-value="SearchText" @bind-value:event="oninput" @onkeyup="HandleKeyUpOnShowDropDown" aria-label="Search">
+            @if (IsShowingSuggestions)
+            {
+                <div class="dropdown-menu bd-search-results" role="menu">
+                    @for (var i = 0; i < Suggestions.Results.Count; i++)
+                    {
+                        var item = Suggestions.Results[i];
+                        <a @key="item" class="@GetSelectedClassIfItemSelected(i)" @onclick="@(() => HandleItemOnClick(item))">@item</a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+}
