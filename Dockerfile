@@ -1,4 +1,7 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+RUN apt install -y tree
+RUN tree .
+
 # build image app folder
 WORKDIR /app 
 
