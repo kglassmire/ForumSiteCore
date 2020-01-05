@@ -12,10 +12,14 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: aarnott/nbgv@master
+    - name: install tree
+      run: apt install -y tree
     - name: print environment variables
       run: printenv
     - name: docker build
       run: docker build . -t $DOCKER_HUB_ORGANIZATION/$DOCKER_HUB_REPOSITORY
+    - name: output directory structure of tree
+      run: tree $GITHUB_WORKSPACE
     - name: Run a multi-line script
       run: |
         echo Add other actions to build,
