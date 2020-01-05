@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v1
     - uses: aarnott/nbgv@master
     - name: install tree
-      run: apt install -y tree
+      run: sudo apt install -y tree
     - name: print environment variables
       run: printenv
     - name: docker build
